@@ -99,11 +99,14 @@ export class Field {
                     lineno++;
                 }
                 if (lineno == editor.lineCount()) {
+                    // first line after leading "---", since it is unpaired
                     lineno = 1;
                 } else {
+                    // next line after second "---"
                     lineno++;
                 }
             }
+            let firstLineAfterFrontmatter = lineno;
             // skip blank lines
             while (
                 lineno < editor.lineCount() &&
@@ -111,18 +114,23 @@ export class Field {
             ) {
                 lineno++;
             }
-            // skip preceding fields
-            let fieldOrder = type.getFieldOrder();
-            let currentFieldOrder = fieldOrder[this.name];
-            for (; lineno < editor.lineCount(); lineno++) {
-                let line = editor.getLine(lineno);
-                let match = this.regexAnyField.exec(line);
-                if (!match) {
-                    break;
-                }
-                let order = fieldOrder[match.groups.field];
-                if (order > currentFieldOrder) {
-                    break;
+            if (lineno == editor.lineCount()) {
+                // the document is empty or contains only frontmatter
+                lineno = firstLineAfterFrontmatter;
+            } else {
+                // skip preceding fields
+                let fieldOrder = type.getFieldOrder();
+                let currentFieldOrder = fieldOrder[this.name];
+                for (; lineno < editor.lineCount(); lineno++) {
+                    let line = editor.getLine(lineno);
+                    let match = this.regexAnyField.exec(line);
+                    if (!match) {
+                        break;
+                    }
+                    let order = fieldOrder[match.groups.field];
+                    if (order > currentFieldOrder) {
+                        break;
+                    }
                 }
             }
             editor.replaceRange(newLine + "\n", {
