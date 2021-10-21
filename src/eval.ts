@@ -36,15 +36,24 @@ export class ScriptContext {
         return result;
     }
 
-    renderMarkdown = (source: string, containerEl: HTMLElement) => {
+    renderMarkdown = async (source: string, containerEl: HTMLElement) => {
         if (!containerEl) {
             containerEl = this.containerEl;
         }
-        MarkdownRenderer.renderMarkdown(
+        let subcontainerEl = containerEl.createSpan();
+        await MarkdownRenderer.renderMarkdown(
             source,
-            containerEl,
+            subcontainerEl,
             this.sourcePath,
             null
         );
+
+        let parEl = subcontainerEl.querySelector("p");
+        if (subcontainerEl.children.length == 1 && parEl) {
+            while (parEl.firstChild) {
+                subcontainerEl.appendChild(parEl.firstChild);
+            }
+            subcontainerEl.removeChild(parEl);
+        }
     };
 }
