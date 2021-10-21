@@ -10,6 +10,7 @@ export class ScriptContext {
         let renderMarkdown = this.renderMarkdown;
         let md = renderMarkdown;
         let type = this.noteType.name;
+        let typeObject = this.noteType;
         let page = this.page;
     `;
 
