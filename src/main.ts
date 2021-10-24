@@ -22,9 +22,8 @@ import { Config } from "./config";
 import { registerTypeIconPostProcessor } from "./icon";
 
 export default class TypingPlugin extends Plugin {
-    config: Config;
+    conf: Config;
     configPath: string = "typing.yaml.md";
-    typeRegistry: TypeRegistry;
 
     async onload() {
         console.log("Typing: loading");
@@ -178,10 +177,9 @@ export default class TypingPlugin extends Plugin {
     }
 
     async reloadConfig() {
-        this.config = parseYaml(
+        let configSpec = parseYaml(
             await this.app.vault.adapter.read(this.configPath)
         );
-        this.typeRegistry.clear();
-        this.typeRegistry.buildFromConfig(this.config);
+        this.conf = await Config.fromSpec(configSpec, this);
     }
 }
