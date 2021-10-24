@@ -23,6 +23,7 @@ export class Type extends StaticTypeAttributesMixin {
     actions: Array<Action>;
     prefix: Prefix;
     createable: boolean;
+    private actionMapping: { [name: string]: Action };
 
     static async fromSpec(spec: TypeSpec, conf: Config): Promise<Type> {
         let result = new this();
@@ -70,7 +71,35 @@ export class Type extends StaticTypeAttributesMixin {
         if (spec.createable != null) {
             result.createable = spec.createable;
         }
+        result.actions = [];
+        result.actionMapping = {};
+        if (spec.actions) {
+            for (let actionSpec of spec.actions) {
+                let action;
+                if (typeof actionSpec == "string") {
+                    if (actionSpec in conf.actions) {
+                        action = conf.actions[actionSpec];
+                    } else {
+                        gracefullyAlert(
+                            `unknown action (${actionSpec}) in type: ${result.name}`
+                        );
+                        continue;
+                    }
+                } else {
+                    action = await Action.fromSpec(actionSpec, conf);
+                }
+                result.actions.push(action);
+                result.actionMapping[action.name] = action;
+            }
+        }
         return result;
+    }
+
+    getActionByName(name: string) {
+        if (name in this.actionMapping) {
+            return this.actionMapping[name];
+        }
+        gracefullyAlert(`unknown action: ${name}`);
     }
 
     async new(name?: string, fields?: { [name: string]: string }) {

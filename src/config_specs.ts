@@ -22,6 +22,7 @@ export interface TypeSpec {
     name: string;
     folder: string;
     parents?: Array<string>;
+    actions?: Array<string | ActionSpec>;
     fields?: Array<FieldSpec>;
     header?: MarginalSpec;
     footer?: MarginalSpec;
