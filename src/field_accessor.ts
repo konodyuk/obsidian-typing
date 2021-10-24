@@ -224,7 +224,11 @@ export async function autoFieldAccessor(
 ): Promise<EditorFieldAccessor | PreviewFieldAccessor> {
     let note = await plugin.asTyped(path);
     let activeView = plugin.app.workspace.getActiveViewOfType(MarkdownView);
-    if (activeView.getMode() == "source" && activeView.file.path === path) {
+    if (
+        activeView &&
+        activeView.getMode() == "source" &&
+        activeView.file.path === path
+    ) {
         return new EditorFieldAccessor(activeView.editor, note);
     } else {
         return new PreviewFieldAccessor(
