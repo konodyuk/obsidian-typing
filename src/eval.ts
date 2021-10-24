@@ -11,7 +11,6 @@ export class EvalContext {
     }
 
     eval(script: string): any {
-        console.log("running", script);
         return function () {
             return eval(this.preamble + script);
         }.call(this);
