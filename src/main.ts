@@ -11,15 +11,10 @@ import {
     registerMarginalsPostProcessors,
     monkeyPatchPreviewView,
 } from "src/marginals";
-import { TypeRegistry, Type } from "./type";
-import { Field } from "./field";
-import {
-    TypeSuggestModal,
-    SearchNoteSuggestModal,
-    FieldSuggestModal,
-} from "./search";
+import { registry } from "./type";
+import { registerLinksPostProcessor } from "./link";
+import { TypedNote } from "./typed_note";
 import { Config } from "./config";
-import { registerTypeIconPostProcessor } from "./icon";
 
 export default class TypingPlugin extends Plugin {
     conf: Config;
@@ -139,8 +134,20 @@ export default class TypingPlugin extends Plugin {
         );
     }
 
-    async getType(path: string): Promise<Type> {
-        return this.typeRegistry.getType(path);
+    asTyped(path: string): TypedNote | null {
+        return TypedNote.fromPath(path, this.conf);
+    }
+
+    getDefaultContext(note: TypedNote) {
+        return {
+            dv: this.syncDataviewApi(),
+            plugin: this,
+            app: this.app,
+            note: note,
+            type: note.type,
+            TypedNote: TypedNote,
+            registry: registry,
+        };
     }
 
     onunload() {
