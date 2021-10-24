@@ -7,10 +7,8 @@ import {
     MarkdownRenderChild,
     MarkdownPostProcessorContext,
 } from "obsidian";
-import { DataviewApi } from "obsidian-dataview";
 import TypingPlugin from "./main";
-import { ScriptContext } from "./eval";
-import { Type } from "./type";
+import { EvalContext } from "./eval";
 import { getFirstSignificantLineNumber } from "./utils";
 
 const HEADER_CODEBLOCK_LANGUAGE = "typing-header";
@@ -21,12 +19,11 @@ const FOOTER_CODEBLOCK = `\n\`\`\`${FOOTER_CODEBLOCK_LANGUAGE}\n\`\`\``;
 class MarginalSection extends MarkdownRenderChild {
     constructor(
         containerEl: HTMLElement,
-        public scriptSource: string,
+        public script: string,
         public plugin: TypingPlugin,
-        public api: DataviewApi,
         public ctx: MarkdownPostProcessorContext,
         public kind: "js" | "md",
-        public noteType: Type
+        public namespace: any
     ) {
         super(containerEl);
     }
@@ -49,16 +46,14 @@ class MarginalSection extends MarkdownRenderChild {
     };
     show = async () => {
         if (this.kind == "js") {
-            let scriptContext = new ScriptContext(
-                this.api,
-                this.ctx.sourcePath,
-                this.containerEl,
-                this.noteType
-            );
-            await scriptContext.asyncEvalScript(this.scriptSource);
+            let scriptContext = new EvalContext({
+                containerEl: this.containerEl,
+                ...this.namespace,
+            });
+            scriptContext.asyncEval(this.script);
         } else {
             MarkdownRenderer.renderMarkdown(
-                this.scriptSource,
+                this.script,
                 this.containerEl,
                 this.ctx.sourcePath,
                 null
@@ -79,7 +74,7 @@ function marginalsPostProcessor(plugin: TypingPlugin): MarkdownPostProcessor {
             return;
         }
 
-        let type = await plugin.getType(ctx.sourcePath);
+        let type = plugin.asTyped(ctx.sourcePath);
 
         if (!type) {
             return;
@@ -111,12 +106,11 @@ function marginalsPostProcessor(plugin: TypingPlugin): MarkdownPostProcessor {
             ctx.addChild(
                 new MarginalSection(
                     containerEl,
-                    type.footer.value,
+                    type.footer.source,
                     plugin,
-                    await plugin.dataviewApi(),
                     ctx,
                     type.footer.kind,
-                    type
+                    plugin.getDefaultContext(type)
                 )
             );
         }
@@ -127,12 +121,11 @@ function marginalsPostProcessor(plugin: TypingPlugin): MarkdownPostProcessor {
             ctx.addChild(
                 new MarginalSection(
                     containerEl,
-                    type.header.value,
+                    type.header.source,
                     plugin,
-                    await plugin.dataviewApi(),
                     ctx,
                     type.header.kind,
-                    type
+                    plugin.getDefaultContext(type)
                 )
             );
         }
@@ -170,7 +163,7 @@ export function registerMarginalsPostProcessors(plugin: TypingPlugin) {
             el: HTMLElement,
             ctx: MarkdownPostProcessorContext
         ) => {
-            let type = await plugin.getType(ctx.sourcePath);
+            let type = plugin.asTyped(ctx.sourcePath);
             if (!type) {
                 return;
             }
@@ -181,12 +174,11 @@ export function registerMarginalsPostProcessors(plugin: TypingPlugin) {
             ctx.addChild(
                 new MarginalSection(
                     containerEl,
-                    type.header.value,
+                    type.header.source,
                     plugin,
-                    await plugin.dataviewApi(),
                     ctx,
                     type.header.kind,
-                    type
+                    plugin.getDefaultContext(type)
                 )
             );
         }
@@ -198,7 +190,7 @@ export function registerMarginalsPostProcessors(plugin: TypingPlugin) {
             el: HTMLElement,
             ctx: MarkdownPostProcessorContext
         ) => {
-            let type = await plugin.getType(ctx.sourcePath);
+            let type = plugin.asTyped(ctx.sourcePath);
             if (!type) {
                 return;
             }
@@ -209,12 +201,11 @@ export function registerMarginalsPostProcessors(plugin: TypingPlugin) {
             ctx.addChild(
                 new MarginalSection(
                     containerEl,
-                    type.footer.value,
+                    type.footer.source,
                     plugin,
-                    await plugin.dataviewApi(),
                     ctx,
                     type.footer.kind,
-                    type
+                    plugin.getDefaultContext(type)
                 )
             );
         }
