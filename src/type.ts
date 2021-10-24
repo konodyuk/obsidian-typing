@@ -127,7 +127,10 @@ export class Type extends StaticTypeAttributesMixin {
         gracefullyAlert(`unknown action: ${name}`);
     }
 
-    async new(name?: string, fields?: { [name: string]: string }) {
+    async new(
+        name?: string,
+        fields?: { [name: string]: string }
+    ): Promise<string> {
         let vault = this.conf.plugin.app.vault;
         if (!vault.getAbstractFileByPath(this.folder)) {
             await vault.createFolder(this.folder);
@@ -160,6 +163,8 @@ export class Type extends StaticTypeAttributesMixin {
                 await accessor.setValue(field, fields[field]);
             }
         }
+        return newPath;
+    }
     }
 
     getFieldOrder(): { [name: string]: number } {
