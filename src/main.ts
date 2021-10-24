@@ -160,12 +160,16 @@ export default class TypingPlugin extends Plugin {
                     }).innerText = tmp.name;
                 }
             } else {
-                titleContainerEl.createDiv({
-                    cls: "view-header-title typing-note-prefix",
-                }).innerText = tmp.prefix;
-                titleContainerEl.createDiv({
-                    cls: "view-header-title typing-note-name",
-                }).innerText = tmp.name;
+                if (tmp.prefix) {
+                    titleContainerEl.createDiv({
+                        cls: "view-header-title typing-note-prefix",
+                    }).innerText = tmp.prefix;
+                }
+                if (tmp.name) {
+                    titleContainerEl.createDiv({
+                        cls: "view-header-title typing-note-name",
+                    }).innerText = tmp.name;
+                }
             }
             titleContainerEl.onclick = (e) => {
                 console.log("editing name of", note.name);
