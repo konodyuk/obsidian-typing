@@ -3,6 +3,7 @@ import { registry, Type, StaticTypeAttributesMixin } from "src/type";
 import { Action, Config } from "./config";
 import { EvalContext } from "./eval";
 import { autoFieldAccessor } from "./field_accessor";
+import { promptName } from "./modals";
 
 export class TypedNote extends StaticTypeAttributesMixin {
     conf: Config;
@@ -82,5 +83,9 @@ export class TypedNote extends StaticTypeAttributesMixin {
         let vault = this.conf.plugin.app.vault;
         let file = vault.getAbstractFileByPath(this.path);
         await vault.rename(file, path);
+    }
+    async promptName(): Promise<string> {
+        let tmp = this.prefix.splitByPrefix(this.name);
+        return promptName(tmp.prefix, tmp.name, this.conf);
     }
 }
