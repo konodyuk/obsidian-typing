@@ -134,17 +134,17 @@ export class Config {
         registry.clear();
         let result = new this(plugin);
         result.settings = await Settings.fromSpec(spec.settings, result);
-        for (let typeSpec of spec.types) {
-            let newType = await Type.fromSpec(typeSpec, result);
-            registry.addType(newType);
-            result.types[newType.name] = newType;
-        }
         if (spec.actions) {
             for (let specId in spec.actions) {
                 let actionSpec = spec.actions[specId];
                 let newAction = await Action.fromSpec(actionSpec, result);
                 result.actions[specId] = newAction;
             }
+        }
+        for (let typeSpec of spec.types) {
+            let newType = await Type.fromSpec(typeSpec, result);
+            registry.addType(newType);
+            result.types[newType.name] = newType;
         }
         if (spec.overrides) {
             for (let overrideSpec of spec.overrides) {
