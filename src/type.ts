@@ -37,6 +37,9 @@ export class Type extends StaticTypeAttributesMixin {
             for (let parentName of spec.parents) {
                 let parent = conf.types[parentName];
                 if (parent == null) {
+                    gracefullyAlert(
+                        `unknown parent of ${spec.name}: ${parent}`
+                    );
                     continue;
                 }
                 if (parent.header) {
