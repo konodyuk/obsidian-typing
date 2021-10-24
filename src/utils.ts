@@ -1,3 +1,5 @@
+import { Notice } from "obsidian";
+
 export function getFrontmatterLengthInLines(body: string) {
     let yamlSymbol = "---";
     if (!body.startsWith(yamlSymbol)) {
@@ -18,4 +20,9 @@ export function getFirstSignificantLineNumber(body: string) {
         }
     }
     return lines.length;
+}
+
+export function gracefullyAlert(message: string) {
+    new Notice("Typing: " + message);
+    console.log("Typing: " + message);
 }
