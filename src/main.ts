@@ -96,7 +96,7 @@ export default class TypingPlugin extends Plugin {
 
         registerMarginalsPostProcessors(this);
         monkeyPatchPreviewView(this);
-        registerTypeIconPostProcessor(this);
+        registerLinksPostProcessor(this);
 
         this.reloadConfig();
         this.setConfigReloader();
