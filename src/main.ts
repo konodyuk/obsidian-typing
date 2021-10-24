@@ -148,7 +148,7 @@ export default class TypingPlugin extends Plugin {
         console.log("Typing: unloading");
     }
 
-    async dataviewApi(): Promise<DataviewApi> {
+    async asyncDataviewApi(): Promise<DataviewApi> {
         let dvPlugin = this.app.plugins.plugins.dataview;
         if (dvPlugin.api) {
             return dvPlugin.api;
@@ -161,6 +161,10 @@ export default class TypingPlugin extends Plugin {
                 }
             );
         });
+    }
+
+    syncDataviewApi(): DataviewApi {
+        return this.app.plugins.plugins.dataview.api;
     }
 
     setConfigReloader() {
