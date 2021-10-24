@@ -74,6 +74,7 @@ export class Action extends Text {
         conf: Config,
         source: string,
         public name: string,
+        public pinned: boolean,
         public display: {
             icon?: string;
             name?: string;
@@ -84,6 +85,7 @@ export class Action extends Text {
     static async fromSpec(spec: ActionSpec, conf: Config): Promise<Action> {
         let result = (await super.fromSpec(spec, conf)) as Action;
         result.name = spec.name;
+        result.pinned = spec.pinned;
         if (spec.display != null) {
             result.display = spec.display;
         }
@@ -125,7 +127,8 @@ export class Config {
         public actions: { [name: string]: Action } = {},
         public overrides: Array<Override> = [],
         public hooks: Array<Hook> = [],
-        public settings: Settings = null
+        public settings: Settings = null,
+        public pinnedActions: Array<Action> = []
     ) {}
     static async fromSpec(
         spec: ConfigSpec,
@@ -139,6 +142,9 @@ export class Config {
                 let actionSpec = spec.actions[specId];
                 let newAction = await Action.fromSpec(actionSpec, result);
                 result.actions[specId] = newAction;
+                if (newAction.pinned) {
+                    result.pinnedActions.push(newAction);
+                }
             }
         }
         for (let typeSpec of spec.types) {

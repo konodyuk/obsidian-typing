@@ -40,6 +40,7 @@ export interface OverrideSpec {
 
 export interface ActionSpec extends TextSpec {
     name: string;
+    pinned: boolean;
     display?: {
         icon?: string;
         name?: string;
