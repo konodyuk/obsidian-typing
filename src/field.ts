@@ -26,6 +26,9 @@ export class Field {
         return result;
     }
     async prompt(oldValue?: string): Promise<string | null> {
+        if (oldValue == null) {
+            oldValue = "";
+        }
         return promptField(this.name, oldValue, this.conf);
     }
 }
