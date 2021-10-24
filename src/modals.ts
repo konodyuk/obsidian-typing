@@ -73,7 +73,7 @@ export class NameModal extends Modal {
 
     onClose() {
         if (!this.success) {
-            if (this.value) {
+            if (this.value !== this.oldText) {
                 this.callback(this.value);
             } else {
                 this.callback(null);
