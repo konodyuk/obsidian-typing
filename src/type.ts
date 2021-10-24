@@ -73,22 +73,38 @@ export class Type extends StaticTypeAttributesMixin {
         return result;
     }
 
-    async new(fields: { [name: string]: string }) {
+    async new(name?: string, fields?: { [name: string]: string }) {
         let vault = this.conf.plugin.app.vault;
         if (!vault.getAbstractFileByPath(this.folder)) {
             await vault.createFolder(this.folder);
         }
-        let serial = 0;
-        while (
-            vault.getAbstractFileByPath(this.folder + `/Untitled${serial}.md`)
-        ) {
-            serial++;
+        if (!name && !this.prefix) {
+            gracefullyAlert(
+                `either name or prefix should be specified when creating type ${this.name}`
+            );
+            return;
         }
-        let newPath = this.folder + `/Untitled${serial}.md`;
+
+        if (!name) {
+            name = "";
+        }
+        if (!fields) {
+            fields = {};
+        }
+        let prefix = "";
+        if (this.prefix) {
+            prefix = this.prefix.new(this, name, fields);
+        }
+
+        let fullname = `${prefix} ${name}`.trim();
+        let newPath = `${this.folder}/${fullname}.md`;
+        console.log("creating", newPath);
         await vault.create(newPath, "");
-        let accessor = await autoFieldAccessor(newPath, this.conf.plugin);
-        for (let field in fields) {
-            await accessor.setValue(field, fields[field]);
+        if (fields) {
+            let accessor = await autoFieldAccessor(newPath, this.conf.plugin);
+            for (let field in fields) {
+                await accessor.setValue(field, fields[field]);
+            }
         }
     }
 
