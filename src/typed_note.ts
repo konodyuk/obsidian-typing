@@ -6,7 +6,7 @@ import { autoFieldAccessor } from "./field_accessor";
 export class TypedNote extends StaticTypeAttributesMixin {
     conf: Config;
     path: string;
-    type: Type;
+    type: Type | null;
     actions: Array<Action>;
 
     get fields(): Record<string, LiteralValue> {
