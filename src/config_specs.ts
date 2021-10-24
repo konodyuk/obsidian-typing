@@ -21,6 +21,7 @@ export interface RenderingSpec {
 export interface TypeSpec {
     name: string;
     folder: string;
+    init?: Array<string>;
     parents?: Array<string>;
     actions?: Array<string | ActionSpec>;
     fields?: Array<FieldSpec>;

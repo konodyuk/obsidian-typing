@@ -18,6 +18,7 @@ export class StaticTypeAttributesMixin {
 export class Type extends StaticTypeAttributesMixin {
     conf: Config;
     name: string;
+    init: Array<string>;
     folder: string;
     fields: Array<Field>;
     actions: Array<Action>;
@@ -56,7 +57,23 @@ export class Type extends StaticTypeAttributesMixin {
             result.footer = await Marginal.fromSpec(spec.footer, conf);
         }
         if (spec.fields != null) {
-            result.fields.push(...spec.fields);
+        result.init = [];
+        if (spec.init != null) {
+            for (let field of spec.init) {
+                // if (field != "name" && !(field in result.fields)) {
+                //     gracefullyAlert(
+                //         `unknown field in init of ${result.name}: ${field}`
+                //     );
+                //     continue;
+                // }
+                if (field in result.init) {
+                    gracefullyAlert(
+                        `duplicated field in init of ${result.name}: ${field}`
+                    );
+                    continue;
+                }
+                result.init.push(field);
+            }
         }
         if (spec.icon != null) {
             result.icon = spec.icon;
