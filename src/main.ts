@@ -1,10 +1,11 @@
 import {
     Plugin,
     TAbstractFile,
-    MarkdownPostProcessorContext,
     parseYaml,
-    Editor,
     MarkdownView,
+    WorkspaceLeaf,
+    addIcon,
+    Platform,
 } from "obsidian";
 import { DataviewApi } from "obsidian-dataview";
 import {
@@ -24,7 +25,10 @@ export default class TypingPlugin extends Plugin {
     async onload() {
         console.log("Typing: loading");
 
-        this.typeRegistry = new TypeRegistry(this);
+        addIcon(
+            "grid",
+            `<path stroke="currentColor" fill="currentColor" d="m 34.375,0 h -25 c -5.1777344,0 -9.375,4.1972656 -9.375,9.375 v 25 c 0,5.175781 4.1972656,9.375 9.375,9.375 h 25 c 5.175781,0 9.375,-4.199219 9.375,-9.375 v -25 c 0,-5.1777344 -4.199219,-9.375 -9.375,-9.375 z m 56.25,56.25 h -25 c -5.175781,0 -9.375,4.199219 -9.375,9.375 v 25 c 0,5.177734 4.197266,9.375 9.375,9.375 h 25 c 5.177734,0 9.375,-4.197266 9.375,-9.375 v -25 c 0,-5.175781 -4.199219,-9.375 -9.375,-9.375 z m 0,-56.25 h -25 c -5.175781,0 -9.375,4.1972656 -9.375,9.375 v 25 c 0,5.175781 4.199219,9.375 9.375,9.375 h 25 c 5.175781,0 9.375,-4.199219 9.375,-9.375 v -25 c 0,-5.1777344 -4.199219,-9.375 -9.375,-9.375 z m -56.25,56.25 h -25 c -5.1777344,0 -9.375,4.199219 -9.375,9.375 v 25 c 0,5.175781 4.1972656,9.375 9.375,9.375 h 25 c 5.175781,0 9.375,-4.199219 9.375,-9.375 v -25 c 0,-5.175781 -4.199219,-9.375 -9.375,-9.375 z" />`
+        );
 
         this.addCommand({
             id: "typing-find",
@@ -103,37 +107,77 @@ export default class TypingPlugin extends Plugin {
         this.reloadConfig();
         this.setConfigReloader();
 
-        // remove inline fields
-        // TODO: move to obsidian-utilities
-        this.registerMarkdownPostProcessor(
-            (el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
-                let parNodes = el.querySelectorAll("p");
-                for (let i = 0; i < parNodes.length; i++) {
-                    let par = parNodes[i];
-                    let parChildren = par.childNodes;
-                    let childrenToRemove: Array<Node> = [];
-                    for (let j = 0; j < parChildren.length; j++) {
-                        let child = parChildren[j];
-                        if (
-                            child.nodeType == 3 &&
-                            child.textContent.match(
-                                /^\s*[0-9\w\p{Letter}][-0-9\w\p{Letter}]*\s*::/u
-                            )
-                        ) {
-                            for (let k = j; k < parChildren.length; k++) {
-                                childrenToRemove.push(parChildren[k]);
-                                if (parChildren[k].nodeName == "BR") {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    for (let child of childrenToRemove) {
-                        par.removeChild(child);
-                    }
-                }
+        this.app.workspace.onLayoutReady(this.processLeaves);
+        this.app.workspace.on("layout-change", this.processLeaves);
+    }
+
+    processLeaves = () => {
+        this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => {
+            if (leaf.view.getViewType() != "markdown") {
+                return;
             }
-        );
+            let view = leaf.view as MarkdownView;
+            let note = this.asTyped(view.file.path);
+
+            this.addViewActionsMenu(view, note);
+            this.setViewTitle(view, note);
+        });
+    };
+
+    addViewActionsMenu(view: MarkdownView, note: TypedNote) {
+        let actionsEl = view.containerEl.querySelector(
+            ".view-actions"
+        ) as HTMLElement;
+        if (!actionsEl.querySelector(`a.view-action[aria-label="Actions"]`)) {
+            view.addAction("grid", "Actions", () => {
+                this.openActions(note);
+            });
+        }
+    }
+
+    openActions(note: TypedNote) {}
+
+    setViewTitle(view: MarkdownView, note: TypedNote) {
+        let titleContainerEl = view.containerEl.querySelector(
+            ".view-header-title-container"
+        ) as HTMLElement;
+
+        while (titleContainerEl.firstChild) {
+            titleContainerEl.removeChild(titleContainerEl.firstChild);
+        }
+
+        if (note.prefix) {
+            let tmp = note.prefix.splitByPrefix(note.name);
+
+            if (Platform.isMobileApp) {
+                if (!tmp.name) {
+                    titleContainerEl.createDiv({
+                        cls: "view-header-title typing-note-prefix",
+                    }).innerText = tmp.prefix;
+                } else {
+                    titleContainerEl.createDiv({
+                        cls: "view-header-title typing-note-name",
+                    }).innerText = tmp.name;
+                }
+            } else {
+                titleContainerEl.createDiv({
+                    cls: "view-header-title typing-note-prefix",
+                }).innerText = tmp.prefix;
+                titleContainerEl.createDiv({
+                    cls: "view-header-title typing-note-name",
+                }).innerText = tmp.name;
+            }
+            titleContainerEl.onclick = (e) => {
+                console.log("editing name of", note.name);
+            };
+        } else {
+            titleContainerEl.createDiv({
+                cls: "view-header-title",
+            }).innerText = note.name;
+            titleContainerEl.onclick = (e) => {
+                console.log("editing name of", note.name);
+            };
+        }
     }
 
     asTyped(path: string): TypedNote | null {
@@ -154,6 +198,7 @@ export default class TypingPlugin extends Plugin {
 
     onunload() {
         console.log("Typing: unloading");
+        this.app.workspace.off("layout-change", this.processLeaves);
     }
 
     async asyncDataviewApi(): Promise<DataviewApi> {
