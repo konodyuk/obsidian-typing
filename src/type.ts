@@ -6,6 +6,7 @@ import { TypedNote } from "./typed_note";
 import { autoFieldAccessor } from "./field_accessor";
 import { Prefix } from "./prefix";
 import { gracefullyAlert } from "./utils";
+import { promptName } from "./modals";
 
 export class StaticTypeAttributesMixin {
     header: Marginal;
@@ -165,6 +166,32 @@ export class Type extends StaticTypeAttributesMixin {
         }
         return newPath;
     }
+
+    async promptNew(): Promise<{
+        name?: string;
+        fields?: { [name: string]: string };
+        success: boolean;
+    }> {
+        let name = null;
+        let fields: { [name: string]: string } = {};
+        for (let initField of this.init) {
+            if (initField == "name") {
+                name = await promptName("", "", this.conf);
+                if (name === null) {
+                    return { success: false };
+                }
+            } else {
+                for (let field of this.fields) {
+                    if (field.name == initField) {
+                        let value = await field.prompt();
+                        if (value != null) {
+                            fields[initField] = value;
+                        }
+                    }
+                }
+            }
+        }
+        return { name: name, fields: fields, success: true };
     }
 
     getFieldOrder(): { [name: string]: number } {
