@@ -15,6 +15,7 @@ import { registry } from "./type";
 import { registerLinksPostProcessor } from "./link";
 import { TypedNote } from "./typed_note";
 import { Config } from "./config";
+import { hideInlineFields } from "./utils";
 
 export default class TypingPlugin extends Plugin {
     conf: Config;
@@ -97,6 +98,7 @@ export default class TypingPlugin extends Plugin {
         registerMarginalsPostProcessors(this);
         monkeyPatchPreviewView(this);
         registerLinksPostProcessor(this);
+        this.registerMarkdownPostProcessor(hideInlineFields);
 
         this.reloadConfig();
         this.setConfigReloader();
