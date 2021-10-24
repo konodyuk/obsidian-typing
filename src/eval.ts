@@ -1,50 +1,48 @@
 import { MarkdownRenderer } from "obsidian";
-import { DataviewApi } from "obsidian-dataview";
-import { Type } from "./type";
 
-export class ScriptContext {
-    static PREAMBLE: string = `
-        let dv = this.dv; 
-        let sourcePath = this.sourcePath; 
-        let containerEl = this.containerEl;
-        let renderMarkdown = this.renderMarkdown;
-        let md = renderMarkdown;
-        let type = this.noteType.name;
-        let typeObject = this.noteType;
-        let page = this.page;
-    `;
+export class EvalContext {
+    public preamble: string;
+    constructor(public namespace: any) {
+        this.namespace["md"] = this.renderMarkdown;
+        this.preamble = "";
+        for (let key in namespace) {
+            this.preamble += `let ${key} = this.namespace["${key}"];`;
+        }
+    }
 
-    constructor(
-        public dv: DataviewApi,
-        public sourcePath: string,
-        public containerEl: HTMLElement,
-        public noteType: Type,
-        public page?: any
-    ) {}
-
-    evalScript(script: string) {
+    eval(script: string): any {
+        console.log("running", script);
         return function () {
-            return eval(ScriptContext.PREAMBLE + script);
+            return eval(this.preamble + script);
         }.call(this);
     }
 
-    async asyncEvalScript(script: string) {
-        // TODO: ensure it returns a value, because now it doesn't
-        let result = await this.evalScript(
-            "(async () => { " + script + " })()"
+    asyncEval(script: string): void {
+        // Async scripts returning value are currently not supported..
+        // URL: https://stackoverflow.com/questions/56187117/await-is-only-valid-in-async-function-eval-in-async
+        this.eval(
+            "(async () => { return eval(`" +
+                script.replace("`", "\\`") +
+                "`) })()"
         );
-        return result;
     }
 
-    renderMarkdown = async (source: string, containerEl: HTMLElement) => {
+    renderMarkdown = async (
+        source: string,
+        containerEl?: HTMLElement,
+        sourcePath?: string
+    ) => {
         if (!containerEl) {
-            containerEl = this.containerEl;
+            containerEl = this.namespace.containerEl;
+        }
+        if (!sourcePath) {
+            sourcePath = this.namespace.note.path;
         }
         let subcontainerEl = containerEl.createSpan();
         await MarkdownRenderer.renderMarkdown(
             source,
             subcontainerEl,
-            this.sourcePath,
+            sourcePath,
             null
         );
 
