@@ -57,6 +57,11 @@ export class Type extends StaticTypeAttributesMixin {
             result.footer = await Marginal.fromSpec(spec.footer, conf);
         }
         if (spec.fields != null) {
+            for (let fieldSpec of spec.fields) {
+                let newField = Field.fromSpec(fieldSpec, conf);
+                result.fields.push(newField);
+            }
+        }
         result.init = [];
         if (spec.init != null) {
             for (let field of spec.init) {
