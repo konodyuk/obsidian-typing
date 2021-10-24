@@ -1,13 +1,13 @@
 import { LiteralValue } from "obsidian-dataview";
 import { registry, Type, StaticTypeAttributesMixin } from "src/type";
 import { Action, Config } from "./config";
+import { EvalContext } from "./eval";
 import { autoFieldAccessor } from "./field_accessor";
 
 export class TypedNote extends StaticTypeAttributesMixin {
     conf: Config;
     path: string;
     type: Type | null;
-    actions: Array<Action>;
 
     get fields(): Record<string, LiteralValue> {
         let dv = this.conf.plugin.syncDataviewApi();
@@ -25,6 +25,10 @@ export class TypedNote extends StaticTypeAttributesMixin {
         );
     }
 
+    get actions(): Array<Action> {
+        return this.type.actions;
+    }
+
     static fromPath(path: string, conf: Config): TypedNote {
         let type = registry.getTypeByPath(path);
 
@@ -40,7 +44,6 @@ export class TypedNote extends StaticTypeAttributesMixin {
             result.render = type.render;
             result.prefix = type.prefix;
 
-            result.actions = type.actions;
             result = registry.applyOverrides(result);
         }
 
@@ -60,6 +63,14 @@ export class TypedNote extends StaticTypeAttributesMixin {
             this.conf.plugin
         );
         await fieldAccessor.setValue(name, value);
+    }
+    async runAction(name: string) {
+        let ctx = new EvalContext(this.conf.plugin.getDefaultContext(this));
+        ctx.asyncEval(this.type.getActionByName(name).source);
+    }
+    async runPinnedAction(name: string) {
+        let ctx = new EvalContext(this.conf.plugin.getDefaultContext(this));
+        ctx.asyncEval(this.conf.pinnedActions[name].source);
     }
     async rename(name: string) {
         let vault = this.conf.plugin.app.vault;
