@@ -171,15 +171,21 @@ export default class TypingPlugin extends Plugin {
                     }).innerText = tmp.name;
                 }
             }
-            titleContainerEl.onclick = (e) => {
-                console.log("editing name of", note.name);
+            titleContainerEl.onclick = async (e) => {
+                let newName = await note.promptName();
+                if (newName) {
+                    await note.rename(newName);
+                }
             };
         } else {
             titleContainerEl.createDiv({
                 cls: "view-header-title",
             }).innerText = note.name;
-            titleContainerEl.onclick = (e) => {
-                console.log("editing name of", note.name);
+            titleContainerEl.onclick = async (e) => {
+                let newName = await note.promptName();
+                if (newName != null) {
+                    await note.rename(newName);
+                }
             };
         }
     }
