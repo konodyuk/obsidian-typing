@@ -128,7 +128,7 @@ export class Config {
         public overrides: Array<Override> = [],
         public hooks: Array<Hook> = [],
         public settings: Settings = null,
-        public pinnedActions: Array<Action> = []
+        public pinnedActions: { [name: string]: Action } = {}
     ) {}
     static async fromSpec(
         spec: ConfigSpec,
@@ -143,7 +143,7 @@ export class Config {
                 let newAction = await Action.fromSpec(actionSpec, result);
                 result.actions[specId] = newAction;
                 if (newAction.pinned) {
-                    result.pinnedActions.push(newAction);
+                    result.pinnedActions[newAction.name] = newAction;
                 }
             }
         }
