@@ -14,6 +14,10 @@ export class TypedNote extends StaticTypeAttributesMixin {
         return dv.page(this.path);
     }
 
+    get folder(): string {
+        return this.path.slice(0, this.path.lastIndexOf("/"));
+    }
+
     get name(): string {
         return this.path.slice(
             this.path.lastIndexOf("/") + 1,
@@ -57,5 +61,15 @@ export class TypedNote extends StaticTypeAttributesMixin {
         );
         await fieldAccessor.setValue(name, value);
     }
-    async runAction(name: string) {}
+    async rename(name: string) {
+        let vault = this.conf.plugin.app.vault;
+        let file = vault.getAbstractFileByPath(this.path);
+        let newPath = `${this.folder}/${name}.md`;
+        await vault.rename(file, newPath);
+    }
+    async move(path: string) {
+        let vault = this.conf.plugin.app.vault;
+        let file = vault.getAbstractFileByPath(this.path);
+        await vault.rename(file, path);
+    }
 }
