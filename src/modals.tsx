@@ -98,7 +98,14 @@ export class NamePromptModal extends ReactCallbackModal<string> {
     onOpen() {
         this.render(
             <div className="modal typing-modal-name">
-                {this.prefix ? <PrefixComponent prefix={this.prefix} /> : {}}
+                {this.prefix ? (
+                    <PrefixComponent
+                        className="typing-modal-name-prefix"
+                        prefix={this.prefix}
+                    />
+                ) : (
+                    {}
+                )}
                 <TextArea
                     responsive={true}
                     value={this.value}
