@@ -105,6 +105,15 @@ export default class TypingPlugin extends Plugin {
         this.app.workspace.on("layout-change", this.processLeaves);
     }
 
+    get currentNote(): TypedNote | null {
+        let leaf = this.app.workspace.activeLeaf;
+        if (leaf.view.getViewType() != "markdown") {
+            return null;
+        }
+        let view = leaf.view as MarkdownView;
+        let note = this.asTyped(view.file.path);
+        return note;
+    }
     processLeaves = () => {
         this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => {
             if (leaf.view.getViewType() != "markdown") {
