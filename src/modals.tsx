@@ -232,3 +232,18 @@ export class ActionsFuzzySuggestModal extends SuggestModal<Action> {
     }
 }
 
+export class TypeSuggestModal extends FuzzySuggestModal<Type> {
+    constructor(app: App, public callback: { (type: Type): void }) {
+        super(app);
+    }
+    getItems(): Type[] {
+        return registry.typesList;
+    }
+    getItemText(type: Type) {
+        return type.name;
+    }
+    onChooseItem(type: Type) {
+        this.callback(type);
+    }
+}
+
