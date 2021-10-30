@@ -103,6 +103,17 @@ export default class TypingPlugin extends Plugin {
             },
         });
 
+        this.addCommand({
+            id: "typing-actions",
+            name: "Open Actions",
+            callback: () => {
+                let note = this.currentNote;
+                if (note) {
+                    this.openActions(note);
+                }
+            },
+        });
+
         registerMarginalsPostProcessors(this);
         monkeyPatchPreviewView(this);
         registerLinksPostProcessor(this);
@@ -124,6 +135,7 @@ export default class TypingPlugin extends Plugin {
         let note = this.asTyped(view.file.path);
         return note;
     }
+
     processLeaves = () => {
         this.app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => {
             if (leaf.view.getViewType() != "markdown") {
@@ -143,12 +155,28 @@ export default class TypingPlugin extends Plugin {
         ) as HTMLElement;
         if (!actionsEl.querySelector(`a.view-action[aria-label="Actions"]`)) {
             view.addAction("grid", "Actions", () => {
-                this.openActions(note);
+                this.openActions(this.asTyped(view.file.path));
             });
         }
     }
 
-    openActions(note: TypedNote) {}
+    openActions(note: TypedNote) {
+        if (Platform.isMobile) {
+            new ActionsModal(
+                this.app,
+                note.actions,
+                this.conf.pinnedActions,
+                note
+            ).open();
+        } else {
+            new ActionsFuzzySuggestModal(
+                this.app,
+                note.actions,
+                this.conf.pinnedActions,
+                note
+            ).open();
+        }
+    }
 
     setViewTitle(view: MarkdownView, note: TypedNote) {
         let titleContainerEl = view.containerEl.querySelector(
