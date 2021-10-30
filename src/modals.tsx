@@ -1,14 +1,24 @@
-import { App, Modal, TextComponent } from "obsidian";
+import { App, Modal } from "obsidian";
 import { Config } from "./config";
+import { PrefixComponent } from "./components/prefix";
+import React from "react";
+import ReactDOM from "react-dom";
 import { ctx } from "./context";
+import { TextArea } from "./components/textarea";
 
 export async function promptName(
     prefix: string | null,
     oldName: string | null,
     conf: Config
 ): Promise<string | null> {
+    if (prefix == null) {
+        prefix = "";
+    }
+    if (oldName == null) {
+        oldName = "";
+    }
     return new Promise((resolve) => {
-        new NameModal(ctx.app, prefix, oldName, (name) => {
+        new NamePromptModal(ctx.app, prefix, oldName, (name) => {
             if (name === null) {
                 resolve(null);
             }
@@ -22,8 +32,11 @@ export async function promptField(
     oldValue: string | null,
     conf: Config
 ): Promise<string | null> {
+    if (oldValue == null) {
+        oldValue = "";
+    }
     return new Promise((resolve) => {
-        new NameModal(ctx.app, field, oldValue, (value) => {
+        new FieldPromptModal(ctx.app, field, oldValue, (value) => {
             if (value === null) {
                 resolve(null);
             }
@@ -32,53 +45,97 @@ export async function promptField(
     });
 }
 
-export class NameModal extends Modal {
-    value: string;
+class ReactModal extends Modal {
+    render(modalComponent: JSX.Element) {
+        this.modalEl.className = modalComponent.props.className;
+        ReactDOM.render(modalComponent.props.children, this.modalEl);
+    }
+}
+
+class ReactCallbackModal<T> extends ReactModal {
+    value: T;
     success: boolean = false;
     constructor(
         app: App,
-        public prefix: string,
-        public oldText: string,
-        public callback: { (name: string | null): void }
+        public oldValue: T,
+        public callback: { (newValue: T | null): void }
     ) {
         super(app);
-        this.value = oldText;
+        this.value = oldValue;
     }
 
-    onOpen() {
-        while (this.modalEl.firstChild) {
-            this.modalEl.removeChild(this.modalEl.firstChild);
-        }
-        this.modalEl.classList.add("typing-prompt-name");
-        if (this.prefix) {
-            let prefEl = this.modalEl.createDiv({
-                cls: "typing-prompt-name-prefix",
-            });
-            prefEl.innerText = this.prefix;
-        }
-        let nameEl = new TextComponent(this.modalEl);
-        nameEl.setValue(this.oldText);
-        nameEl.onChange((value) => {
-            this.value = value;
-        });
-        nameEl.inputEl.addEventListener("keydown", (evt: KeyboardEvent) => {
-            if (evt.key === "Enter") {
-                this.success = true;
-                this.callback(this.value);
-                this.close();
-            }
-        });
-        nameEl.inputEl.classList.add("typing-prompt-name-input");
-        nameEl.inputEl.focus();
-    }
+    submitCallback = (value: T) => {
+        this.success = true;
+        this.callback(value);
+        this.close();
+    };
+
+    setValueCallback = (value: T) => {
+        this.value = value;
+    };
 
     onClose() {
         if (!this.success) {
-            if (this.value !== this.oldText) {
+            if (this.value !== this.oldValue) {
                 this.callback(this.value);
             } else {
                 this.callback(null);
             }
         }
+    }
+}
+
+export class NamePromptModal extends ReactCallbackModal<string> {
+    constructor(
+        app: App,
+        public prefix: string,
+        oldName: string,
+        callback: { (name: string | null): void }
+    ) {
+        super(app, oldName, callback);
+    }
+
+    onOpen() {
+        this.render(
+            <div className="modal typing-modal-name">
+                {this.prefix ? <PrefixComponent prefix={this.prefix} /> : {}}
+                <TextArea
+                    responsive={true}
+                    value={this.value}
+                    className="typing-modal-name-input"
+                    submitCallback={this.submitCallback}
+                    setValueCallback={this.setValueCallback}
+                ></TextArea>
+            </div>
+        );
+    }
+}
+
+export class FieldPromptModal extends ReactCallbackModal<string> {
+    constructor(
+        app: App,
+        public fieldName: string,
+        oldValue: string,
+        callback: { (name: string | null): void }
+    ) {
+        super(app, oldValue, callback);
+    }
+
+    onOpen() {
+        this.render(
+            <div className="modal typing-modal-field">
+                <div className="typing-modal-field-name">
+                    {this.fieldName}
+                    {": "}
+                </div>
+                <TextArea
+                    responsive={true}
+                    value={this.value}
+                    className="typing-modal-field-input"
+                    submitCallback={this.submitCallback}
+                    setValueCallback={this.setValueCallback}
+                ></TextArea>
+            </div>
+        );
     }
 }
