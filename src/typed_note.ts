@@ -17,7 +17,12 @@ export class TypedNote extends StaticTypeAttributesMixin {
     }
 
     get folder(): string {
-        return this.path.slice(0, this.path.lastIndexOf("/"));
+        let lastIndexOfPathSep = this.path.lastIndexOf("/");
+        if (lastIndexOfPathSep != -1) {
+            return this.path.slice(0, lastIndexOfPathSep);
+        } else {
+            return "";
+        }
     }
 
     get name(): string {
