@@ -15,7 +15,7 @@ export class ViewTitle extends Component {
 
     render() {
         let shouldRenderPrefix =
-            this.props.prefix && (!Platform.isMobileApp || !this.props.name);
+            this.props.prefix && (!Platform.isMobile || !this.props.name);
         let shouldRenderName = this.props.name;
         return (
             <>
