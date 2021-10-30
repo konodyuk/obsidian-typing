@@ -189,20 +189,30 @@ export class Type extends StaticTypeAttributesMixin {
     }> {
         let name = null;
         let fields: { [name: string]: string } = {};
-        for (let initField of this.init) {
-            if (initField == "name") {
-                name = await promptName("", "", this.conf);
-                if (name === null) {
-                    return { success: false };
-                }
-            } else {
-                for (let field of this.fields) {
-                    if (field.name == initField) {
-                        let value = await field.prompt();
-                        if (value != null) {
-                            fields[initField] = value;
+        if (this.init?.length) {
+            for (let initField of this.init) {
+                if (initField == "name") {
+                    name = await promptName("", "", this.conf);
+                    if (name === null) {
+                        return { success: false };
+                    }
+                } else {
+                    for (let field of this.fields) {
+                        if (field.name == initField) {
+                            let value = await field.prompt();
+                            if (value != null) {
+                                fields[initField] = value;
+                            }
                         }
                     }
+                }
+            }
+        } else {
+            name = await promptName("", "", this.conf);
+            for (let field of this.fields) {
+                let value = await field.prompt();
+                if (value != null) {
+                    fields[field.name] = value;
                 }
             }
         }
