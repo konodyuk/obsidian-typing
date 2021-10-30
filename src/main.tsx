@@ -39,25 +39,7 @@ export default class TypingPlugin extends Plugin {
         this.addCommand({
             id: "typing-find",
             name: "Find",
-            editorCallback: (editor: Editor, view: MarkdownView) => {
-                new TypeSuggestModal(
-                    this.app,
-                    this.typeRegistry,
-                    async (type: Type) => {
-                        new SearchNoteSuggestModal(
-                            this.app,
-                            this,
-                            await this.dataviewApi(),
-                            [type],
-                            (page) => {
-                                editor.replaceSelection(
-                                    `[[${page.file.name}]]`
-                                );
-                            }
-                        ).open();
-                    }
-                ).open();
-            },
+            callback: () => {},
         });
 
         this.addCommand({
