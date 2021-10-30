@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 export class PrefixComponent extends Component {
     state: { expanded: boolean };
-    constructor(public props: { prefix: string }) {
+    constructor(public props: { prefix: string; className: string }) {
         super(props);
         this.state = {
             expanded: true,
@@ -12,7 +12,7 @@ export class PrefixComponent extends Component {
     render() {
         return (
             <div
-                className="typing-modal-name-prefix"
+                className={this.props.className}
                 onClick={() => {
                     this.setState({ expanded: !this.state.expanded });
                 }}
