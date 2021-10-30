@@ -5,6 +5,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { ctx } from "./context";
 import { TextArea } from "./components/textarea";
+import { ActionCard, ActionLine } from "./components/action";
 
 export async function promptName(
     prefix: string | null,
@@ -146,3 +147,43 @@ export class FieldPromptModal extends ReactCallbackModal<string> {
         );
     }
 }
+
+export class ActionsModal extends ReactModal {
+    constructor(
+        app: App,
+        public actions: Array<Action>,
+        public pinnedActions: { [name: string]: Action },
+        public note: TypedNote
+    ) {
+        super(app);
+    }
+
+    onOpen() {
+        let actionCards = [];
+        for (let action of this.actions) {
+            actionCards.push(
+                ActionCard(action, () => {
+                    this.close();
+                    this.note.runAction(action.name);
+                })
+            );
+        }
+        let pinnedActionCards = [];
+        for (let actionName in this.pinnedActions) {
+            let action = this.pinnedActions[actionName];
+            pinnedActionCards.push(
+                ActionCard(action, () => {
+                    this.close();
+                    this.note.runPinnedAction(action.name);
+                })
+            );
+        }
+        this.render(
+            <div className="modal typing-modal-actions">
+                <div className="typing-note-actions">{actionCards}</div>
+                <div className="typing-pinned-actions">{pinnedActionCards}</div>
+            </div>
+        );
+    }
+}
+
