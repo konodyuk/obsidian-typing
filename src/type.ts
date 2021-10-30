@@ -27,6 +27,7 @@ export class Type extends StaticTypeAttributesMixin {
     prefix: Prefix;
     createable: boolean;
     private actionMapping: { [name: string]: Action };
+    private fieldMapping: { [name: string]: Field };
 
     static async fromSpec(spec: TypeSpec, conf: Config): Promise<Type> {
         let result = new this();
@@ -66,6 +67,10 @@ export class Type extends StaticTypeAttributesMixin {
                 let newField = Field.fromSpec(fieldSpec, conf);
                 result.fields.push(newField);
             }
+        }
+        result.fieldMapping = {};
+        for (let field of result.fields) {
+            result.fieldMapping[field.name] = field;
         }
         result.init = [];
         if (spec.init != null) {
@@ -127,6 +132,13 @@ export class Type extends StaticTypeAttributesMixin {
             return this.actionMapping[name];
         }
         gracefullyAlert(`unknown action: ${name}`);
+
+    getFieldByName(name: string): Field | null {
+        if (name in this.fieldMapping) {
+            return this.fieldMapping[name];
+        }
+        gracefullyAlert(`unknown field: ${name}`);
+        return null;
     }
 
     async new(
