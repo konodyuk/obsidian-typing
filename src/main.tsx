@@ -75,31 +75,24 @@ export default class TypingPlugin extends Plugin {
 
         this.addCommand({
             id: "typing-field",
-            name: "Field",
-            editorCallback: async (editor: Editor, view: MarkdownView) => {
-                let type = await this.getType(
-                    this.app.workspace.getActiveFile().path
-                );
-                new FieldSuggestModal(
-                    this.app,
-                    this.typeRegistry,
-                    type,
-                    async (field: Field) => {
-                        let value = field.getValue(editor);
-                        await field.suggestOptions(
-                            editor,
-                            value,
-                            (newValue: string, setCursor: boolean = false) => {
-                                field.setValue(
-                                    editor,
-                                    newValue,
-                                    type,
-                                    setCursor
-                                );
+            name: "Set Field",
+            callback: async () => {
+                let note = this.currentNote;
+                if (note) {
+                    let fieldNames = note.type.fields.map(
+                        (field) => field.name
+                    );
+                    new StringSuggestModal(
+                        this.app,
+                        fieldNames,
+                        async (field) => {
+                            let newValue = await note.promptField(field);
+                            if (newValue != null) {
+                                note.setField(field, newValue);
                             }
-                        );
-                    }
-                ).open();
+                        }
+                    ).open();
+                }
             },
         });
 
