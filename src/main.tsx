@@ -18,6 +18,9 @@ import { TypedNote } from "./typed_note";
 import { Config } from "./config";
 import { hideInlineFields } from "./utils";
 import { ctx } from "./context";
+import ReactDOM from "react-dom";
+import { ViewTitle } from "./components/view_title";
+import React from "react";
 
 export default class TypingPlugin extends Plugin {
     conf: Config;
@@ -145,52 +148,29 @@ export default class TypingPlugin extends Plugin {
             ".view-header-title-container"
         ) as HTMLElement;
 
-        while (titleContainerEl.firstChild) {
-            titleContainerEl.removeChild(titleContainerEl.firstChild);
-        }
-
+        let name = null,
+            prefix = null;
         if (note.prefix) {
             let tmp = note.prefix.splitByPrefix(note.name);
-
-            if (Platform.isMobileApp) {
-                if (!tmp.name) {
-                    titleContainerEl.createDiv({
-                        cls: "view-header-title typing-note-prefix",
-                    }).innerText = tmp.prefix;
-                } else {
-                    titleContainerEl.createDiv({
-                        cls: "view-header-title typing-note-name",
-                    }).innerText = tmp.name;
-                }
-            } else {
-                if (tmp.prefix) {
-                    titleContainerEl.createDiv({
-                        cls: "view-header-title typing-note-prefix",
-                    }).innerText = tmp.prefix;
-                }
-                if (tmp.name) {
-                    titleContainerEl.createDiv({
-                        cls: "view-header-title typing-note-name",
-                    }).innerText = tmp.name;
-                }
-            }
-            titleContainerEl.onclick = async (e) => {
-                let newName = await note.promptName();
-                if (newName) {
-                    await note.rename(newName);
-                }
-            };
+            name = tmp.name;
+            prefix = tmp.prefix;
         } else {
-            titleContainerEl.createDiv({
-                cls: "view-header-title",
-            }).innerText = note.name;
-            titleContainerEl.onclick = async (e) => {
-                let newName = await note.promptName();
-                if (newName != null) {
-                    await note.rename(newName);
-                }
-            };
+            name = note.name;
         }
+
+        ReactDOM.render(
+            <ViewTitle
+                prefix={prefix}
+                name={name}
+                onNameClick={async () => {
+                    let newName = await note.promptName();
+                    if (newName != null) {
+                        await note.rename(newName);
+                    }
+                }}
+            ></ViewTitle>,
+            titleContainerEl
+        );
     }
 
     asTyped(path: string): TypedNote | null {
