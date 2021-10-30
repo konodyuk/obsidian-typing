@@ -17,6 +17,7 @@ import { registerLinksPostProcessor } from "./link";
 import { TypedNote } from "./typed_note";
 import { Config } from "./config";
 import { hideInlineFields } from "./utils";
+import { ctx } from "./context";
 
 export default class TypingPlugin extends Plugin {
     conf: Config;
@@ -24,6 +25,8 @@ export default class TypingPlugin extends Plugin {
 
     async onload() {
         console.log("Typing: loading");
+        ctx.setApp(this.app);
+        ctx.setPlugin(this);
 
         addIcon(
             "grid",
