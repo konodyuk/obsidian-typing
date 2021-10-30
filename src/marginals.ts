@@ -15,8 +15,12 @@ const HEADER_CODEBLOCK_LANGUAGE = "typing-header";
 const FOOTER_CODEBLOCK_LANGUAGE = "typing-footer";
 const HEADER_CODEBLOCK = `\`\`\`${HEADER_CODEBLOCK_LANGUAGE}\n\`\`\`\n`;
 const FOOTER_CODEBLOCK = `\n\`\`\`${FOOTER_CODEBLOCK_LANGUAGE}\n\`\`\``;
+const TIMEOUT = 1000;
 
 class MarginalSection extends MarkdownRenderChild {
+    private shouldUpdate: boolean = false;
+    private canUpdate: boolean = true;
+
     constructor(
         containerEl: HTMLElement,
         public script: string,
@@ -41,8 +45,21 @@ class MarginalSection extends MarkdownRenderChild {
         this.update();
     };
     update = () => {
-        this.hide();
-        this.show();
+        if (this.canUpdate) {
+            this.shouldUpdate = false;
+            this.hide();
+            this.show();
+            this.canUpdate = false;
+
+            setTimeout(() => {
+                this.canUpdate = true;
+                if (this.shouldUpdate) {
+                    this.update();
+                }
+            }, TIMEOUT);
+        } else {
+            this.shouldUpdate = true;
+        }
     };
     show = async () => {
         if (this.kind == "js") {
