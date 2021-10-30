@@ -92,7 +92,11 @@ export class TypedNote extends StaticTypeAttributesMixin {
         await vault.rename(file, path);
     }
     async promptName(): Promise<string> {
-        let tmp = this.prefix.splitByPrefix(this.name);
-        return promptName(tmp.prefix, tmp.name, this.conf);
+        if (this.prefix) {
+            let tmp = this.prefix.splitByPrefix(this.name);
+            return promptName(tmp.prefix, tmp.name, this.conf);
+        } else {
+            return promptName(null, this.name, this.conf);
+        }
     }
 }
