@@ -57,6 +57,12 @@ export default class TypingPlugin extends Plugin {
             },
         });
 
+        // this.addCommand({
+        //     id: "typing-change-type",
+        //     name: "Change Type",
+        //     callback: () => {},
+        // });
+
         this.addCommand({
             id: "typing-field",
             name: "Field",
