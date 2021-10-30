@@ -13,6 +13,7 @@ import ReactDOM from "react-dom";
 import { ctx } from "./context";
 import { TextArea } from "./components/textarea";
 import { ActionCard, ActionLine } from "./components/action";
+import { TypedNote } from "./typed_note";
 import { registry, Type } from "./type";
 
 export async function promptName(
@@ -248,3 +249,21 @@ export class TypeSuggestModal extends FuzzySuggestModal<Type> {
     }
 }
 
+export class StringSuggestModal extends FuzzySuggestModal<string> {
+    constructor(
+        app: App,
+        public strings: Array<string>,
+        public callback: { (type: string): void }
+    ) {
+        super(app);
+    }
+    getItems(): string[] {
+        return this.strings;
+    }
+    getItemText(s: string) {
+        return s;
+    }
+    onChooseItem(s: string) {
+        this.callback(s);
+    }
+}
