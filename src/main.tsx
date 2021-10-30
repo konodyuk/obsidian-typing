@@ -31,7 +31,7 @@ import {
 
 export default class TypingPlugin extends Plugin {
     conf: Config;
-    configPath: string = "typing.yaml.md";
+    configPath: string = "typing.yaml";
 
     async onload() {
         console.log("Typing: loading");
