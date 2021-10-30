@@ -13,6 +13,7 @@ import ReactDOM from "react-dom";
 import { ctx } from "./context";
 import { TextArea } from "./components/textarea";
 import { ActionCard, ActionLine } from "./components/action";
+import { registry, Type } from "./type";
 
 export async function promptName(
     prefix: string | null,
