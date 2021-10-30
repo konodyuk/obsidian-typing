@@ -4,8 +4,8 @@
   "description": "Strict note typing for Obsidian",
   "main": "main.js",
   "scripts": {
-    "dev": "obsidian-plugin dev src/main.ts",
-    "build": "obsidian-plugin build src/main.ts",
+    "dev": "obsidian-plugin dev src/main.tsx",
+    "build": "obsidian-plugin build src/main.tsx",
     "test": "npx jest"
   },
   "keywords": [],
