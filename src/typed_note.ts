@@ -102,4 +102,11 @@ export class TypedNote extends StaticTypeAttributesMixin {
             return promptName(null, this.name, this.conf);
         }
     }
+    async promptField(name: string): Promise<string> {
+        if (this.type) {
+            return await this.type
+                .getFieldByName(name)
+                .prompt(await this.getField(name));
+        }
+    }
 }
