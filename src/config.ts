@@ -123,7 +123,6 @@ export class Rendering {
 
 export class Config {
     constructor(
-        public plugin: TypingPlugin,
         public types: { [name: string]: Type } = {},
         public actions: { [name: string]: Action } = {},
         public overrides: Array<Override> = [],
@@ -131,12 +130,9 @@ export class Config {
         public settings: Settings = null,
         public pinnedActions: { [name: string]: Action } = {}
     ) {}
-    static async fromSpec(
-        spec: ConfigSpec,
-        plugin: TypingPlugin
-    ): Promise<Config> {
+    static async fromSpec(spec: ConfigSpec): Promise<Config> {
         registry.clear();
-        let result = new this(plugin);
+        let result = new this();
         result.settings = await Settings.fromSpec(spec.settings, result);
         if (spec.actions) {
             for (let specId in spec.actions) {

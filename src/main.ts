@@ -247,6 +247,6 @@ export default class TypingPlugin extends Plugin {
         let configSpec = parseYaml(
             await this.app.vault.adapter.read(this.configPath)
         );
-        this.conf = await Config.fromSpec(configSpec, this);
+        this.conf = await Config.fromSpec(configSpec);
     }
 }
