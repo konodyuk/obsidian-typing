@@ -40,6 +40,9 @@ export class TypedNote extends StaticTypeAttributesMixin {
     }
 
     get actions(): Array<Action> {
+        if (!this.type) {
+            return [];
+        }
         return this.type.actions;
     }
 
