@@ -45,14 +45,14 @@ export async function promptField(
     });
 }
 
-class ReactModal extends Modal {
+export class ReactModal extends Modal {
     render(modalComponent: JSX.Element) {
         this.modalEl.className = modalComponent.props.className;
         ReactDOM.render(modalComponent.props.children, this.modalEl);
     }
 }
 
-class ReactCallbackModal<T> extends ReactModal {
+export class ReactCallbackModal<T> extends ReactModal {
     value: T;
     success: boolean = false;
     constructor(
