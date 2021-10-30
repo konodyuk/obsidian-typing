@@ -1,3 +1,4 @@
+import { ctx } from "./context";
 import { Type } from "./type";
 
 interface PrefixProvider {
@@ -95,7 +96,7 @@ Prefix.registerProvider(
     "serial",
     "[1-9]+[0-9]*\\s*",
     (type, name, fields, prefix) => {
-        let vault = type.conf.plugin.app.vault;
+        let vault = ctx.app.vault;
         let serial = 1;
         while (true) {
             let fullname = `${type.folder}/${prefix.exec({

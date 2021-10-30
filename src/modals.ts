@@ -1,5 +1,6 @@
 import { App, Modal, TextComponent } from "obsidian";
 import { Config } from "./config";
+import { ctx } from "./context";
 
 export async function promptName(
     prefix: string | null,
@@ -7,7 +8,7 @@ export async function promptName(
     conf: Config
 ): Promise<string | null> {
     return new Promise((resolve) => {
-        new NameModal(conf.plugin.app, prefix ?? "", oldName ?? "", (name) => {
+        new NameModal(ctx.app, prefix, oldName, (name) => {
             if (name === null) {
                 resolve(null);
             }
@@ -22,7 +23,7 @@ export async function promptField(
     conf: Config
 ): Promise<string | null> {
     return new Promise((resolve) => {
-        new NameModal(conf.plugin.app, field, oldValue, (value) => {
+        new NameModal(ctx.app, field, oldValue, (value) => {
             if (value === null) {
                 resolve(null);
             }
