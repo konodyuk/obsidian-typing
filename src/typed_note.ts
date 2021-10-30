@@ -26,10 +26,17 @@ export class TypedNote extends StaticTypeAttributesMixin {
     }
 
     get name(): string {
-        return this.path.slice(
-            this.path.lastIndexOf("/") + 1,
-            this.path.lastIndexOf(".")
-        );
+        let lastIndexOfPathSep = this.path.lastIndexOf("/");
+
+        // branching make for explicity
+        if (lastIndexOfPathSep != -1) {
+            return this.path.slice(
+                lastIndexOfPathSep + 1,
+                this.path.lastIndexOf(".")
+            );
+        } else {
+            return this.path.slice(0, this.path.lastIndexOf("."));
+        }
     }
 
     get actions(): Array<Action> {
