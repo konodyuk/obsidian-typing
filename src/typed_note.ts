@@ -1,6 +1,7 @@
 import { LiteralValue } from "obsidian-dataview";
 import { registry, Type, StaticTypeAttributesMixin } from "src/type";
 import { Action, Config } from "./config";
+import { ctx } from "./context";
 import { EvalContext } from "./eval";
 import { autoFieldAccessor } from "./field_accessor";
 import { promptName } from "./modals";
@@ -11,7 +12,7 @@ export class TypedNote extends StaticTypeAttributesMixin {
     type: Type | null;
 
     get fields(): Record<string, LiteralValue> {
-        let dv = this.conf.plugin.syncDataviewApi();
+        let dv = ctx.plugin.syncDataviewApi();
         return dv.page(this.path);
     }
 
@@ -52,35 +53,29 @@ export class TypedNote extends StaticTypeAttributesMixin {
     }
 
     async getField(name: string): Promise<string | null> {
-        let fieldAccessor = await autoFieldAccessor(
-            this.path,
-            this.conf.plugin
-        );
+        let fieldAccessor = await autoFieldAccessor(this.path, ctx.plugin);
         return await fieldAccessor.getValue(name);
     }
     async setField(name: string, value: string) {
-        let fieldAccessor = await autoFieldAccessor(
-            this.path,
-            this.conf.plugin
-        );
+        let fieldAccessor = await autoFieldAccessor(this.path, ctx.plugin);
         await fieldAccessor.setValue(name, value);
     }
     async runAction(name: string) {
-        let ctx = new EvalContext(this.conf.plugin.getDefaultContext(this));
-        ctx.asyncEval(this.type.getActionByName(name).source);
+        let evalCtx = new EvalContext(ctx.plugin.getDefaultContext(this));
+        evalCtx.asyncEval(this.type.getActionByName(name).source);
     }
     async runPinnedAction(name: string) {
-        let ctx = new EvalContext(this.conf.plugin.getDefaultContext(this));
-        ctx.asyncEval(this.conf.pinnedActions[name].source);
+        let evalCtx = new EvalContext(ctx.plugin.getDefaultContext(this));
+        evalCtx.asyncEval(this.conf.pinnedActions[name].source);
     }
     async rename(name: string) {
-        let vault = this.conf.plugin.app.vault;
+        let vault = ctx.app.vault;
         let file = vault.getAbstractFileByPath(this.path);
         let newPath = `${this.folder}/${name}.md`;
         await vault.rename(file, newPath);
     }
     async move(path: string) {
-        let vault = this.conf.plugin.app.vault;
+        let vault = ctx.app.vault;
         let file = vault.getAbstractFileByPath(this.path);
         await vault.rename(file, path);
     }

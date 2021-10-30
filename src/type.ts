@@ -7,6 +7,7 @@ import { autoFieldAccessor } from "./field_accessor";
 import { Prefix } from "./prefix";
 import { gracefullyAlert } from "./utils";
 import { promptName } from "./modals";
+import { ctx } from "./context";
 
 export class StaticTypeAttributesMixin {
     header: Marginal;
@@ -132,7 +133,7 @@ export class Type extends StaticTypeAttributesMixin {
         name?: string,
         fields?: { [name: string]: string }
     ): Promise<string> {
-        let vault = this.conf.plugin.app.vault;
+        let vault = ctx.app.vault;
         if (!vault.getAbstractFileByPath(this.folder)) {
             await vault.createFolder(this.folder);
         }
@@ -159,7 +160,7 @@ export class Type extends StaticTypeAttributesMixin {
         console.log("creating", newPath);
         await vault.create(newPath, "");
         if (fields) {
-            let accessor = await autoFieldAccessor(newPath, this.conf.plugin);
+            let accessor = await autoFieldAccessor(newPath, ctx.plugin);
             for (let field in fields) {
                 await accessor.setValue(field, fields[field]);
             }
@@ -233,9 +234,9 @@ export class Override {
         return new this(conf, condition, header, footer, spec.icon);
     }
     check(note: TypedNote): boolean {
-        let ctx = new EvalContext(this.conf.plugin.getDefaultContext(note));
+        let evalCtx = new EvalContext(ctx.plugin.getDefaultContext(note));
         try {
-            return ctx.eval(this.condition);
+            return evalCtx.eval(this.condition);
         } catch (e) {
             return false;
         }

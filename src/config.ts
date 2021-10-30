@@ -7,6 +7,7 @@ import {
     TextSpec,
     MarginalSpec,
 } from "./config_specs";
+import { ctx } from "./context";
 import TypingPlugin from "./main";
 import { Type, Override, registry } from "./type";
 import { gracefullyAlert } from "./utils";
@@ -41,7 +42,7 @@ export class Text {
             spec.file = null;
         }
         if (spec.file) {
-            source = await conf.plugin.app.vault.adapter.read(spec.file);
+            source = await ctx.app.vault.adapter.read(spec.file);
         }
         if (spec.source) {
             source = spec.source;
