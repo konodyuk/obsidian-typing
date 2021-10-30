@@ -1,5 +1,12 @@
-import { App, Modal } from "obsidian";
-import { Config } from "./config";
+import {
+    App,
+    fuzzySearch,
+    FuzzySuggestModal,
+    Modal,
+    prepareQuery,
+    SuggestModal,
+} from "obsidian";
+import { Action, Config } from "./config";
 import { PrefixComponent } from "./components/prefix";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -184,6 +191,44 @@ export class ActionsModal extends ReactModal {
                 <div className="typing-pinned-actions">{pinnedActionCards}</div>
             </div>
         );
+    }
+}
+
+export class ActionsFuzzySuggestModal extends SuggestModal<Action> {
+    constructor(
+        app: App,
+        public actions: Array<Action>,
+        public pinnedActions: { [name: string]: Action },
+        public note: TypedNote
+    ) {
+        super(app);
+    }
+    async renderSuggestion(action: Action, el: HTMLElement) {
+        return ReactDOM.render(
+            ActionLine(action, () => {}),
+            el
+        );
+    }
+
+    getSuggestions(query: string): Action[] {
+        let preparedQuery = prepareQuery(query);
+        let result = [];
+        for (let actionName in this.pinnedActions) {
+            let action = this.pinnedActions[actionName];
+            if (fuzzySearch(preparedQuery, action.name)) {
+                result.push(action);
+            }
+        }
+        for (let action of this.actions) {
+            if (fuzzySearch(preparedQuery, action.name)) {
+                result.push(action);
+            }
+        }
+        return result;
+    }
+
+    onChooseSuggestion(action: Action) {
+        this.note.runPinnedAction(action.name);
     }
 }
 
