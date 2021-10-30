@@ -127,11 +127,13 @@ export class Type extends StaticTypeAttributesMixin {
         return result;
     }
 
-    getActionByName(name: string) {
+    getActionByName(name: string): Action | null {
         if (name in this.actionMapping) {
             return this.actionMapping[name];
         }
         gracefullyAlert(`unknown action: ${name}`);
+        return null;
+    }
 
     getFieldByName(name: string): Field | null {
         if (name in this.fieldMapping) {
