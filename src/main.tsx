@@ -21,6 +21,12 @@ import { ctx } from "./context";
 import ReactDOM from "react-dom";
 import { ViewTitle } from "./components/view_title";
 import React from "react";
+import {
+    ActionsFuzzySuggestModal,
+    ActionsModal,
+    StringSuggestModal,
+    TypeSuggestModal,
+} from "./modals";
 
 export default class TypingPlugin extends Plugin {
     conf: Config;
