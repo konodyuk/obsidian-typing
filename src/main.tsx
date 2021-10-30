@@ -5,6 +5,7 @@ import {
     MarkdownView,
     WorkspaceLeaf,
     addIcon,
+    TFile,
     Platform,
 } from "obsidian";
 import { DataviewApi } from "obsidian-dataview";
@@ -51,15 +52,18 @@ export default class TypingPlugin extends Plugin {
         this.addCommand({
             id: "typing-new",
             name: "New",
-            callback: () => {
-                new TypeSuggestModal(
-                    this.app,
-                    this.typeRegistry,
-                    async (type: Type) => {
-                        let file = await type.createNewFile();
-                        this.app.workspace.activeLeaf.openFile(file);
+            callback: async () => {
+                new TypeSuggestModal(this.app, async (type) => {
+                    let options = await type.promptNew();
+                    if (!options.success) {
+                        return;
                     }
-                ).open();
+
+                    let newPath = await type.new(options.name, options.fields);
+                    this.app.workspace.activeLeaf.openFile(
+                        this.app.vault.getAbstractFileByPath(newPath) as TFile
+                    );
+                }).open();
             },
         });
 
