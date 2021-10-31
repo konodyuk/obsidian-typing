@@ -182,21 +182,30 @@ export class Type extends StaticTypeAttributesMixin {
         return newPath;
     }
 
-    async promptNew(): Promise<{
+    async promptNew(
+        name: string | null = null,
+        fields: { [name: string]: string } = {}
+    ): Promise<{
         name?: string;
         fields?: { [name: string]: string };
         success: boolean;
     }> {
-        let name = null;
-        let fields: { [name: string]: string } = {};
+        // let name = null;
+        // let fields: { [name: string]: string } = {};
         if (this.init?.length) {
             for (let initField of this.init) {
                 if (initField == "name") {
+                    if (name != null) {
+                        continue;
+                    }
                     name = await promptName("", "", this.conf);
                     if (name === null) {
                         return { success: false };
                     }
                 } else {
+                    if (initField in fields) {
+                        continue;
+                    }
                     for (let field of this.fields) {
                         if (field.name == initField) {
                             let value = await field.prompt();
@@ -208,8 +217,13 @@ export class Type extends StaticTypeAttributesMixin {
                 }
             }
         } else {
-            name = await promptName("", "", this.conf);
+            if (name == null) {
+                name = await promptName("", "", this.conf);
+            }
             for (let field of this.fields) {
+                if (field.name in fields) {
+                    continue;
+                }
                 let value = await field.prompt();
                 if (value != null) {
                     fields[field.name] = value;
