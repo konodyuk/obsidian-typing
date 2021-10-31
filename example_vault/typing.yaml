@@ -34,6 +34,15 @@ types:
             kind: choice
             args:
                 options: [planned, active, completed]
+      actions:
+          - name: Set status
+            display:
+                name: status
+            source: |
+                let newValue = await note.promptField("status")
+                if (newValue != null) {
+                    note.setField("status", newValue)
+                }
       prefix: I-{date_compact}
       icon: far fa-circle-dot
 
@@ -51,7 +60,7 @@ types:
       actions:
           - name: Create a meeting
             display:
-                icon: far fa-circle-dot
+                name: meeting
             source: |
                 let issue = registry.getTypeByName("meeting");
                 let tmp = await issue.promptNew(null, {members: `[[${note.path}]]`});
