@@ -19,11 +19,7 @@ export class EvalContext {
     asyncEval(script: string): void {
         // Async scripts returning value are currently not supported..
         // URL: https://stackoverflow.com/questions/56187117/await-is-only-valid-in-async-function-eval-in-async
-        this.eval(
-            "(async () => { return eval(`" +
-                script.replace("`", "\\`") +
-                "`) })()"
-        );
+        this.eval("(async () => {" + script + "})()");
     }
 
     renderMarkdown = async (
