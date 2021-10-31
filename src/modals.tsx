@@ -230,7 +230,11 @@ export class ActionsFuzzySuggestModal extends SuggestModal<Action> {
     }
 
     onChooseSuggestion(action: Action) {
-        this.note.runPinnedAction(action.name);
+        if (action.pinned) {
+            this.note.runPinnedAction(action.name);
+        } else {
+            this.note.runAction(action.name);
+        }
     }
 }
 
