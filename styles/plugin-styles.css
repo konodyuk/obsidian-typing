@@ -118,8 +118,15 @@
     border: 1px solid var(--text-muted);
 }
 
-.typing-pinned-actions {
+.theme-dark .typing-pinned-actions {
     background-color: #ffffff10;
+}
+
+.theme-light .typing-pinned-actions {
+    background-color: #00000010;
+}
+
+.typing-pinned-actions {
     border-radius: 12px;
     display: flex;
     flex-direction: column;
