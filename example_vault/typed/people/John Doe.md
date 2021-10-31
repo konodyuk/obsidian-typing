@@ -1,4 +1,4 @@
 name :: John
 surname :: Doe
 
-Some text mentioning [[I-LAVCW9 Issue One]] and demonstrating icon rendering.
+Some text mentioning [[Alice Doe]] and demonstrating icon rendering.
