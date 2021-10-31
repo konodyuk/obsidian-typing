@@ -1,0 +1,138 @@
+.is-mobile .view-header-title {
+    -webkit-mask-image: unset;
+    mask-image: unset;
+}
+
+.view-header-title-container {
+    display: flex;
+}
+
+.typing-view-title-prefix {
+    color: var(--text-muted) !important;
+    width: fit-content;
+    padding-right: 10px !important;
+}
+
+.typing-modal-name {
+    padding: unset;
+    flex-direction: row !important;
+    padding: 24px;
+    border-radius: 20px;
+    position: absolute !important;
+    top: 150px !important;
+}
+
+.is-mobile .typing-modal-name {
+    padding: 24px;
+    border-radius: 20px;
+    position: absolute !important;
+    top: 30px !important;
+    bottom: unset !important;
+}
+
+.typing-modal-name-prefix {
+    color: var(--text-muted) !important;
+    margin-left: 4px;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+.typing-modal-name-prefix,
+.typing-modal-name-input {
+    line-height: 1.5em !important;
+    font-size: 1.2em !important;
+}
+.typing-modal-name-input {
+    padding: 0px !important;
+    font-family: inherit !important;
+    width: 100%;
+    border: unset !important;
+    background: unset !important;
+}
+
+.typing-modal-field {
+    padding: unset;
+    flex-direction: row !important;
+    padding: 24px;
+    border-radius: 20px;
+    position: absolute !important;
+    top: 150px !important;
+}
+
+.is-mobile .typing-modal-field {
+    padding: 24px;
+    flex-direction: column !important;
+    border-radius: 20px;
+    position: absolute !important;
+    top: 30px !important;
+    bottom: unset !important;
+}
+
+.typing-modal-field-name {
+    color: var(--text-muted) !important;
+    margin-left: 4px;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+.is-mobile .typing-modal-field-name {
+    margin: 0px;
+}
+.typing-modal-field-input {
+    padding: 0px !important;
+    font-family: inherit !important;
+    overflow: hidden !important;
+    border: unset !important;
+    background: unset !important;
+}
+
+.typing-modal-actions {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+
+    padding: 24px !important;
+    border-radius: 20px !important;
+    position: absolute !important;
+    top: 50px !important;
+    bottom: unset !important;
+}
+
+.typing-note-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.typing-pinned-actions {
+    display: flex;
+    flex-direction: column;
+}
+
+.typing-action-card {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    margin: 3px;
+    border-radius: 16px;
+    padding: 1px 5px;
+    border: 1px solid var(--text-muted);
+}
+
+.typing-pinned-actions {
+    background-color: #ffffff10;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.typing-action-line {
+    display: flex;
+    flex-direction: row;
+}
+.typing-action-line-pin {
+    width: 2em;
+    color: var(--text-muted);
+}
+.typing-action-line-slug {
+    width: 2em;
+}
