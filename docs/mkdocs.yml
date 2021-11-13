@@ -1,0 +1,66 @@
+site_name: Typing
+repo_url: https://github.com/konodyuk/obsidian-typing
+repo_name: konodyuk/obsidian-typing
+edit_uri: ""
+theme:
+  name: material
+  palette:
+    primary: white
+    accent: red
+  font:
+    # text: Lato
+    text: Roboto Slab
+    code: Fira Code
+  features:
+    - navigation.instant
+    - navigation.tracking
+    # - navigation.tabs
+    - navigation.sections
+    - search.suggest
+    - search.highlight
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+plugins:
+  - search
+extra:
+  analytics:
+    provider: google
+    property: ${{ secrets.GA_TOKEN }}
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - pymdownx.highlight
+  - pymdownx.details
+  - pymdownx.superfences
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home: "index.md"
+  - Getting Started:
+      - Quick Start: "getting-started/quick-start.md"
+      - Installation: "getting-started/installation.md"
+      - Walkthrough: "getting-started/walkthrough.md"
+  - Type Settings:
+      - Overview: "type-settings/overview.md"
+      - Fields: "type-settings/fields.md"
+      - Actions: "type-settings/actions.md"
+      - Icon: "type-settings/icon.md"
+      - Header & Footer: "type-settings/marginals.md"
+      - Link Rendering: "type-settings/link-rendering.md"
+      - Name Prefix: "type-settings/name-prefix.md"
+      - Initialization: "type-settings/initialization.md"
+      - Inheritance: "type-settings/inheritance.md"
+      - Overrides: "type-settings/overrides.md"
+  - Commands:
+      - New: "commands/new.md"
+      - Set Field: "commands/set-field.md"
+      - Open Actions: "commands/open-actions.md"
+      - Find: "commands/find.md"
+  - Configuration:
+      - Config File: "configuration/config-file.md"
+      - Including Scripts: "configuration/including-scripts.md"
