@@ -13,10 +13,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup node 14
+      - name: Setup node 16.7.0
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 16.7.0
 
       - name: Get Version
         run: |
