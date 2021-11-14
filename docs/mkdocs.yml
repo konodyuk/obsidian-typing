@@ -11,14 +11,14 @@ theme:
     # text: Lato
     text: Roboto Slab
     code: Fira Code
-  # features:
-  #   - navigation.instant
-  #   - navigation.tracking
-  #   # - navigation.tabs
-  #   - navigation.sections
-  #   - search.suggest
-  #   - search.highlight
-  #   - content.code.annotate
+  features:
+    - navigation.instant
+    - navigation.tracking
+    # - navigation.tabs
+    - navigation.sections
+    - search.suggest
+    - search.highlight
+    - content.code.annotate
   icon:
     repo: fontawesome/brands/github
 plugins:
@@ -28,13 +28,13 @@ plugins:
 #     provider: google
 #     property: ${{ secrets.GA_TOKEN }}
 
-# markdown_extensions:
-#   - abbr
-#   - admonition
-#   - attr_list
-#   - pymdownx.highlight
-#   - pymdownx.details
-#   - pymdownx.superfences
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - pymdownx.highlight
+  - pymdownx.details
+  - pymdownx.superfences
 
 extra_css:
   - stylesheets/extra.css
