@@ -23,10 +23,10 @@ theme:
     repo: fontawesome/brands/github
 plugins:
   - search
-# extra:
-#   analytics:
-#     provider: google
-#     property: ${{ secrets.GA_TOKEN }}
+extra:
+  analytics:
+    provider: google
+    property: "{GA_TOKEN}"
 
 markdown_extensions:
   - abbr
