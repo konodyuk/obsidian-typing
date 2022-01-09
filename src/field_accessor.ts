@@ -1,6 +1,7 @@
 import { Editor, MarkdownView, TFile } from "obsidian";
 import TypingPlugin from "./main";
-import { TypedNote } from "./typed_note";
+import { Note } from "./typing/note";
+import { Type } from "./typing/type";
 
 let regexField = RegExp(
     `^\\s*(?<field>[0-9\\w\\p{Letter}][-0-9\\w\\p{Letter}]*)\\s*::\\s*(?<value>.*)\\s*`
@@ -18,7 +19,7 @@ interface IFieldAccessor {
 }
 
 export class EditorFieldAccessor implements IFieldAccessor {
-    constructor(public editor: Editor, public note: TypedNote) {}
+    constructor(public editor: Editor, public note: Note) {}
     locateField(key: string): FieldSearchResult {
         let match;
         for (let lineno = 0; lineno < this.editor.lineCount(); lineno++) {
@@ -96,7 +97,7 @@ export class EditorFieldAccessor implements IFieldAccessor {
                 lineno = firstLineAfterFrontmatter;
             } else {
                 // skip preceding fields
-                let fieldOrder = this.note.type.getFieldOrder();
+                let fieldOrder = getFieldOrder(this.note.type);
                 let currentFieldOrder = fieldOrder[key];
                 for (; lineno < this.editor.lineCount(); lineno++) {
                     let line = this.editor.getLine(lineno);
@@ -130,7 +131,7 @@ export class PreviewFieldAccessor implements IFieldAccessor {
     constructor(
         public file: TFile,
         public plugin: TypingPlugin,
-        public note: TypedNote
+        public note: Note
     ) {}
     async getLines(): Promise<Array<string>> {
         if (this.lines) {
@@ -196,7 +197,7 @@ export class PreviewFieldAccessor implements IFieldAccessor {
                 lineno = firstLineAfterFrontmatter;
             } else {
                 // skip preceding fields
-                let fieldOrder = this.note.type.getFieldOrder();
+                let fieldOrder = getFieldOrder(this.note.type);
                 let currentFieldOrder = fieldOrder[key];
                 for (; lineno < lines.length; lineno++) {
                     let line = lines[lineno];
@@ -222,7 +223,7 @@ export async function autoFieldAccessor(
     path: string,
     plugin: TypingPlugin
 ): Promise<EditorFieldAccessor | PreviewFieldAccessor> {
-    let note = await plugin.asTyped(path);
+    let note = new Note(path);
     let activeView = plugin.app.workspace.getActiveViewOfType(MarkdownView);
     if (
         activeView &&
@@ -237,4 +238,17 @@ export async function autoFieldAccessor(
             note
         );
     }
+}
+
+function getFieldOrder(type: Type): { [name: string]: number } {
+    let result: { [name: string]: number } = {};
+    if (!type.fields) {
+        return result;
+    }
+    let index = 0;
+    for (let name in type.fields) {
+        result[name] = index;
+        index++;
+    }
+    return result;
 }
