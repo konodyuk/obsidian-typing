@@ -1,4 +1,5 @@
-import React, { Component, createRef } from "react";
+import { Fragment, h } from "preact";
+import { Component, createRef } from "react";
 
 export class TextArea extends Component {
     state: { value: string; receivedEnter: boolean };
@@ -37,7 +38,9 @@ export class TextArea extends Component {
                 className={this.props.className}
                 value={this.state.value}
                 onChange={(event) => {
+                    // @ts-ignore
                     this.setState({ value: event.target.value });
+                    // @ts-ignore
                     this.props.setValueCallback(event.target.value);
                     this.autoResize();
                 }}

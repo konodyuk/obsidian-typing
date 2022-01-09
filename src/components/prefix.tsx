@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import { Fragment, h } from "preact";
+import { Component } from "react";
 
 export class PrefixComponent extends Component {
     state: { expanded: boolean };
