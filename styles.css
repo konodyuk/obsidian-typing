@@ -95,57 +95,64 @@
     bottom: unset !important;
 }
 
-.typing-note-actions {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-}
-
-.typing-pinned-actions {
-    display: flex;
-    flex-direction: column;
-}
-
-.typing-action-card {
-    display: inline-flex;
-    flex-direction: row;
-    justify-content: center;
-    align-content: center;
-    margin: 3px;
-    border-radius: 16px;
-    padding: 1px 5px;
-    border: 1px solid var(--text-muted);
-}
-
-.theme-dark .typing-pinned-actions {
-    background-color: #ffffff10;
-}
-
-.theme-light .typing-pinned-actions {
-    background-color: #00000010;
-}
-
-.typing-pinned-actions {
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-}
-
-.typing-action-line {
+.typing-option-line {
     display: flex;
     flex-direction: row;
 }
-.typing-action-line-pin {
+.typing-option-line-pin {
     width: 2em;
     color: var(--text-muted);
 }
-.typing-action-line-slug {
+.typing-option-line-slug {
     width: 2em;
 }
 
 .typing-icon {
     margin-right: 0.2em;
+}
+
+/* URL: https://stackoverflow.com/a/25836471 */
+/* Tooltip */
+.otl-line-number {
+    display: inline-block;
+    position: relative;
+    color: var(--text-muted);
+    text-align: end;
+    font-family: var(--font-monospace);
+}
+.otl-line-number-error,
+.otl-line-number-info {
+    cursor: help;
+    text-decoration: underline;
+    font-weight: bold;
+}
+.otl-line-number-error {
+    color: red;
+}
+.otl-line-number-info {
+    color: blue;
+}
+.otl-line-number-tooltip {
+    position: absolute;
+    background: var(--background-primary);
+    border: 1px solid var(--text-muted);
+    color: var(--text-normal);
+    padding: 0.2em 0.4em;
+    font-size: 0.8em;
+    min-width: 100px;
+    border-radius: 0.2em;
+    top: 100%;
+    margin-top: 0.5em;
+    z-index: 100;
+
+    text-decoration: none;
+    font-weight: normal;
+
+    display: none;
+}
+
+.otl-line-number:hover .otl-line-number-tooltip {
+    display: block;
 }
 @font-face {
     font-family: 'Font Awesome 6 Free';
