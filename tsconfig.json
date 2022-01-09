@@ -11,9 +11,11 @@
         "importHelpers": true,
         "lib": ["dom", "es5", "scripthost", "es2015"],
         "esModuleInterop": true,
-        "jsx": "react"
+        "jsx": "react",
+        "jsxFactory": "h",
+        "jsxFragmentFactory": "Fragment"
     },
-    "include": ["**/*.ts"],
+    "include": ["**/*.ts", "**/*.tsx"],
     "typeAcquisition": {
         "include": ["jest"]
     }
