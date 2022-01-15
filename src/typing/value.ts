@@ -51,12 +51,14 @@ export class IconValue {
         if (this.string) {
             return this.string;
         }
-        return await new Promise((resolve, reject) => {
-            this.script.run({
+        let result = await this.script
+            .run({
                 note: note,
-                context: { resolve: resolve, reject: reject },
-            });
-        });
+            })
+            .catch((reason) =>
+                console.log(`Error rendering link for ${note.path}: ${reason}`)
+            );
+        return result || "";
     }
 }
 export class MarkdownValue {
