@@ -56,7 +56,7 @@ export class Note {
         await vault.rename(file, path);
     }
     async promptName(): Promise<string> {
-        if (this.type.prefix) {
+        if (this.type?.prefix) {
             let tmp = this.type.prefix.split(this.name);
             return promptName(tmp.prefix, tmp.name);
         } else {
