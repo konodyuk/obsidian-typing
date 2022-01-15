@@ -106,10 +106,10 @@ export class Script {
 
         if (container) {
             baseContext["container"] = container;
-            baseContext["md"] = baseContext["markdown"] = createRenderMarkdown(
-                container,
-                note.path
-            );
+            baseContext = {
+                ...baseContext,
+                ...createMarkdownRenderingContext(container, note.path),
+            };
         }
         return baseContext;
     }
@@ -140,11 +140,11 @@ export class JSXScript extends Script {
     }
 }
 
-function createRenderMarkdown(
+function createMarkdownRenderingContext(
     containerDefault: HTMLElement,
     notePathDefault: string
 ) {
-    return async function renderMarkdown(
+    async function renderMarkdown(
         source: string,
         container?: HTMLElement,
         notePath?: string,
@@ -172,6 +172,27 @@ function createRenderMarkdown(
             }
             subcontainer.removeChild(par);
         }
+    }
+
+    const Markdown = ({ text, children }: { text: string; children: any }) => {
+        if (children) {
+            text = children;
+        }
+        return (
+            <span
+                ref={(el) => {
+                    renderMarkdown(text, el);
+                }}
+            ></span>
+        );
+    };
+
+    return {
+        renderMarkdown: renderMarkdown,
+        markdown: renderMarkdown,
+        md: renderMarkdown,
+        Markdown: Markdown,
+        Md: Markdown,
     };
 }
 
