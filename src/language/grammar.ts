@@ -63,23 +63,29 @@ interface OTLGrammarTyping {
     appearanceHeader: { header: Marginal & NodeLike };
     appearanceFooter: { footer: Marginal & NodeLike };
     typeFieldsSection: {
-        fields: Record<string & NodeLike, Field & NodeLike>;
+        fields: Record<string, Field & NodeLike>;
     };
-    fieldAssignment: { [name: string & NodeLike]: Field & NodeLike };
+    fieldAssignment: { [name: string]: Field & NodeLike };
     fieldType: FieldType & NodeLike;
     atomFieldType: AtomFieldType & NodeLike;
     noteFieldType: NoteFieldType & NodeLike;
     choiceFieldType: ChoiceFieldType & NodeLike;
     textFieldType: TextFieldType & NodeLike;
     listFieldType: ListFieldType & NodeLike;
-    typeActionsSection: {
-        actions: Record<string & NodeLike, Action & NodeLike>;
+    actionsSection: {
+        actions: Record<string, Action & NodeLike>;
     };
-    actionAssignment: { [name: string & NodeLike]: Action & NodeLike };
+    actionAssignment: { [name: string]: Action & NodeLike };
     actionScriptAssignment: { script: Script & NodeLike };
     actionIconAssignment: { icon: String & NodeLike };
     settingsSection: { settings: Settings & NodeLike };
-    settingAssignment: { [name: string & NodeLike]: TextValue & NodeLike };
+    settingAssignment: { [name: string]: TextValue & NodeLike };
+
+    defaultActionsSection: {
+        actions: Record<string, Action & NodeLike>;
+    };
+    defaultSettingsSection: { settings: Settings & NodeLike };
+
     marginalValue: Marginal & NodeLike;
     scriptValue: Script & NodeLike;
     plainScriptValue: Script & NodeLike;
@@ -95,7 +101,6 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
     EQUALS: () => token("="),
     LBRACE: () => token("{"),
     RBRACE: () => token("}"),
-    // RBRACE: () => WS.then(P.string("}")),
     LPAREN: () => token("("),
     RPAREN: () => token(")"),
     STRING: () =>
@@ -113,8 +118,11 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
             r.type.map((value) => {
                 return { type: "type", value: value };
             }),
-            r.settingsSection.map((value) => {
+            r.defaultSettingsSection.map((value) => {
                 return { type: "settings", value: value };
+            }),
+            r.defaultActionsSection.map((value) => {
+                return { type: "actions", value: value };
             })
         )
             .many()
@@ -122,23 +130,47 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
                 (
                     value: Array<
                         | { type: "type"; value: Type & NodeLike }
-                        | { type: "settings"; value: Settings & NodeLike }
+                        | {
+                              type: "settings";
+                              value: { settings: Settings & NodeLike };
+                          }
+                        | {
+                              type: "actions";
+                              value: {
+                                  actions: Record<string, Action & NodeLike>;
+                              };
+                          }
                     >
                 ) => {
                     let settings = null;
+                    let actions = null;
                     for (let entry of value) {
                         if (entry.type == "settings") {
                             if (settings != null) {
                                 throw new CompilationError({
-                                    msg: "Duplicate settings section",
-                                    node: settings,
+                                    msg: "Duplicate default settings section",
+                                    node: entry.value.settings,
                                 });
                             }
-                            settings = entry.value;
+                            settings = entry.value.settings;
+                        }
+                        if (entry.type == "actions") {
+                            if (actions != null) {
+                                for (let key in entry.value.actions) {
+                                    throw new CompilationError({
+                                        msg: "Duplicate default actions section",
+                                        node: entry.value.actions[key],
+                                    });
+                                }
+                            }
+                            actions = entry.value.actions;
                         }
                     }
 
                     let registry = new Registry();
+                    registry.settings = settings;
+                    registry.actions = actions;
+
                     for (let entry of value) {
                         if (entry.type != "type") {
                             continue;
@@ -183,7 +215,7 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
                 r.typeInitializer,
                 r.typeAppearanceSection,
                 r.typeFieldsSection,
-                r.typeActionsSection,
+                r.actionsSection,
                 r.settingsSection
             )
                 .sepBy(WS)
@@ -378,7 +410,7 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
         ).thru(toNodeLike),
 
     // actions
-    typeActionsSection: (r) =>
+    actionsSection: (r) =>
         P.seqMap(
             token("actions"),
             r.actionAssignment.sepBy(WS).wrap(r.LBRACE, r.RBRACE),
@@ -388,6 +420,10 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
         ),
     actionAssignment: (r) =>
         P.seqMap(
+            P.alt(
+                token("pinned").map(() => true),
+                WS.map(() => false)
+            ),
             r.STRING.trim(WS),
             r.EQUALS,
             P.alt(r.actionScriptAssignment, r.actionIconAssignment)
@@ -397,7 +433,7 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
                     let { script, icon } = mergeDicts(assignments);
                     return { script: script, icon: icon };
                 }),
-            function (name, eq, value) {
+            function (is_pinned, name, eq, value) {
                 if (value.script == null) {
                     throw new CompilationError({
                         msg: "Script should be specified",
@@ -414,7 +450,7 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
                 return {
                     [name.valueOf()]: setPos(
                         new Action(
-                            false,
+                            is_pinned,
                             name.valueOf(),
                             value.script,
                             value.icon
@@ -465,6 +501,16 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
                 return { [name.valueOf()]: value };
             }
         ),
+
+    defaultSettingsSection: (r) =>
+        P.seqMap(token("default"), r.settingsSection, function (kw, section) {
+            return section;
+        }),
+
+    defaultActionsSection: (r) =>
+        P.seqMap(token("default"), r.actionsSection, function (kw, section) {
+            return section;
+        }),
 
     // values
     marginalValue: (r) =>
