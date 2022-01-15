@@ -27,6 +27,12 @@ class LinkRenderChild extends MarkdownRenderChild {
         this.requestUpdate();
     }
     show = async () => {
+        let linkScript = this.note.type?.appearance?.link;
+        if (linkScript) {
+            linkScript.run({ note: this.note, container: this.containerEl });
+            return;
+        }
+
         let iconValue = this.note.type?.appearance?.icon;
         if (iconValue) {
             let iconEl = document.createElement("span");
@@ -34,12 +40,6 @@ class LinkRenderChild extends MarkdownRenderChild {
                 "typing-icon " + (await iconValue.value(this.note));
             this.containerEl.prepend(iconEl);
             this.containerEl.appendText(this.text);
-            return;
-        }
-
-        let linkScript = this.note.type?.appearance?.link;
-        if (linkScript) {
-            linkScript.run({ note: this.note, container: this.containerEl });
             return;
         }
 
