@@ -283,15 +283,22 @@ export function registerOTLCodeBlockPostProcessors(plugin: TypingPlugin) {
             async (
                 source: string,
                 container: HTMLElement,
-                ctx: MarkdownPostProcessorContext
+                mctx: MarkdownPostProcessorContext
             ) => {
                 codeBlockRenderingManager.maybeRerender(
                     null,
                     async (container, source) => {
+                        let preamble = null;
+                        if (
+                            !new Note(mctx.sourcePath).type?.settings?.preamble
+                        ) {
+                            preamble = ctx.registry?.settings?.preamble;
+                        }
                         let script = new scriptType(
-                            new TextValue({ value: source })
+                            new TextValue({ value: source }),
+                            preamble
                         );
-                        let note = new Note(ctx.sourcePath);
+                        let note = new Note(mctx.sourcePath);
 
                         await script
                             .run({ note: note, container: container })
@@ -302,7 +309,7 @@ export function registerOTLCodeBlockPostProcessors(plugin: TypingPlugin) {
                                 )
                             );
                     },
-                    ctx,
+                    mctx,
                     container,
                     source
                 );
