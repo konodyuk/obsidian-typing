@@ -68,7 +68,7 @@ function setViewTitle(view: MarkdownView) {
 
     let name = null,
         prefix = null;
-    if (note?.type?.prefix) {
+    if (note.type?.prefix) {
         let tmp = note.type.prefix.split(note.name);
         name = tmp.name;
         prefix = tmp.prefix;
