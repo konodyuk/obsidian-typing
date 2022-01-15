@@ -47,13 +47,11 @@ export async function promptChoiceField(
     oldValue: string | null,
     options: Array<string>
 ): Promise<string | null> {
-    console.log("prompting", options);
     if (oldValue == null) {
         oldValue = "";
     }
     return new Promise((resolve) => {
         new ChoiceFieldModal(ctx.app, fieldName, oldValue, options, (value) => {
-            console.log("resolving", value);
             if (value == null) {
                 resolve(null);
             }
