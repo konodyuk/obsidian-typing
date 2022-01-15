@@ -48,13 +48,13 @@ class ViewTitle extends Component {
     }
 }
 
-function addViewActions(view: MarkdownView, path: string) {
+function addViewActions(view: MarkdownView) {
     let actionsEl = view.containerEl.querySelector(
         ".view-actions"
     ) as HTMLElement;
     if (!actionsEl.querySelector(`a.view-action[aria-label="Actions"]`)) {
         view.addAction("grid", "Actions", () => {
-            openActions(path);
+            openActions(view.file.path);
         });
     }
 }
@@ -101,7 +101,7 @@ export function registerLeafHook(plugin: TypingPlugin) {
             }
             let view = leaf.view as MarkdownView;
 
-            addViewActions(view, view.file.path);
+            addViewActions(view);
 
             let note = new Note(view.file.path);
             if (note) {
