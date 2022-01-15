@@ -7,6 +7,7 @@ import {
 import { Fragment, h } from "preact";
 import { useState } from "preact/hooks";
 import { render } from "react-dom";
+import styled from "styled-components";
 import { ctx } from "./context";
 import TypingPlugin from "./main";
 import { Note } from "./typing/note";
@@ -127,6 +128,7 @@ export class JSXScript extends Script {
             Fragment: Fragment,
             useState: useState,
             render: render,
+            styled: styled,
         };
     }
 }
