@@ -6,6 +6,7 @@ import {
     MarkdownRenderChild,
     TFile,
 } from "obsidian";
+import { h, render } from "preact";
 import { ctx } from "src/context";
 import { Note } from "src/typing/note";
 import { Marginal } from "src/typing/value";
@@ -62,7 +63,11 @@ class MarginalRenderChild extends MarkdownRenderChild {
         this.show();
     };
     show = async () => {
-        this.marginal.render(this.note, this.containerEl);
+        await this.marginal
+            .render(this.note, this.containerEl)
+            .catch((reason) =>
+                render(<pre>{`Error:\n${reason}`}</pre>, this.containerEl)
+            );
     };
     hide = () => {
         while (this.containerEl.firstChild) {
