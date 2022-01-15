@@ -64,10 +64,9 @@ export class MarkdownValue {
 }
 export class Marginal {
     constructor(public script?: Script, public markdown?: MarkdownValue) {}
-    render(note: Note, container: HTMLElement): void {
+    async render(note: Note, container: HTMLElement): Promise<any> {
         if (this.script) {
-            this.script.run({ note: note, container: container });
-            return;
+            return await this.script.run({ note: note, container: container });
         }
         if (this.markdown) {
             console.log("markdown marginal is not supported yet");
