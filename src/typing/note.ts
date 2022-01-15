@@ -1,3 +1,4 @@
+import { TFile } from "obsidian";
 import { LiteralValue } from "obsidian-dataview";
 import { promptName } from "src/modals/prompt";
 import { Type } from "src/typing/type";
@@ -24,13 +25,29 @@ export class Note {
         }
     }
 
-    get name(): string {
+    get fullname(): string {
         let lastIndexOfPathSep = this.path.lastIndexOf("/");
 
         return this.path.slice(
             lastIndexOfPathSep + 1,
             this.path.lastIndexOf(".")
         );
+    }
+
+    get prefix(): string {
+        if (this.type?.prefix) {
+            return this.type.prefix.split(this.fullname).prefix;
+        } else {
+            return "";
+        }
+    }
+
+    get name(): string {
+        if (this.type?.prefix) {
+            return this.type.prefix.split(this.fullname).name;
+        } else {
+            return this.fullname;
+        }
     }
 
     async getField(name: string): Promise<string | null> {
@@ -57,10 +74,10 @@ export class Note {
     }
     async promptName(): Promise<string> {
         if (this.type?.prefix) {
-            let tmp = this.type.prefix.split(this.name);
+            let tmp = this.type.prefix.split(this.fullname);
             return promptName(tmp.prefix, tmp.name);
         } else {
-            return promptName(null, this.name);
+            return promptName(null, this.fullname);
         }
     }
     async promptField(name: string): Promise<string> {
