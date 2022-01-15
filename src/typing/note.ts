@@ -87,4 +87,9 @@ export class Note {
             );
         }
     }
+    async open() {
+        await ctx.app.workspace.activeLeaf.openFile(
+            ctx.app.vault.getAbstractFileByPath(this.path) as TFile
+        );
+    }
 }
