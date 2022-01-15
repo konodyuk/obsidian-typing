@@ -4,6 +4,7 @@ import React from "react";
 import Editor from "react-simple-code-editor";
 import { ctx } from "src/context";
 import TypingPlugin from "src/main";
+import styled from "styled-components";
 import { compile } from "./grammar";
 
 const MIN_VALIDATION_INTERVAL = 1000;
@@ -71,7 +72,19 @@ const Gutter = ({
     );
 };
 
-export class OTLEditorComponent extends React.Component {
+const EditorContainer = styled.div`
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    flex-direction: row;
+
+    & pre,
+    & textarea {
+        white-space: pre !important;
+    }
+`;
+
+class CodeEditorComponent extends React.Component {
     ref: any;
     state: {
         content: string;
@@ -102,35 +115,24 @@ export class OTLEditorComponent extends React.Component {
         return (
             // additional div for full height
             // URL: https://github.com/satya164/react-simple-code-editor/issues/63#issuecomment-843406191
-            <div
-                style={{
-                    height: "100%",
-                    overflow: "auto",
-                    display: "flex",
-                    flexDirection: "row",
+            <EditorContainer
+                onClick={() => {
+                    // focus on text area
+                    this.ref._input.focus();
                 }}
             >
                 <Gutter
                     annotations={this.state.annotations}
                     lineCount={this.state.content.split("\n").length}
                 />
-                <div
-                    style={{ width: "100%" }}
-                    onClick={() => {
-                        // focus on text area
-                        this.ref._input.focus();
-                    }}
-                >
+                <div style={{ width: "fit-content" }}>
                     <Editor
                         value={this.state.content}
-                        onValueChange={(code: string) => {
-                            this.setState({ content: code });
-                            this.requestValidation();
-                            this.props.onChangeCallback(code);
-                        }}
+                        onValueChange={this.onValueChange}
                         ref={(ref: any) => {
                             this.ref = ref;
                         }}
+                        id="typing-code-editor"
                         highlight={(code: string) => this.highlight(code)}
                         padding={0}
                         spellCheck={"false"}
@@ -140,16 +142,38 @@ export class OTLEditorComponent extends React.Component {
                         tabSize={4}
                     />
                 </div>
-            </div>
+            </EditorContainer>
         );
     }
+
+    onValueChange = (code: string) => {
+        this.setState({ content: code });
+    };
+
+    highlight(code: string) {
+        return code;
+    }
+}
+
+export class JSXEditorComponent extends CodeEditorComponent {
+    highlight(code: string) {
+        return ctx.prism.highlight(code, ctx.prism.languages.jsx);
+    }
+}
+
+export class OTLEditorComponent extends CodeEditorComponent {
+    canValidate: boolean = true;
+    shouldValidate: boolean = false;
+
+    onValueChange = (code: string) => {
+        this.setState({ content: code });
+        this.requestValidation();
+        this.props.onChangeCallback(code);
+    };
 
     highlight(code: string) {
         return ctx.prism.highlight(code, ctx.prism.languages.otl);
     }
-
-    canValidate: boolean = true;
-    shouldValidate: boolean = false;
 
     requestValidation() {
         if (this.canValidate) {
@@ -196,21 +220,16 @@ export class OTLEditorComponent extends React.Component {
 }
 
 export const OTL_EDITOR_VIEW_TYPE = "otl-editor-view";
+export const JSX_EDITOR_VIEW_TYPE = "jsx-editor-view";
 
-export class OTLEditorView extends TextFileView {
-    editor: React.RefObject<OTLEditorComponent>;
+abstract class CodeEditorView<
+    T extends CodeEditorComponent
+> extends TextFileView {
+    editor: React.RefObject<T>;
 
-    constructor(leaf: WorkspaceLeaf) {
+    constructor(leaf: WorkspaceLeaf, public type: new (...args: any[]) => T) {
         super(leaf);
-        this.editor = React.createRef<OTLEditorComponent>();
-    }
-
-    getViewType() {
-        return OTL_EDITOR_VIEW_TYPE;
-    }
-
-    getDisplayText() {
-        return this.file?.name || "OTL File";
+        this.editor = React.createRef<T>();
     }
 
     getViewData(): string {
@@ -227,9 +246,8 @@ export class OTLEditorView extends TextFileView {
     }
 
     async onOpen() {
-        ctx.plugin.resetSchemaReloader();
         render(
-            <OTLEditorComponent
+            <this.type
                 // @ts-ignore
                 ref={this.editor}
                 content={""}
@@ -248,11 +266,39 @@ export class OTLEditorView extends TextFileView {
     }
 }
 
+export class JSXEditorView extends CodeEditorView<JSXEditorComponent> {
+    getViewType() {
+        return JSX_EDITOR_VIEW_TYPE;
+    }
+}
+
+export class OTLEditorView extends CodeEditorView<OTLEditorComponent> {
+    getViewType() {
+        return OTL_EDITOR_VIEW_TYPE;
+    }
+
+    async onOpen() {
+        ctx.plugin.resetSchemaReloader();
+        super.onOpen();
+    }
+
+    async onClose() {
+        ctx.plugin.setSchemaReloader();
+    }
+}
+
 export function registerOTLEditorView(plugin: TypingPlugin) {
     plugin.registerView(OTL_EDITOR_VIEW_TYPE, (leaf: WorkspaceLeaf) => {
-        return new OTLEditorView(leaf);
+        return new OTLEditorView(leaf, OTLEditorComponent);
     });
     plugin.registerExtensions(["otl"], OTL_EDITOR_VIEW_TYPE);
+}
+
+export function registerJSXEditorView(plugin: TypingPlugin) {
+    plugin.registerView(JSX_EDITOR_VIEW_TYPE, (leaf: WorkspaceLeaf) => {
+        return new JSXEditorView(leaf, JSXEditorComponent);
+    });
+    plugin.registerExtensions(["js", "jsx"], JSX_EDITOR_VIEW_TYPE);
 }
 
 export async function registerPrism(plugin: TypingPlugin) {
