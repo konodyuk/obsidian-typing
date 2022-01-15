@@ -8,7 +8,11 @@ import { registerLinkPostProcessor } from "./appearance/link";
 import { registerLeafHook } from "./appearance/title_bar";
 import { registerCommands } from "./commands";
 import { ctx, GlobalContext } from "./context";
-import { registerOTLEditorView, registerPrism } from "./language/editor";
+import {
+    registerJSXEditorView,
+    registerOTLEditorView,
+    registerPrism,
+} from "./language/editor";
 import { compile } from "./language/grammar";
 import { registerOTLCodeBlockPostProcessors } from "./script";
 import { Registry } from "./typing/registry";
@@ -38,6 +42,7 @@ export default class TypingPlugin extends Plugin {
         registerLeafHook(this);
         registerInlineFieldsPostProcessor(this);
         registerOTLEditorView(this);
+        registerJSXEditorView(this);
         registerPrism(this);
         registerCommands(this);
         registerOTLCodeBlockPostProcessors(this);
