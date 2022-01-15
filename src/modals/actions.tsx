@@ -55,12 +55,31 @@ export class ActionsSuggestModal extends SuggestModal<Action> {
 
 export function openActions(path: string) {
     let note = new Note(path);
-    if (note) {
-        new ActionsSuggestModal(
-            ctx.app,
-            Object.values(note.type?.actions || {}),
-            {},
-            note
-        ).open();
+    let actions: { [name: string]: Action };
+    if (note?.type?.actions) {
+        actions = note.type.actions;
+    } else {
+        if (ctx.registry.actions) {
+            actions = ctx.registry.actions;
+        } else {
+            actions = {};
+        }
     }
+    let normalActions: Array<Action> = [];
+    let pinnedActions: Array<Action> = [];
+
+    for (let actionName in actions) {
+        let action = actions[actionName];
+        if (action.is_pinned) {
+            pinnedActions.push(action);
+        } else {
+            normalActions.push(action);
+        }
+    }
+
+    new ActionsSuggestModal(
+        ctx.app,
+        [...pinnedActions, ...normalActions],
+        note
+    ).open();
 }
