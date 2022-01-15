@@ -287,7 +287,7 @@ function setOTLPrismHighlighting(prism: any) {
         },
         function: /\b\w+(?=\()/,
         keyword:
-            /\b(?:type|extends|folder|icon|prefix|fields|actions|settings|appearance|header|footer|script|initializer|link|abstract)\b/,
+            /\b(?:type|extends|folder|icon|prefix|fields|actions|settings|appearance|header|footer|script|initializer|link|abstract|default|pinned)\b/,
         boolean: /\b(?:false|true)\b/,
         number: /\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,
         operator: /[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,
