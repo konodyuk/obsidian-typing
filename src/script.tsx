@@ -4,9 +4,8 @@ import {
     MarkdownPostProcessorContext,
     MarkdownRenderer,
 } from "obsidian";
-import { Fragment, h } from "preact";
+import { Fragment, h, render } from "preact";
 import { useState } from "preact/hooks";
-import { render } from "react-dom";
 import styled from "styled-components";
 import { ctx } from "./context";
 import TypingPlugin from "./main";
@@ -22,6 +21,8 @@ const transformReactJSX = availablePlugins["transform-react-jsx"];
 
 type ContextType = Record<string, any>;
 
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+
 export class Script {
     constructor(public source: TextValue, public preamble: TextValue = null) {}
     async run({
@@ -36,7 +37,7 @@ export class Script {
         container?: HTMLElement;
         context?: ContextType;
         async?: boolean;
-    }) {
+    }): Promise<any> {
         let baseContext = this.context({
             note: note,
             type: type,
@@ -58,17 +59,23 @@ export class Script {
         source = this.transformSource(source);
 
         if (async) {
-            this._execAsync(source, resultContext);
+            return await this._execAsync(source, resultContext);
         } else {
-            this._exec(source, resultContext);
+            return this._exec(source, resultContext);
         }
     }
-    private _exec(source: string, context: ContextType) {
+    private _exec(source: string, context: ContextType): any {
         // URL: https://esbuild.github.io/content-types/#direct-eval
         return new Function(source).call(context);
     }
-    private _execAsync(source: string, context: ContextType) {
-        this._exec("(async () => {" + source + "})()", context);
+    private async _execAsync(
+        source: string,
+        context: ContextType
+    ): Promise<any> {
+        // URL: https://davidwalsh.name/async-function-class
+        return await new AsyncFunction(
+            "return (async () => {" + source + "})()"
+        ).call(context);
     }
     baseContext(): ContextType {
         return {
@@ -176,31 +183,109 @@ function contextToPreamble(context: ContextType): string {
     return result;
 }
 
+const TIMEOUT = 500;
+
+class CodeBlockRenderingManager {
+    currentPath: string = null;
+    containerIndex: {
+        [containerLineStart: number]: {
+            shouldRerender: boolean;
+            canRerender: boolean;
+            container: HTMLElement;
+            ctx: MarkdownPostProcessorContext;
+            source: string;
+            fn: { (container: HTMLElement, source: string): void };
+        };
+    } = {};
+    maybeRerender(
+        lineStart?: number,
+        fn?: { (container: HTMLElement, source: string): void },
+        ctx?: MarkdownPostProcessorContext,
+        container?: HTMLElement,
+        source?: string
+    ) {
+        if (ctx && ctx.sourcePath != this.currentPath) {
+            this.containerIndex = {};
+            this.currentPath = ctx.sourcePath;
+        }
+
+        let containerLineStart: number;
+        if (lineStart != null) {
+            containerLineStart = lineStart;
+        } else {
+            containerLineStart = ctx.getSectionInfo(container).lineStart || -1;
+            if (!(containerLineStart in this.containerIndex)) {
+                this.containerIndex[containerLineStart] = {
+                    shouldRerender: false,
+                    canRerender: true,
+                    container: container,
+                    ctx: ctx,
+                    source: source,
+                    fn: fn,
+                };
+            }
+            this.containerIndex[containerLineStart].container = container;
+            this.containerIndex[containerLineStart].ctx = ctx;
+            this.containerIndex[containerLineStart].source = source;
+            this.containerIndex[containerLineStart].fn = fn;
+        }
+        let containerEntry = this.containerIndex[containerLineStart];
+
+        if (containerEntry.canRerender) {
+            containerEntry.shouldRerender = false;
+            containerEntry.fn(containerEntry.container, containerEntry.source);
+            containerEntry.canRerender = false;
+
+            setTimeout(() => {
+                this.containerIndex[containerLineStart].canRerender = true;
+                if (this.containerIndex[containerLineStart].shouldRerender) {
+                    this.maybeRerender(containerLineStart);
+                }
+            }, TIMEOUT);
+        } else {
+            containerEntry.shouldRerender = true;
+
+            render(<pre>Rendering...</pre>, container);
+        }
+    }
+}
+
+let codeBlockRenderingManager = new CodeBlockRenderingManager();
+
 export function registerOTLCodeBlockPostProcessors(plugin: TypingPlugin) {
-    plugin.registerMarkdownCodeBlockProcessor(
-        "typing-script",
-        async (
-            source: string,
-            container: HTMLElement,
-            ctx: MarkdownPostProcessorContext
-        ) => {
-            let script = new Script(new TextValue({ value: source }));
-            let note = new Note(ctx.sourcePath);
+    for (let { languageCode, scriptType } of [
+        { languageCode: "typing-script", scriptType: Script },
+        { languageCode: "typing-jsxscript", scriptType: JSXScript },
+    ]) {
+        plugin.registerMarkdownCodeBlockProcessor(
+            languageCode,
+            async (
+                source: string,
+                container: HTMLElement,
+                ctx: MarkdownPostProcessorContext
+            ) => {
+                codeBlockRenderingManager.maybeRerender(
+                    null,
+                    async (container, source) => {
+                        let script = new scriptType(
+                            new TextValue({ value: source })
+                        );
+                        let note = new Note(ctx.sourcePath);
 
-            await script.run({ note: note, container: container });
-        }
-    );
-    plugin.registerMarkdownCodeBlockProcessor(
-        "typing-jsxscript",
-        async (
-            source: string,
-            container: HTMLElement,
-            ctx: MarkdownPostProcessorContext
-        ) => {
-            let script = new JSXScript(new TextValue({ value: source }));
-            let note = new Note(ctx.sourcePath);
-
-            await script.run({ note: note, container: container });
-        }
-    );
+                        await script
+                            .run({ note: note, container: container })
+                            .catch((reason) =>
+                                render(
+                                    <pre>{`Error:\n${reason}`}</pre>,
+                                    container
+                                )
+                            );
+                    },
+                    ctx,
+                    container,
+                    source
+                );
+            }
+        );
+    }
 }
