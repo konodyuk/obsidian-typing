@@ -27,12 +27,7 @@ export function ActionSuggestion(props: {
 }
 
 export class ActionsSuggestModal extends SuggestModal<Action> {
-    constructor(
-        app: App,
-        public actions: Array<Action>,
-        public pinnedActions: { [name: string]: Action },
-        public note: Note
-    ) {
+    constructor(app: App, public actions: Array<Action>, public note: Note) {
         super(app);
     }
     async renderSuggestion(action: Action, el: HTMLElement) {
@@ -45,12 +40,6 @@ export class ActionsSuggestModal extends SuggestModal<Action> {
     getSuggestions(query: string): Action[] {
         let preparedQuery = prepareQuery(query);
         let result = [];
-        for (let actionName in this.pinnedActions) {
-            let action = this.pinnedActions[actionName];
-            if (fuzzySearch(preparedQuery, action.name)) {
-                result.push(action);
-            }
-        }
         for (let action of this.actions) {
             if (fuzzySearch(preparedQuery, action.name)) {
                 result.push(action);
