@@ -59,10 +59,12 @@ function addViewActions(view: MarkdownView) {
     }
 }
 
-function setViewTitle(view: MarkdownView, note: Note) {
+function setViewTitle(view: MarkdownView) {
     let titleContainerEl = view.containerEl.querySelector(
         ".view-header-title-container"
     ) as HTMLElement;
+
+    let note = new Note(view.file.path);
 
     let name = null,
         prefix = null;
@@ -83,6 +85,7 @@ function setViewTitle(view: MarkdownView, note: Note) {
             prefix={prefix}
             name={name}
             onNameClick={async () => {
+                let note = new Note(view.file.path);
                 let newName = await note.promptName();
                 if (newName != null) {
                     await note.rename(newName);
@@ -103,10 +106,9 @@ export function registerLeafHook(plugin: TypingPlugin) {
 
             addViewActions(view);
 
-            let note = new Note(view.file.path);
-            if (note) {
-                setViewTitle(view, note);
-            }
+            // if (note) {
+            setViewTitle(view);
+            // }
         });
     };
 
