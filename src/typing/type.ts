@@ -205,6 +205,29 @@ export class Type {
     async promptField(name: string): Promise<string> {
         return await this.fields[name].prompt();
     }
+    async promptFields(
+        names: Array<string> | "all"
+    ): Promise<Record<string, string>> {
+        let result: Record<string, string> = {};
+        if (names == "all") {
+            for (let key in this.fields) {
+                let value = await this.promptField(key);
+                if (value == null) {
+                    continue;
+                }
+                result[key] = value;
+            }
+        } else {
+            for (let key of names) {
+                let value = await this.promptField(key);
+                if (value == null) {
+                    continue;
+                }
+                result[key] = value;
+            }
+        }
+        return result;
+    }
     async prompt(
         name: boolean = true,
         fields: Array<string> | "all" = "all"
@@ -213,24 +236,7 @@ export class Type {
         if (name) {
             result.name = await this.promptName();
         }
-        if (fields == "all") {
-            result.fields = {};
-            for (let key in this.fields) {
-                let value = await this.promptField(key);
-                if (value == null) {
-                    continue;
-                }
-                result.fields[key] = value;
-            }
-        } else {
-            for (let key of fields) {
-                let value = await this.promptField(key);
-                if (value == null) {
-                    continue;
-                }
-                result.fields[key] = value;
-            }
-        }
+        result.fields = await this.promptFields(fields);
         return result;
     }
 }
