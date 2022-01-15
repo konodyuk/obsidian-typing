@@ -187,17 +187,24 @@ export class Type {
      * @returns created note
      */
     async _new(): Promise<Note> {
+        let note = null;
         if (this.initializer != null) {
-            return await new Promise<Note>((resolve, reject) =>
-                this.initializer.run({
+            note = await this.initializer
+                .run({
                     type: this,
-                    context: { resolve: resolve, reject: reject },
                 })
-            );
+                .catch((reason) =>
+                    console.log(
+                        `Error creating class ${this.name} with custom initializer: ${reason}\n\nFallback to default initializer`
+                    )
+                );
         }
 
-        let { name, fields } = await this.prompt();
-        return await this.new(name, fields);
+        if (!note) {
+            let { name, fields } = await this.prompt();
+            note = await this.new(name, fields);
+        }
+        return note;
     }
     async promptName(): Promise<string> {
         return await promptName("", "");
