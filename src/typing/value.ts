@@ -3,7 +3,7 @@ import { ctx } from "src/context";
 import { Script } from "../script";
 import { Note } from "./note";
 
-export class IncludedValue {
+export class LoadValue {
     constructor(public path: string) {}
     async value(): Promise<string> {
         let file = ctx.app.vault.getAbstractFileByPath(this.path);
@@ -13,20 +13,20 @@ export class IncludedValue {
 
 export class TextValue {
     private _value: string = null;
-    private _include: IncludedValue = null;
+    private _load: LoadValue = null;
     constructor({
         value,
-        include,
+        load,
     }: {
         value?: string;
-        include?: IncludedValue;
+        load?: LoadValue;
     }) {
-        if (value == null && include == null) {
+        if (value == null && load == null) {
             throw Error(
                 "Either value or promise should be specified in TextValue"
             );
         }
-        if (value != null && include != null) {
+        if (value != null && load != null) {
             throw Error(
                 "Both value and promise cannot be specified in TextValue"
             );
@@ -35,11 +35,11 @@ export class TextValue {
             this._value = value;
             return;
         }
-        this._include = include;
+        this._load = load;
     }
     async value(): Promise<string> {
         if (this._value == null) {
-            this._value = await this._include.value();
+            this._value = await this._load.value();
         }
         return this._value;
     }

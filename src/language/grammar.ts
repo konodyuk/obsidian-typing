@@ -17,7 +17,7 @@ import { Type, TypeArguments } from "src/typing/type";
 import {
     Appearance,
     IconValue,
-    IncludedValue,
+    LoadValue,
     Marginal,
     MarkdownValue,
     Settings,
@@ -92,7 +92,7 @@ interface OTLGrammarTyping {
     JSXScriptValue: JSXScript & NodeLike;
     markdownValue: MarkdownValue & NodeLike;
     textValue: TextValue & NodeLike;
-    include: TextValue & NodeLike;
+    loadValue: TextValue & NodeLike;
 }
 
 export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
@@ -572,17 +572,17 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
                     value: x,
                 };
             }),
-            r.include.map((x) => {
+            r.loadValue.map((x) => {
                 return {
-                    include: x,
+                    load: x,
                 };
             })
         )
             .map((options) => new TextValue(options))
             .thru(toNodeLike),
-    include: (r) =>
+    loadValue: (r) =>
         P.seqMap(
-            token("include"),
+            P.alt(token("include"), token("load")),
             r.STRING.wrap(r.LPAREN, r.RPAREN),
             function (kw, value) {
                 let file = ctx.app.vault.getAbstractFileByPath(value.valueOf());
@@ -593,7 +593,7 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
                     });
                 }
                 return new TextValue({
-                    include: new IncludedValue(value.valueOf()),
+                    load: new LoadValue(value.valueOf()),
                 });
             }
         ).thru(toNodeLike),
