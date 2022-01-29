@@ -65,12 +65,12 @@ export class Note {
         let vault = ctx.app.vault;
         let file = vault.getAbstractFileByPath(this.path);
         let newPath = `${this.folder}/${name}.md`;
-        await vault.rename(file, newPath);
+        await ctx.app.fileManager.renameFile(file, newPath);
     }
     async move(path: string) {
         let vault = ctx.app.vault;
         let file = vault.getAbstractFileByPath(this.path);
-        await vault.rename(file, path);
+        await ctx.app.fileManager.renameFile(file, path);
     }
     async promptName(): Promise<string> {
         if (this.type?.prefix) {
