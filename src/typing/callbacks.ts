@@ -4,8 +4,7 @@ import { Note } from "./note";
 
 function onCreateTypedNote(file: TAbstractFile) {
     setTimeout(() => {
-        if (!(file as TFile).basename) {
-            // not a TFile
+        if ((file as TFile).extension != "md") {
             return;
         }
         let note = new Note(file.path);
