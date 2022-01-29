@@ -3,7 +3,7 @@ import TypingPlugin from "src/main";
 import { Note } from "./note";
 
 function onCreateTypedNote(file: TAbstractFile) {
-    setInterval(() => {
+    setTimeout(() => {
         if (!(file as TFile).basename) {
             // not a TFile
             return;
