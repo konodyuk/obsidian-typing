@@ -14,13 +14,7 @@ export class LoadValue {
 export class TextValue {
     private _value: string = null;
     private _load: LoadValue = null;
-    constructor({
-        value,
-        load,
-    }: {
-        value?: string;
-        load?: LoadValue;
-    }) {
+    constructor({ value, load }: { value?: string; load?: LoadValue }) {
         if (value == null && load == null) {
             throw Error(
                 "Either value or promise should be specified in TextValue"
@@ -80,7 +74,8 @@ export class Appearance {
         public icon?: IconValue,
         public link?: Script,
         public header?: Marginal,
-        public footer?: Marginal
+        public footer?: Marginal,
+        public show_prefix?: "auto" | "always" | "never"
     ) {}
 }
 export class Settings {

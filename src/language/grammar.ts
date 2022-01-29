@@ -62,6 +62,7 @@ interface OTLGrammarTyping {
     appearanceLink: { link: Script & NodeLike };
     appearanceHeader: { header: Marginal & NodeLike };
     appearanceFooter: { footer: Marginal & NodeLike };
+    appearanceShowPrefix: { show_prefix: string };
     typeFieldsSection: {
         fields: Record<string, Field & NodeLike>;
     };
@@ -276,16 +277,18 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
                 r.appearanceIcon,
                 r.appearanceLink,
                 r.appearanceHeader,
-                r.appearanceFooter
+                r.appearanceFooter,
+                r.appearanceShowPrefix
             )
                 .sepBy(WS)
                 .wrap(r.LBRACE, r.RBRACE),
             P.index,
             function (kw, start, section, end) {
-                let { icon, link, header, footer } = mergeDicts(section);
+                let { icon, link, header, footer, show_prefix } =
+                    mergeDicts(section);
                 return {
                     appearance: setPos(
-                        new Appearance(icon, link, header, footer),
+                        new Appearance(icon, link, header, footer, show_prefix),
                         start,
                         end
                     ),
@@ -341,6 +344,15 @@ export const OTLGrammar = P.createLanguage<OTLGrammarTyping>({
             r.marginalValue,
             function (kw, eq, value) {
                 return { footer: value };
+            }
+        ),
+    appearanceShowPrefix: (r) =>
+        P.seqMap(
+            token("show_prefix"),
+            r.EQUALS,
+            P.alt(token("auto"), token("always"), token("never")),
+            function (kw, eq, value) {
+                return { show_prefix: value };
             }
         ),
 

@@ -39,7 +39,24 @@ class LinkRenderChild extends MarkdownRenderChild {
             iconEl.className =
                 "typing-icon " + (await iconValue.value(this.note));
             this.containerEl.prepend(iconEl);
-            this.containerEl.appendText(this.text);
+            let linkText = this.text;
+            if (linkText == this.note?.fullname && this.note?.type?.prefix) {
+                let show_prefix =
+                    this.note?.type?.appearance?.show_prefix ?? "auto";
+                if (show_prefix == "never") {
+                    linkText = this.note.name;
+                }
+                if (show_prefix == "auto") {
+                    let nameValue = this.note.name;
+                    let prefixValue = this.note.prefix;
+                    if (nameValue) {
+                        linkText = nameValue;
+                    } else {
+                        linkText = prefixValue;
+                    }
+                }
+            }
+            this.containerEl.appendText(linkText);
             return;
         }
 

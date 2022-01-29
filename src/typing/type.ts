@@ -131,6 +131,13 @@ export class Type {
         ) {
             this.appearance.header = parent.appearance.header;
         }
+        if (this.appearance.show_prefix == null) {
+            if (parent.appearance.show_prefix != null) {
+                this.appearance.show_prefix = parent.appearance.show_prefix;
+            } else {
+                this.appearance.show_prefix = "auto";
+            }
+        }
         this.fields = { ...parent.fields, ...this.fields };
         this.actions = { ...parent.actions, ...this.actions };
     }
