@@ -15,6 +15,7 @@ import {
 } from "./language/editor";
 import { compile } from "./language/grammar";
 import { registerOTLCodeBlockPostProcessors } from "./script";
+import { registerOnCreateTypedNoteCallback } from "./typing/callbacks";
 import { Registry } from "./typing/registry";
 import { warn } from "./utils";
 
@@ -46,6 +47,7 @@ export default class TypingPlugin extends Plugin {
         registerPrism(this);
         registerCommands(this);
         registerOTLCodeBlockPostProcessors(this);
+        registerOnCreateTypedNoteCallback(this);
 
         this.app.workspace.onLayoutReady(() => this.reloadSchema());
         this.setSchemaReloader();
