@@ -149,7 +149,8 @@ export class Type {
      */
     async new(
         name?: string,
-        fields?: { [name: string]: string }
+        fields?: { [name: string]: string },
+        body?: string
     ): Promise<Note> {
         if (!name && !this.prefix) {
             warn(
@@ -177,7 +178,7 @@ export class Type {
 
         let fullname = `${prefix} ${name}`.trim();
         let newPath = `${this.folder}/${fullname}.md`;
-        await ctx.app.vault.create(newPath, "");
+        await ctx.app.vault.create(newPath, body ?? "");
         if (fields) {
             let accessor = await autoFieldAccessor(newPath, ctx.plugin);
             for (let fieldName in fields) {
