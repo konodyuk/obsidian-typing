@@ -3,7 +3,7 @@ import { autoFieldAccessor } from "src/field_accessor";
 import { CompilationError, NodeLike } from "src/language/grammar";
 import { warn } from "src/utils";
 import { promptName } from "../modals/prompt";
-import { Script } from "../script";
+import { Script } from "../script/script";
 import { Action } from "./action";
 import { Field } from "./field";
 import { Note } from "./note";

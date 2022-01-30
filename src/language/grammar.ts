@@ -1,6 +1,6 @@
 import Parsimmon, { Index, Parser } from "parsimmon";
 import { ctx } from "src/context";
-import { JSXScript, Script } from "src/script";
+import { JSXScript, Script } from "src/script/script";
 import { Action } from "src/typing/action";
 import { Field } from "src/typing/field";
 import {

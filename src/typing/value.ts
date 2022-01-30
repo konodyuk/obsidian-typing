@@ -1,6 +1,6 @@
 import { TFile } from "obsidian";
 import { ctx } from "src/context";
-import { Script } from "../script";
+import { Script } from "../script/script";
 import { Note } from "./note";
 
 export class LoadValue {

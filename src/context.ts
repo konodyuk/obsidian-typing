@@ -1,6 +1,7 @@
 import { App, MarkdownView } from "obsidian";
 import { DataviewApi } from "obsidian-dataview";
 import TypingPlugin from "./main";
+import { IncludeManager } from "./script/include_manager";
 import { Note } from "./typing/note";
 import { Registry } from "./typing/registry";
 
@@ -9,6 +10,7 @@ export class GlobalContext {
     plugin: TypingPlugin;
     registry: Registry;
     prism: any;
+    include_manager: IncludeManager;
 
     get dv(): DataviewApi {
         return this.app.plugins.plugins.dataview.api;

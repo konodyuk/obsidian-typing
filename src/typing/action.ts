@@ -1,4 +1,4 @@
-import { Script } from "src/script";
+import { Script } from "src/script/script";
 
 export class Action {
     constructor(
