@@ -1,6 +1,7 @@
 import { TAbstractFile, TFile } from "obsidian";
 import TypingPlugin from "src/main";
 import { ctx } from "../context";
+import { AsyncFunction } from "./script";
 import {
     contextToPreamble,
     ContextType,
@@ -13,10 +14,15 @@ type Namespace = any;
 export class IncludeManager {
     modules: Record<string, Namespace> = {};
 
-    compile(source: string): Namespace {
+    async compile(source: string): Promise<Namespace> {
         let context: ContextType = createBaseContext();
         context.module = { exports: null };
-        new Function(contextToPreamble(context) + source).call(context);
+        await new AsyncFunction(
+            "return (async () => {" +
+                contextToPreamble(context) +
+                source +
+                "})()"
+        ).call(context);
         return context.module.exports;
     }
     async load(path: string, transpile: boolean = true): Promise<Namespace> {
@@ -25,7 +31,7 @@ export class IncludeManager {
         if (transpile) {
             source = transpileJSX(source);
         }
-        return this.compile(source);
+        return await this.compile(source);
     }
     async reload(path: string, transpile: boolean = true) {
         this.modules[path] = await this.load(path, transpile);

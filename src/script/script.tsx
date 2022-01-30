@@ -9,7 +9,9 @@ import {
 } from "./script_context";
 import { transpileJSX } from "./transpilation";
 
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+export const AsyncFunction = Object.getPrototypeOf(
+    async function () {}
+).constructor;
 
 export class Script {
     constructor(public source: TextValue, public preamble: TextValue = null) {}
