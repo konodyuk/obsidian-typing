@@ -40,6 +40,9 @@ export class EditorFieldAccessor implements IFieldAccessor {
     setValue(key: string, value: string): void {
         let result = this.locateField(key);
         let newLine = `${key} :: ${value}`;
+        if (!value) {
+            newLine = "";
+        }
         if (result.success) {
             let line = this.editor.getLine(result.lineno);
             this.editor.replaceRange(
@@ -66,6 +69,9 @@ export class EditorFieldAccessor implements IFieldAccessor {
             //     );
             // }
         } else {
+            if (!newLine) {
+                return;
+            }
             let lineno = 0;
             // skip frontmatter
             if (this.editor.getLine(0).trim() === "---") {
@@ -163,12 +169,22 @@ export class PreviewFieldAccessor implements IFieldAccessor {
         let result = await this.locateField(key);
         let lines = await this.getLines();
         let newLine = `${key} :: ${value}`;
+        if (!value) {
+            newLine = "";
+        }
         if (result.success) {
-            lines[result.lineno] = newLine;
+            if (newLine) {
+                lines[result.lineno] = newLine;
+            } else {
+                lines.splice(result.lineno, 1);
+            }
             let newContent = lines.join("\n");
             await this.plugin.app.vault.modify(this.file, newContent);
             return;
         } else {
+            if (!newLine) {
+                return;
+            }
             let lineno = 0;
             // skip frontmatter
             if (lines[0].trim() === "---") {
