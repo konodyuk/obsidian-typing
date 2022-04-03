@@ -8,6 +8,7 @@ import { registerLinkPostProcessor } from "./appearance/link";
 import { registerLeafHook } from "./appearance/title_bar";
 import { registerCommands } from "./commands";
 import { ctx, GlobalContext } from "./context";
+import { registerExports } from "./exports";
 import {
     registerJSXEditorView,
     registerOTLEditorView,
@@ -24,6 +25,7 @@ export default class TypingPlugin extends Plugin {
     schemaPath: string = "typing.otl";
     reloadSchemaCallbackRef: EventRef;
     ctx: GlobalContext;
+    exports: any;
 
     async onload() {
         console.log("Typing: loading");
@@ -50,6 +52,7 @@ export default class TypingPlugin extends Plugin {
         registerOTLCodeBlockPostProcessors(this);
         registerOnCreateTypedNoteCallback(this);
         registerIncludeManager(this);
+        registerExports(this);
 
         this.app.workspace.onLayoutReady(() => this.reloadSchema());
         this.setSchemaReloader();
