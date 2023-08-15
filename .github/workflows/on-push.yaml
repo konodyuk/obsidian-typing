@@ -12,7 +12,7 @@ jobs:
           node-version: "18"
       - run: |
           cd docs
-          npm ci
+          npm install
           npm run build
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
