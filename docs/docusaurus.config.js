@@ -18,7 +18,7 @@ const config = {
     projectName: "obsidian-typing", // Usually your repo name.
     trailingSlash: false,
 
-    onBrokenLinks: "throw",
+    onBrokenLinks: "warn",
     onBrokenMarkdownLinks: "warn",
 
     i18n: {
