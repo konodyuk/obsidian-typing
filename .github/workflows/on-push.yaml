@@ -3,15 +3,18 @@ name: on-push
 on: [push]
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-node@v2
         with:
-          python-version: 3.x
+          node-version: "18"
       - run: |
-          pip install mkdocs-material mkdocs-redirects
           cd docs
-          python -c "content = open('mkdocs.yml').read().format(GA_TOKEN='${{ secrets.GA_TOKEN }}'); open('mkdocs.yml', 'w').write(content)"
-          mkdocs gh-deploy --force
+          npm ci
+          npm run build
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: docs/build

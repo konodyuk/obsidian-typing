@@ -1,0 +1,8 @@
+.imageContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.image {
+    max-width: calc(max(500px, 50%));
+}
