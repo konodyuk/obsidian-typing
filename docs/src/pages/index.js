@@ -13,7 +13,7 @@ function HomepageHeader() {
             <Heading as="h1">
                 <div class={styles.heroContainer}>
                     <div>
-                        <img src={"/img/logo-filled.min.svg"} width={200} height={200} />
+                        <img src={useBaseUrl("/img/logo-filled.min.svg")} width={200} height={200} />
                     </div>
                     <div class={clsx(styles.heroText)}>
                         <h1 className="hero__title">Obsidian Typing</h1>
@@ -120,7 +120,7 @@ export default function Home() {
                             </div>
                             <div class="col col--4">
                                 <center>
-                                    <img className={styles.imgDemo} src={"/img/issue-prompt-1-3.png"} />
+                                    <img className={styles.imgDemo} src={useBaseUrl("/img/issue-prompt-1-3.png")} />
                                 </center>
                             </div>
                             <div class="col col--4">
@@ -203,7 +203,10 @@ export default function Home() {
                                 <center>
                                     <h2>Preview Mode</h2>
 
-                                    <img className={styles.imgDemo} src={"/img/issue-header-footer-1.png"} />
+                                    <img
+                                        className={styles.imgDemo}
+                                        src={useBaseUrl("/img/issue-header-footer-1.png")}
+                                    />
                                 </center>
                             </div>
                         </div>
@@ -228,7 +231,7 @@ export default function Home() {
                                 </CodeBlock>
                                 <center>
                                     <h2>Preview Mode</h2>
-                                    <img className={styles.imgDemo} src={"/img/links-1.png"} />
+                                    <img className={styles.imgDemo} src={useBaseUrl("/img/links-1.png")} />
                                 </center>
                             </div>
                             <div class="col col--6">
@@ -415,7 +418,7 @@ export default function Home() {
                             </div>
                             <div class="col">
                                 <center>
-                                    <img className={styles.imgDemo} src={"/img/editor-2.png"} />
+                                    <img className={styles.imgDemo} src={useBaseUrl("/img/editor-2.png")} />
                                 </center>
                             </div>
                         </div>
