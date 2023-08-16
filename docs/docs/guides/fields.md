@@ -27,7 +27,7 @@ type TypeName {
     fields {
         i_am_a_normal_identifier: String
         "i have spaces": Number
-        "symbols like эти are included": List[Number]
+        "symbols like 官話 are included": List[Number]
     }
 }
 ```

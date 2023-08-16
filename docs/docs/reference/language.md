@@ -77,7 +77,7 @@ A more flexible identifier encapsulated within a [String](#string), allowing for
 Examples:
 
 -   `"Type Name With Spaces"`
--   `"Название не на латиницe"`
+-   `"Type Name Containing 官話"`
 
 ### Loose Identifier
 
