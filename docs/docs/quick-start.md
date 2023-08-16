@@ -85,6 +85,7 @@ type Movie {
     icon = "far fa-film"
     prefix = "MOV"
 
+    // highlight-start
     fields {
         status: Choice["planned", "watched"] = "planned"
         priority: Number[min=1, max=5] = 2
@@ -95,16 +96,17 @@ type Movie {
         cast: List[Tag[dynamic=true]]
         tags: List[Tag[dynamic=true]]
     }
+    // highlight-end
 }
 ```
 
 </SplitViewOTLPrompt>
 
 :::tip Field Types
-Explore the available field types in our [Field Guide](./reference/field-types/index.md).
+Explore the available field types in the [Field Types Reference](/docs/category/field-types).
 :::
 
-## 4. Structuring Movie Notes
+## 4. Creating a Movie App
 
 With the `Movie` type established, you can now create a view note to use as an entrypoint to the movie management subsystem.
 Use dataview queries for organization and display:

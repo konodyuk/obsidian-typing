@@ -42,3 +42,9 @@
     flex-direction: column;
     justify-content: center;
 }
+
+.imgDemo {
+    border-radius: 10px;
+    overflow: hidden;
+    max-height: 500px;
+}
