@@ -10,9 +10,12 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "18"
-      - run: |
+      - name: "install and build"
+        run: |
           npm install
           npm run build
+      - name: "test"
+        run: |
           npm run test
   deploy-docs:
     runs-on: ubuntu-latest
@@ -21,11 +24,13 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "18"
-      - run: |
+      - name: "install and build"
+        run: |
           cd docs
           npm install
           npm run build
-      - uses: JamesIves/github-pages-deploy-action@v4
+      - name: "deploy"
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: docs/build
