@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
-    "build": "obsidian-plugin build src/main.tsx",
+    "build": "node esbuild.config.mjs production",
     "test": "npx jest"
   },
   "keywords": [],
@@ -66,6 +66,7 @@
     "@headlessui/react": "^1.7.14",
     "@lezer/common": "1.0.0",
     "@lezer/generator": "1.2.0",
+    "@lezer/css": "1.0.0",
     "@lezer/highlight": "1.0.0",
     "@lezer/javascript": "1.0.0",
     "@lezer/lr": "1.0.0",
