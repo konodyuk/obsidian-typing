@@ -1,0 +1,1 @@
+export { registerCodeEditorViews } from "./editor";
