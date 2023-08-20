@@ -1,0 +1,12 @@
+.view-title {
+    display: flex;
+    flex-direction: row;
+    gap: 1ch;
+
+    & &-prefix {
+        color: var(--text-muted);
+    }
+
+    & &-name {
+    }
+}

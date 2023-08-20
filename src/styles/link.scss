@@ -1,0 +1,18 @@
+.Link {
+    white-space: nowrap;
+    & > * {
+        margin: 0 var(--size-2-1);
+    }
+    & > :first-child {
+        margin-left: 0;
+    }
+    & > :last-child {
+        margin-right: 0;
+    }
+    &-icon {
+    }
+    &-prefix {
+    }
+    &-title {
+    }
+}
