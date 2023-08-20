@@ -1,19 +1,22 @@
 {
     "compilerOptions": {
+        "outDir": "build",
         "baseUrl": ".",
         "inlineSourceMap": true,
         "inlineSources": true,
-        "module": "ESNext",
+        "module": "es2020",
         "target": "es6",
         "allowJs": true,
         "noImplicitAny": true,
         "moduleResolution": "node",
         "importHelpers": true,
-        "lib": ["dom", "es5", "scripthost", "es2015"],
+        "lib": ["dom", "es5", "scripthost", "es2020"],
         "esModuleInterop": true,
-        "jsx": "react",
-        "jsxFactory": "h",
-        "jsxFragmentFactory": "Fragment"
+        "jsx": "react-jsx",
+        "jsxImportSource": "preact",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "types": ["reflect-metadata", "jest", "node"]
     },
     "include": ["**/*.ts", "**/*.tsx"],
     "typeAcquisition": {
