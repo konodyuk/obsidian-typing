@@ -14,9 +14,9 @@ export class Action extends DataClass implements Bindable<ActionContext, Functio
     @field()
     public script: FnScript;
     @field()
-    public shortcut?: string;
+    public shortcut?: string = null;
     @field()
-    public icon?: string;
+    public icon?: string = null;
     @field()
     public pinned: boolean = false;
 
