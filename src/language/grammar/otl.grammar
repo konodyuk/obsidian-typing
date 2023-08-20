@@ -1,0 +1,197 @@
+@top File {
+  (TypeDeclaration | ImportStatement | newline)*
+}
+
+// Type declarations
+TypeDeclaration {
+  kw<"abstract">? kw<"type"> LooseIdentifier ExtendsClause? TypeBody
+}
+
+TypeBody {
+    scope
+}
+
+scope {
+    "{" (Assignment | SectionDeclaration | newline)* "}"
+}
+
+ExtendsClause {
+  kw<"extends"> LooseIdentifier ("," LooseIdentifier)*
+}
+
+// Section declarations
+SectionDeclaration {
+  Identifier SectionBody
+}
+
+SectionBody {
+    scope
+}
+
+SectionAttributes {
+  kw<"default">
+}
+
+// Assignments
+Assignment {
+  AssignmentName AssignmentMark? (":" AssignmentType)? ("=" AssignmentValue)? newline
+}
+
+AssignmentMark {
+    "`" Identifier "`"
+}
+
+AssignmentName {
+  LooseIdentifier
+}
+
+AssignmentValue {
+  Literal
+}
+
+AssignmentType {
+  Identifier ("[" ParameterList "]")?
+}
+
+ParameterList {
+  Parameter ("," Parameter)*
+}
+
+Parameter {
+  (ParameterName "=")? ParameterValue
+}
+
+ParameterName {
+  Identifier
+}
+
+ParameterValue {
+  (Literal | AssignmentType)
+}
+
+// Literals
+Literal {
+  String | Number | Boolean | TaggedString | List | Object | Null
+}
+
+TaggedString {
+  Tag String
+}
+
+Tag {
+  Identifier
+}
+
+Object {
+  /* "{" (Assignment | newline)* "}" */
+  scope
+}
+
+Boolean {
+  kw<"true"> | kw<"false">
+}
+
+Null {
+  kw<"null">
+}
+
+List {
+  "[" (Literal ("," Literal)*)? "]"
+}
+
+// Imports
+ImportStatement { 
+  kw<"import"> "{" ImportedSymbols "}" kw<"from"> String 
+}
+
+// or Specifiers?
+ImportedSymbols {
+  LooseIdentifier ("," LooseIdentifier)*
+}
+
+// Identifiers
+LooseIdentifier {
+  Identifier | StringIdentifier
+}
+
+@tokens {
+  Identifier {
+    (@asciiLetter | "_")+ (@asciiLetter | @digit | "_")*
+  }
+
+  Number {
+    "-"? @digit+ ("." (@digit)+)?
+  }
+
+
+  StringIdentifier {
+    stringSingleLine
+  }
+
+  // Strings
+  String {
+    stringMultiline | stringSingleLine
+  }
+
+  stringMultiline {
+    '"""' (stringContentMultiline)* '"""'
+  }
+
+  stringSingleLine {
+    '"' (stringContentDouble)* '"' | "'" (stringContentSingle)* "'"
+  }
+
+  stringContent[@isGroup=StringContent] {
+    stringContentMultiline |
+    stringContentDouble |
+    stringContentSingle
+  }
+
+  stringContentMultiline {
+    (!["\\] | "\\" _ | '"' longString2_2)+
+  }
+
+  stringContentDouble {
+    ![\\\n"]+
+  }
+
+  stringContentSingle {
+    ![\\\n']+
+  }
+
+  longString2_2 {
+    !["\\] | "\\" _ | '"' longString2_3
+  }
+
+  longString2_3 {
+    !["\\] | "\\" _
+  }
+
+    space { ($[ \t\f])+ }
+    newline {
+      "\n" | "\r" | "\r\n"
+    }
+
+  LineComment {
+    "//" ![\n]*
+  }
+}
+
+@skip {
+  (space | LineComment)*
+}
+
+@precedence {
+  Float 
+  Integer
+  Assignment
+  TaggedString
+}
+
+kw<term> {
+  @specialize[@name={term}]<Identifier, term>
+}
+
+ckw<term> {
+  @extend[@name={term}]<Identifier, term>
+}
