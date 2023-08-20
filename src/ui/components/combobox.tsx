@@ -38,7 +38,7 @@ export const Combobox = ({
 }) => {
     const numOptions = maxOptions;
     // const [numOptions, setNumOptions] = useState(maxOptions);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState(value ?? control?.value ?? "");
     const [activeIndex, setActiveIndex] = useState(-1); // Index of currently active option
     const [dropdownActive, setDropdownActive] = useState(open ?? true);
     const [offset, setOffset] = useState(0);
@@ -97,11 +97,13 @@ export const Combobox = ({
                 preview={preview}
                 onBeforeFocus={() => {
                     if (!dropdownActive) setDropdownActive(true);
+                    setQuery("");
                     return true;
                 }}
                 onBeforeBlur={(e) => {
                     if (dropdownActive && !ref?.current?.base?.contains(e?.relatedTarget)) {
                         setDropdownActive(false);
+                        setQuery(value ?? control?.value ?? query);
                     }
                     return true;
                 }}
