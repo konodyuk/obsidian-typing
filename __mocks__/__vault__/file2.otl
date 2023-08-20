@@ -1,0 +1,6 @@
+import { F } from "./folder/index.otl"
+
+type FF {
+    folder = "kek"
+    icon = "kok"
+}

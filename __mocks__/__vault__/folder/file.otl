@@ -1,0 +1,4 @@
+type F {
+    folder = "folder"
+    icon = "test"
+}

@@ -1,0 +1,51 @@
+import { F } from "file2.otl"
+
+type A {}
+type B extends F {}
+
+type C {
+    folder = "c"
+    icon = "c"
+    prefix = "e"
+}
+
+type D {
+    folder = "d"
+    prefix = "D-{serial}"
+    fields {
+        one: String
+        two: String
+    }
+}
+
+type Hooks {
+    folder = "hooks"
+    hooks {
+        on_create = fn"""
+            console.log("hook on_create in Type", {api, ctx})
+            import {appendHookCall} from "scripts/hooks-sink.tsx"
+            appendHookCall("on_create", ctx)
+        """
+        on_rename = fn"""
+            console.log("hook on_rename in Type", {api, ctx})
+            import {appendHookCall} from "scripts/hooks-sink.tsx"
+            appendHookCall("on_rename", ctx)
+        """
+        // on_delete = fn"""
+        //    import {appendHookCall} from "scripts/hooks-sink"
+        //    appendHookCall("on_delete", ctx)
+        // """
+    }
+}
+
+type Methods {
+    folder = "methods"
+    methods {
+        one = expr"""()=>{
+            return 1
+        }"""
+        inc = expr"""(x)=>{
+            return x + note.methods.one()
+        }"""
+    }
+}
