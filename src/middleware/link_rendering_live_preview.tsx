@@ -70,10 +70,18 @@ const linkPlugin = ViewPlugin.fromClass(
         decorations: DecorationSet;
 
         constructor(view: EditorView) {
+            if (!gctx.settings.linksInLivePreview) {
+                this.decorations = Decoration.none;
+                return;
+            }
             this.decorations = this.buildDecorations(view);
         }
 
         update(update: ViewUpdate) {
+            if (!gctx.settings.linksInLivePreview) {
+                this.decorations = Decoration.none;
+                return;
+            }
             if (!update.state.field(editorLivePreviewField)) {
                 this.decorations = Decoration.none;
                 return;

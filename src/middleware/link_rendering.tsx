@@ -59,6 +59,7 @@ class LinkRenderChild extends MarkdownRenderChild {
 
 function linkPostProcessor(plugin: TypingPlugin): MarkdownPostProcessor {
     return async (el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+        if (!gctx.settings.linksInPreview) return;
         el.querySelectorAll("a.internal-link").forEach(async (linkEl: HTMLElement) => {
             if (!(linkEl instanceof HTMLAnchorElement)) {
                 return;

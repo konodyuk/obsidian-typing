@@ -186,15 +186,19 @@ export function registerMarginalMonkeyPatch(plugin: TypingPlugin) {
             get(oldMethod) {
                 return function (...args) {
                     let result = oldMethod && oldMethod.apply(this, args);
-                    result = result.replaceAll(HEADER_CODEBLOCK, "");
-                    result = result.replaceAll(FOOTER_CODEBLOCK, "");
+                    if (gctx.settings.marginalsInPreview) {
+                        result = result.replaceAll(HEADER_CODEBLOCK, "");
+                        result = result.replaceAll(FOOTER_CODEBLOCK, "");
+                    }
                     return result;
                 };
             },
             set(oldMethod) {
                 return function (...args) {
-                    args[0] = injectHeader(args[0], HEADER_CODEBLOCK);
-                    args[0] = args[0] + FOOTER_CODEBLOCK;
+                    if (gctx.settings.marginalsInPreview) {
+                        args[0] = injectHeader(args[0], HEADER_CODEBLOCK);
+                        args[0] = args[0] + FOOTER_CODEBLOCK;
+                    }
                     const result = oldMethod && oldMethod.apply(this, args);
                     return result;
                 };
@@ -206,6 +210,8 @@ export function registerMarginalMonkeyPatch(plugin: TypingPlugin) {
 // NOTE: works in previews and embeds
 function marginalPostProcessor(plugin: TypingPlugin): MarkdownPostProcessor {
     return async (el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+        if (!gctx.settings.marginalsInPreview) return;
+
         let info = ctx.getSectionInfo(el);
         if (!info) {
             return;
