@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-typing",
-	"name": "Typing",
-	"version": "0.0.1",
-	"minAppVersion": "0.9.12",
-	"description": "Strict note typing for Obsidian",
-	"author": "Nikita Konodyuk",
-	"authorUrl": "https://github.com/konodyuk",
-	"isDesktopOnly": false
+    "id": "typing",
+    "name": "Typing",
+    "version": "0.1.0",
+    "minAppVersion": "0.9.12",
+    "description": "Strict note typing for Obsidian",
+    "author": "Nikita Konodyuk",
+    "authorUrl": "https://github.com/konodyuk",
+    "isDesktopOnly": false
 }
