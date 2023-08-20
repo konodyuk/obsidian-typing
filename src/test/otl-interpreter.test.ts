@@ -32,7 +32,6 @@ test("empty type", () => {
 type A {
 }
 `);
-    console.log("module", module);
     expect(A).toBeDefined();
 });
 
@@ -43,7 +42,6 @@ type A {
     folder = "typed/folder"
 }
 `);
-        console.log("module", module);
         expect(A).toBeDefined();
         expect(A.folder).toBe("typed/folder");
     });
@@ -54,7 +52,6 @@ type A {
     icon = "fa fa-square"
 }
 `);
-        console.log("module", module);
         expect(A).toBeDefined();
         expect(A.icon).toBe("fa fa-square");
     });
@@ -65,7 +62,6 @@ type A {
     prefix = "MTN-{date_compact}"
 }
 `);
-        console.log("module", module);
         expect(A).toBeDefined();
         expect(A.prefix?.template).toBe("MTN-{date_compact}");
     });

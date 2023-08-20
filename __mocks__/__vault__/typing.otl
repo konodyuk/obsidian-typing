@@ -22,12 +22,10 @@ type Hooks {
     folder = "hooks"
     hooks {
         on_create = fn"""
-            console.log("hook on_create in Type", {api, ctx})
             import {appendHookCall} from "scripts/hooks-sink.tsx"
             appendHookCall("on_create", ctx)
         """
         on_rename = fn"""
-            console.log("hook on_rename in Type", {api, ctx})
             import {appendHookCall} from "scripts/hooks-sink.tsx"
             appendHookCall("on_rename", ctx)
         """

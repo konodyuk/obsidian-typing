@@ -21,7 +21,6 @@ test("create new", async () => {
     expect(gctx.graph).toBeDefined();
     let D = gctx.graph.get({ name: "D" });
     expect(D).toBeDefined();
-    console.log("DD", gctx.graph, D);
     let note = await D.create({
         title: "New D",
         prefix: "D-1",
