@@ -76,14 +76,13 @@
     "chrono-node": "^2.6.3",
     "classnames": "^2.3.2",
     "codemirror": "6.0.0",
-    "framer-motion": "^10.12.4",
     "jest-environment-jsdom": "^29.6.2",
     "lucide-react": "^0.241.0",
     "monkey-around": "^2.2.0",
     "path-browserify": "^1.0.1",
     "preact": "^10.17.1",
-    "react": "npm:@preact/compat",
+    "react": "npm:@preact/compat@^17.0.0",
     "react-datepicker": "^4.8.0",
-    "react-dom": "npm:@preact/compat"
+    "react-dom": "npm:@preact/compat@^17.0.0"
   }
 }
