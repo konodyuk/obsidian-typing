@@ -3,7 +3,7 @@
     margin: unset;
     min-height: unset;
     max-height: 85%;
-    overflow: hidden;
+    overflow: unset;
 
     --checkbox-size: var(--font-ui-medium);
     background-color: var(--background-primary);
@@ -20,33 +20,40 @@
         overflow: scroll;
         display: flex;
         flex-direction: column;
+
+        & > :first-child {
+            padding-top: var(--size-4-2);
+            border-radius: var(--modal-radius) var(--modal-radius) 0 0;
+        }
+
+        & > :last-child {
+            border-radius: 0 0 var(--modal-radius) var(--modal-radius);
+        }
     }
 
     .is-phone & {
-        --margin-top: unset;
-        --margin-bottom: unset;
+        --mobile-height: 100vh;
+        --margin-top: calc(var(--safe-area-inset-top) + var(--header-height) + var(--size-4-4));
+        --margin-bottom: calc(var(--safe-area-inset-bottom) + var(--size-4-4));
+        max-height: calc(var(--mobile-height) - var(--margin-top) - var(--margin-bottom));
+        height: unset;
         min-width: unset;
         width: unset;
+        top: unset;
+        bottom: unset;
         position: absolute;
         margin-top: var(--margin-top);
         right: var(--size-4-4);
         left: var(--size-4-4);
         margin-bottom: var(--margin-bottom);
+        border: var(--modal-border-width) solid var(--modal-border-color);
+        border-radius: var(--modal-radius);
 
         &-picker {
             --margin-top: unset;
             --margin-bottom: unset;
             z-index: calc(var(--layer-modal) + 2);
         }
-    }
-
-    & > :first-child {
-        padding-top: var(--size-4-2);
-        border-radius: var(--modal-radius) var(--modal-radius) 0 0;
-    }
-
-    & > :last-child {
-        border-radius: 0 0 var(--modal-radius) var(--modal-radius);
     }
 
     &-submit-button {
@@ -132,12 +139,32 @@ input[type="text"].Input {
 }
 
 .Confirmation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: fit-content;
+    padding: var(--size-4-4);
+
+    .is-mobile & {
+        padding: unset;
+        align-items: center;
+    }
+
     & &-buttons {
+        margin-top: var(--size-4-4);
         display: flex;
         gap: var(--size-4-2);
+        justify-content: center;
+
+        width: 50%;
+        .is-mobile & {
+            width: 100%;
+            margin-top: var(--size-4-2);
+        }
     }
 
     & &-button {
+        flex-grow: 1;
     }
 }
 
@@ -153,6 +180,8 @@ input[type="text"].Input {
             position: absolute;
             background-color: var(--background-primary);
             padding: var(--size-4-1);
+            top: -10px;
+            left: 0;
         }
     }
 
@@ -165,7 +194,8 @@ input[type="text"].Input {
 
     &-mobile {
         &-panel {
-            height: 70vh;
+            max-height: 70vh;
+            min-height: 30vh;
             border-top: 1px solid var(--background-modifier-border);
         }
         &-container {
@@ -187,9 +217,6 @@ input[type="text"].Input {
         height: calc(var(--font-ui-medium) * var(--line-height-normal));
         display: flex;
         align-items: center;
-        &:focus {
-            background-color: var(--background-modifier-hover);
-        }
 
         &-hidden {
             height: 0;
