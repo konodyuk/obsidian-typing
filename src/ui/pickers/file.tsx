@@ -14,6 +14,7 @@ function generateFileShortcut(file: File, rename?: FnScript): string {
 
 export const File = ({
     paths = [],
+    search = true,
     upload = true,
     subpath = false,
     display = false,
@@ -34,38 +35,54 @@ export const File = ({
     upload?: boolean;
     autoRename?: FnScript;
     short?: boolean;
+    search?: boolean;
 }) => {
+    const composeWithoutBrackets = ({ folder, name, extension, subpath, display }) => {
+        let result = "";
+        let path;
+
+        if (extension) {
+            name = `${name}.${extension}`;
+        }
+
+        if (folder) {
+            path = `${folder}/${name}`;
+        } else {
+            path = name;
+        }
+
+        if (path) result += path;
+        if (subpath) result += `#${subpath}`;
+        if (display) result += `|${display}`;
+
+        return result;
+    };
+    const compose = (options) => {
+        let result = composeWithoutBrackets(options);
+        if (result.length) {
+            return `[[${result}]]`;
+        } else {
+            return "";
+        }
+    };
     let controls = useControls({
         parse: parseLinkExtended,
-        compose({ folder, name, extension, subpath, display }) {
-            let result = "";
-            let path;
-
-            if (extension) {
-                name = `${name}.${extension}`;
-            }
-
-            if (folder) {
-                path = `${folder}/${name}`;
-            } else {
-                path = name;
-            }
-
-            if (path) result += path;
-            if (subpath) result += `#${subpath}`;
-            if (display) result += `|${display}`;
-
-            if (result.length) {
-                return `[[${result}]]`;
-            } else {
-                return "";
-            }
-        },
+        compose,
     });
     const promptCtx = useContext(Contexts.PromptContext);
     const pickerCtx = useContext(Contexts.PickerContext);
 
     const [file, setFile] = useState<File>(null);
+
+    if (file == null) {
+        let filename = composeWithoutBrackets({ name: controls.name.value, extension: controls.extension.value });
+        let uploadSpec = promptCtx.state?.uploads?.find((value) => {
+            return (short || value.destination == controls.folder.value) && value.name == filename;
+        });
+        if (uploadSpec != null) {
+            setFile(uploadSpec.file);
+        }
+    }
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         let oldFile = file;
@@ -115,13 +132,15 @@ export const File = ({
     // }
 
     const updateUploads = (value: string) => {
+        const oldFilename = `${controls.name.value}.${controls.extension.value}`;
+        const newFilename = `${value}.${controls.extension.value}`;
         promptCtx.dispatch({
             type: "CANCEL_UPLOAD",
-            payload: { name: controls.name.value },
+            payload: { name: oldFilename },
         });
         promptCtx.dispatch({
             type: "DEFER_UPLOAD",
-            payload: { name: value, file, destination: folder },
+            payload: { name: newFilename, file, destination: folder },
         });
     };
 
@@ -150,11 +169,16 @@ export const File = ({
                         </label>
                     </div>
                 )}
-                {!file && (
+                {search && !file && (
                     <Combobox
                         static
                         autofocus
                         options={paths}
+                        value={composeWithoutBrackets({
+                            // folder: controls.folder.value,
+                            name: controls.name.value,
+                            extension: controls.extension.value,
+                        })}
                         onSetValue={(path) => {
                             let { name, extension } = parseFileExtension(path);
                             controls.name.setValue(name);
@@ -162,6 +186,14 @@ export const File = ({
                             if (!short) {
                                 controls.folder.setValue(folder);
                             }
+                        }}
+                        onSubmitValue={(path) => {
+                            let { name, extension } = parseFileExtension(path);
+                            controls.extension.setValue(extension);
+                            if (!short) {
+                                controls.folder.setValue(folder);
+                            }
+                            controls.name.submitValue(name);
                         }}
                         preview={preview}
                         placeholder="Search"
@@ -180,6 +212,14 @@ export const File = ({
                                 updateUploads(value);
                                 controls.name.submitValue(value);
                             }}
+                            preview={(name) =>
+                                preview(
+                                    compose({
+                                        name,
+                                        extension: controls.extension.value,
+                                    })
+                                )
+                            }
                             placeholder="Rename"
                         />
                     </>
