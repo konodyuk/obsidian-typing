@@ -67,7 +67,7 @@ export const TypeParentsClause = createVisitor({
 
                 return {
                     label: name,
-                    apply: (...args) => snippet(x.name + ", ")(...args),
+                    apply: (...args) => snippet(x.name)(...args),
                 } as Completion;
             });
     },
