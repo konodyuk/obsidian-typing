@@ -4,6 +4,7 @@ import { Platform } from "obsidian";
 import { ComponentChildren } from "preact";
 import React, { createContext, useContext, useEffect, useReducer, useRef } from "react";
 import styles from "src/styles/prompt.scss";
+import { useBlurCallbacks } from "../hooks";
 import { ControlsResult } from "../hooks/controls";
 import { Portal } from "./portal";
 import { PromptContext } from "./prompt";
@@ -25,6 +26,7 @@ export interface PickerConfig {
 export interface PickerState extends PickerConfig {
     isSelected?: boolean;
     bodyRef?: React.RefObject<any>;
+    submitButtonRef?: React.RefObject<any>;
     focusedControl?: React.RefObject<any>;
     modalRef?: React.RefObject<any>;
     displayRef?: React.RefObject<any>;
@@ -90,9 +92,20 @@ Picker.SubmitButton = (props: { controls: ControlsResult<any> }) => {
     if (!Platform.isMobile) return null;
     return (
         <button
-            onClick={() => {
-                props.controls.submitCurrentValue();
-                pickerCtx.dispatch({ type: "SET_IS_ACTIVE", payload: false });
+            ref={pickerCtx.state.submitButtonRef}
+            tabIndex={-1}
+            onClick={(e) => {
+                const inputTarget = pickerCtx.state.focusedControl.current;
+                try {
+                    inputTarget?.focus?.();
+                } catch {}
+                try {
+                    inputTarget?.dispatchEvent?.(new KeyboardEvent("keydown", { key: "Enter", metaKey: true }));
+                } catch {}
+                setTimeout(() => {
+                    props?.controls?.submitCurrentValue();
+                    pickerCtx?.dispatch({ type: "SET_IS_ACTIVE", payload: false });
+                }, 50);
             }}
             className={styles.pickerSubmitButton}
         >
@@ -163,6 +176,7 @@ Picker.Display = React.memo(
 Picker.Body = React.memo(({ children }: ChildrenProps) => {
     let pickerCtx = useContext(PickerContext);
     let { state, dispatch } = pickerCtx;
+    const { onPickerBlur } = useBlurCallbacks();
 
     if (!state.isActive) return null;
 
@@ -172,10 +186,7 @@ Picker.Body = React.memo(({ children }: ChildrenProps) => {
                 class={styles.pickerContainer}
                 ref={state.bodyRef}
                 onBlur={(e) => {
-                    if (!state.bodyRef?.current?.contains(e?.relatedTarget)) {
-                        if (!state.isActiveControlled) dispatch({ type: "SET_IS_ACTIVE", payload: false });
-                        dispatch({ type: "SET_IS_SELECTED", payload: false });
-                    }
+                    onPickerBlur(e);
                 }}
             >
                 {children || "default body"}
@@ -194,19 +205,7 @@ Picker.Body = React.memo(({ children }: ChildrenProps) => {
                         />
                         <div ref={state.bodyRef} class={classNames(styles.promptPicker, styles.prompt)}>
                             <div class={styles.pickerMobileContainer}>
-                                <div
-                                    class={styles.pickerContainer}
-                                    onBlur={(e) => {
-                                        if (!state.bodyRef?.current?.contains(e?.relatedTarget)) {
-                                            if (!state.isActiveControlled) {
-                                                dispatch({ type: "SET_IS_ACTIVE", payload: false });
-                                            }
-                                            dispatch({ type: "SET_IS_SELECTED", payload: false });
-                                        }
-                                    }}
-                                >
-                                    {children || "default body"}
-                                </div>
+                                <div class={styles.pickerContainer}>{children || "default body"}</div>
                             </div>
                             <div class={styles.pickerMobilePanel}>
                                 <Portal.Receiver />
@@ -225,6 +224,7 @@ Picker.Wrapper = ({ children, ...config }: PickerConfig & ChildrenProps) => {
         isActive: false,
         isSelected: false,
         bodyRef: useRef(),
+        submitButtonRef: useRef(),
         modalRef: useRef(),
         focusedControl: useRef(),
         displayRef: useRef(),
