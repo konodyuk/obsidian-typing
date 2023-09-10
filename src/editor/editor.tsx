@@ -28,6 +28,8 @@ import { hover } from "./hover";
 import { lint } from "./linting";
 import { obsidianCodeTheme } from "./themes/obsidian";
 
+import styles from "src/styles/editor.scss";
+
 const tsxLanguageSupport = javascript({ jsx: true, typescript: true });
 const cssLanguageSupport = css();
 const markdownLanguageSupport = markdown({ base: markdownLanguage });
@@ -184,6 +186,7 @@ class BaseEditorView extends TextFileView {
     }
 
     async onOpen() {
+        this.contentEl.classList.add(styles.codeEditorViewContent);
         let state = EditorState.create({
             extensions: [
                 basicSetup,
