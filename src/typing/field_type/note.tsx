@@ -33,13 +33,17 @@ export class Note extends FieldType<Note> {
 
     get types() {
         if (!this._types) {
-            this._types = this.typeNames.map((name) => gctx.graph.get({ name }));
+            this._types = this.typeNames.map((name) => gctx.graph.get({ name })).filter((type) => type != null);
         }
         return this._types;
     }
 
     Display: FieldType["Display"] = ({ value }) => {
         let { path, subpath, display } = parseLink(value);
+        if (!display) {
+            // to not pass empty linkText to RenderLink
+            display = null;
+        }
 
         // TODO: supply current path: which one should it be?
         let resolved = gctx.app.metadataCache.getFirstLinkpathDest(path, "");
@@ -75,7 +79,7 @@ export class Note extends FieldType<Note> {
 
     private get query() {
         return this.types
-            .filter((type) => type.folder != null)
+            .filter((type) => type?.folder != null)
             .map((type) => `"${type.folder}"`)
             .join("|");
     }
