@@ -45,7 +45,12 @@ export function useControls<T extends Record<string | number, any>>({
         // TODO: or make functional
         submitCurrentValue: useCallback(
             // TODO: somehow call "beforeSubmit" argument of useControls
-            () => pickerCtx.dispatch({ type: "SUBMIT_VALUE", payload: compose(state) }),
+            () => {
+                setState((state) => {
+                    pickerCtx.dispatch({ type: "SUBMIT_VALUE", payload: compose(state) });
+                    return state;
+                });
+            },
             [pickerCtx, compose, state]
         ),
     };
