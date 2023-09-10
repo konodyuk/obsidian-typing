@@ -28,7 +28,11 @@ export class TypingAPI {
     note(path: string): Note {
         return new Note(path);
     }
-    type({ name, folder, path }: { path?: string; folder?: string; name?: string }): Type {
+    type(opt: string | { path?: string; folder?: string; name?: string }): Type {
+        if (typeof opt == "string") {
+            return gctx.graph.get({ name: opt });
+        }
+        let { name, folder, path } = opt;
         return gctx.graph.get({ name, folder, path });
     }
 
