@@ -2,7 +2,7 @@ import { TFile } from "obsidian";
 import { LiteralValue } from "obsidian-dataview";
 import { gctx } from "src/context";
 import { autoFieldAccessor, IFieldAccessor } from "src/middleware/field_accessor";
-import { bindCollection, DataClass, field } from "src/utilities";
+import { bindCollection, DataClass, field, RenderLink } from "src/utilities";
 import { HookContextType, HookNames, RelationsProxy, Type } from ".";
 
 export interface NoteState {
@@ -204,6 +204,27 @@ export class Note {
         this.runHook(HookNames.ON_RENAME, { note: this, prevPath, prevFilename, prevTitle });
     }
 
+    super(typeName?: string) {
+        if (!this.type) return this;
+        if (!typeName) {
+            if (this.type.parents.length == 1) {
+                typeName = this.type.parents[0];
+            } else {
+                throw new Error(
+                    `Type ${this.type.name} has ${this.type.parents.length}!=1 parents. Please specify parent type name explictly`
+                );
+            }
+        }
+        let superType = gctx.graph.get({ name: typeName });
+        if (!superType) {
+            throw new Error(`Invalid super type: ${typeName} does not exist`);
+        }
+        if (!gctx.graph.isinstance(this.type, superType)) {
+            throw new Error(`Invalid super type: ${typeName} is not a parent of ${this.type.name}`);
+        }
+        return new Note(this.path, superType);
+    }
+
     get typed() {
         return this.type != null;
     }
@@ -211,6 +232,18 @@ export class Note {
     get file(): TFile {
         return gctx.app.vault.getAbstractFileByPath(this.path) as TFile;
     }
+
+    Link = (props: { children?: any; container?: HTMLElement; linkText?: string }) => {
+        return (
+            <a class="internal-link" href={this.path}>
+                {props?.children ?? <RenderLink note={this} type={this.type} {...props} />}
+            </a>
+        );
+    };
+
+    // TODO
+    Header = () => {};
+    Footer = () => {};
 
     async open() {
         await gctx.app.workspace.getLeaf().openFile(gctx.app.vault.getAbstractFileByPath(this.path) as TFile);

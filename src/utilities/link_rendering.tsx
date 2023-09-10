@@ -51,7 +51,7 @@ export const RenderLink = ({
 }: {
     type: Type;
     note: Note;
-    container: HTMLElement;
+    container?: HTMLElement;
     linkText?: string;
 }) => {
     if (!type) {
