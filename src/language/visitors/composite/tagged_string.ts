@@ -1,4 +1,5 @@
 import { snippetCompletion } from "@codemirror/autocomplete";
+import { gctx } from "src/context";
 import { ExprScript, FnScript } from "src/scripting";
 import { Values } from "src/typing";
 import { dedent } from "src/utilities/dedent";
@@ -52,6 +53,7 @@ export const FnScriptString = (content = "\n\t${}\n", tags = ["fn", "function"])
             code: Visitors.String,
         },
         run(node) {
+            if (!gctx.settings.enableScripting) return undefined;
             return FnScript.new({
                 source: dedent(this.runChild("code")),
                 filePath: this.globalContext?.callContext?.interpreter?.activeModule?.file?.path,
@@ -59,6 +61,13 @@ export const FnScriptString = (content = "\n\t${}\n", tags = ["fn", "function"])
         },
         lint(node) {
             let result = FnScript.validate(this.runChild("code"));
+            if (!gctx.settings.enableScripting) {
+                this.warning(
+                    "Safe mode: JS scripting is currently disabled. Until you enable it in the plugin settings, this expression will be ignored.",
+                    node.getChild(Rules.Tag)
+                );
+                return;
+            }
             if (result.message) {
                 this.error(result.message, node.getChild(Rules.Tag));
             }
@@ -82,6 +91,7 @@ export const ExprScriptString = (content = "\n\t${}\n", tags = ["expr", "express
             code: Visitors.String,
         },
         run(node) {
+            if (!gctx.settings.enableScripting) return undefined;
             return ExprScript.new({
                 source: dedent(this.runChild("code")),
                 filePath: this.globalContext?.callContext?.interpreter?.activeModule?.file?.path,
@@ -89,6 +99,13 @@ export const ExprScriptString = (content = "\n\t${}\n", tags = ["expr", "express
         },
         lint(node) {
             let result = ExprScript.validate(this.runChild("code"));
+            if (!gctx.settings.enableScripting) {
+                this.warning(
+                    "Safe mode: JS scripting is currently disabled. Until you enable it in the plugin settings, this expression will be ignored.",
+                    node.getChild(Rules.Tag)
+                );
+                return;
+            }
             if (result.message) {
                 this.error(result.message, node.getChild(Rules.Tag));
             }
