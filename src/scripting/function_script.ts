@@ -39,6 +39,9 @@ export class Script<T extends IScriptContextBase = IScriptContextBase> extends D
     }
 
     static validate(source: string) {
+        if (!gctx.settings.enableScripting) {
+            return { message: "Safe mode: JS scripting is currently disabled. Please enable it in Typing settings." };
+        }
         return compileFunctionWithContext(source, {});
     }
 }

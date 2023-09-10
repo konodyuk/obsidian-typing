@@ -12,6 +12,8 @@ export interface TypingSettings {
     marginalsInLivePreview: boolean;
     linksInPreview: boolean;
     linksInLivePreview: boolean;
+    enableScripting: boolean;
+    enabledFonts: string[];
 }
 
 export const DEFAULT_SETTINGS: TypingSettings = {
@@ -22,6 +24,13 @@ export const DEFAULT_SETTINGS: TypingSettings = {
     marginalsInLivePreview: false,
     linksInPreview: true,
     linksInLivePreview: true,
+    enableScripting: false,
+    enabledFonts: [],
+};
+
+export const TEST_SETTINGS: TypingSettings = {
+    ...DEFAULT_SETTINGS,
+    enableScripting: true,
 };
 
 class TypingSettingTab extends PluginSettingTab {
@@ -43,6 +52,21 @@ class TypingSettingTab extends PluginSettingTab {
         let { containerEl } = this;
 
         containerEl.empty();
+
+        containerEl.createEl("h2").innerText = "Safety";
+        new Setting(containerEl)
+            .setName("Enable JS scripting")
+            .setDesc(
+                "Enables JS/TS code execution for React-based headers, footers, internal links, note actions, methods, and lifecycle hooks. " +
+                    "If you enable this setting, be sure to check all the OTL and JS/TS code you import and use."
+            )
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.enableScripting);
+                toggle.onChange(async (value: boolean) => {
+                    this.plugin.settings.enableScripting = value;
+                    await this.plugin.saveSettings();
+                });
+            });
 
         containerEl.createEl("h2").innerText = "Paths";
         ReactDOM.render(
