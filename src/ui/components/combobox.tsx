@@ -1,9 +1,9 @@
 import classNames from "classnames";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { Platform, prepareFuzzySearch } from "obsidian";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import styles from "src/styles/prompt.scss";
-import { Dropdown, Input } from ".";
+import { Contexts, Dropdown, Input } from ".";
 import { ControlSpec } from "../hooks/controls";
 
 export interface IComboboxOption {
@@ -23,6 +23,7 @@ export const Combobox = ({
     static: static_,
     open,
     preview,
+    onBeforeFocus,
     ...props
 }: {
     value?: string;
@@ -35,14 +36,17 @@ export const Combobox = ({
     static?: boolean;
     open?: boolean;
     preview?: (value: string) => any;
+    onBeforeFocus?: (e) => boolean;
 }) => {
     const numOptions = maxOptions;
     // const [numOptions, setNumOptions] = useState(maxOptions);
     const [query, setQuery] = useState(value ?? control?.value ?? "");
     const [activeIndex, setActiveIndex] = useState(-1); // Index of currently active option
-    const [dropdownActive, setDropdownActive] = useState(open ?? true);
+    const [dropdownActive, setDropdownActive] = useState(open ?? false);
     const [offset, setOffset] = useState(0);
-    const ref = useRef();
+    const targetRef = useRef();
+    const panelRef = useRef();
+    const pickerCtx = useContext(Contexts.PickerContext);
 
     const filterHook = () => {
         let fuzzy = prepareFuzzySearch(query);
@@ -91,7 +95,7 @@ export const Combobox = ({
     const onSubmitValueHandler = onSubmitValue ?? control?.submitValue ?? onSetValueHandler;
 
     return (
-        <Dropdown ref={ref} active={dropdownActive}>
+        <Dropdown targetRef={targetRef} panelRef={panelRef} active={dropdownActive}>
             <Input
                 isActive={dropdownActive}
                 value={query}
@@ -102,16 +106,25 @@ export const Combobox = ({
                 }}
                 onSetValue={(value) => {}}
                 preview={preview}
-                onBeforeFocus={() => {
+                onBeforeFocus={(e) => {
+                    if (onBeforeFocus?.(e)) return true;
                     if (!dropdownActive) setDropdownActive(true);
                     setQuery("");
                     return true;
                 }}
                 onBeforeBlur={(e) => {
-                    if (dropdownActive && !ref?.current?.base?.contains(e?.relatedTarget)) {
-                        setDropdownActive(false);
-                        setQuery(value ?? control?.value ?? query);
+                    if (pickerCtx?.state.isMobile) {
+                        return;
                     }
+
+                    if (dropdownActive && targetRef?.current?.contains(e?.relatedTarget)) {
+                        return true;
+                    }
+                    if (dropdownActive && panelRef?.current?.contains(e?.relatedTarget)) {
+                        return true;
+                    }
+                    setDropdownActive(false);
+                    setQuery(value ?? control?.value ?? query);
                     return true;
                 }}
                 onBeforeKeyDown={(e) => {
@@ -223,8 +236,6 @@ export const Combobox = ({
                                 "is-selected": activeIndex === filteredOptions.length,
                             })}
                             onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
                                 setQuery(query);
                                 setActiveIndex(0);
                                 if (e.metaKey) {
