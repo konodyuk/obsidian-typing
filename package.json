@@ -55,8 +55,8 @@
     "@codemirror/autocomplete": "^6.7.1",
     "@codemirror/commands": "^6.2.4",
     "@codemirror/lang-html": "6.0.0",
-    "@codemirror/lang-javascript": "6.0.0",
     "@codemirror/lang-css": "6.0.0",
+    "@codemirror/lang-javascript": "6.0.0",
     "@codemirror/lang-markdown": "6.0.0",
     "@codemirror/lint": "^6.2.2",
     "@codemirror/theme-one-dark": "6.0.0",
@@ -66,11 +66,12 @@
     "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.14",
     "@lezer/common": "1.0.0",
-    "@lezer/generator": "1.2.0",
     "@lezer/css": "1.0.0",
+    "@lezer/generator": "1.2.0",
     "@lezer/highlight": "1.0.0",
     "@lezer/javascript": "1.0.0",
     "@lezer/lr": "1.0.0",
+    "@popperjs/core": "^2.11.8",
     "@types/parsimmon": "^1.10.6",
     "@types/path-browserify": "^1.0.0",
     "@types/react-datepicker": "^4.10.0",
@@ -87,6 +88,7 @@
     "preact": "^10.17.1",
     "react": "npm:@preact/compat@^17.0.0",
     "react-datepicker": "^4.8.0",
-    "react-dom": "npm:@preact/compat@^17.0.0"
+    "react-dom": "npm:@preact/compat@^17.0.0",
+    "react-popper": "^2.3.0"
   }
 }
