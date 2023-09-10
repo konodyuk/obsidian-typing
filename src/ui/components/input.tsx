@@ -3,6 +3,7 @@ import { Platform } from "obsidian";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "src/styles/prompt.scss";
 import { Contexts } from ".";
+import { useActiveControl, useBlurCallbacks } from "../hooks";
 import { ControlSpec } from "../hooks/controls";
 
 export const Input = React.memo(
@@ -25,10 +26,13 @@ export const Input = React.memo(
         const dropdownCtx = useContext(Contexts.DropdownContext);
         const inputRef = useRef();
         const [active, setActive] = useState(false);
+        const { onDropdownBlur, onPickerBlur } = useBlurCallbacks();
+        const { onBeforeFocus } = useActiveControl();
 
         const isActive = props.isActive !== undefined ? props.isActive : dropdownCtx?.isActive || active;
 
         const onFocus = (e) => {
+            onBeforeFocus(e);
             if (props.onBeforeFocus?.(e)) return;
             setActive(true);
             dropdownCtx?.setIsActive(true);
@@ -36,14 +40,14 @@ export const Input = React.memo(
 
         const onBlur = (e: FocusEvent) => {
             if (props.onBeforeBlur?.(e)) return;
-            if (dropdownCtx != null) {
-                if (!dropdownCtx?.panelRef?.current?.contains(e?.relatedTarget)) {
+            setTimeout(() => {
+                if (dropdownCtx != null) {
+                    onDropdownBlur(e);
+                } else {
                     setActive(false);
-                    dropdownCtx?.setIsActive(false);
                 }
-            } else {
-                setActive(false);
-            }
+                onPickerBlur(e);
+            }, 100);
         };
 
         if ((props.autofocus && !Platform.isMobile) || (props.autofocusMobile && Platform.isMobile)) {
