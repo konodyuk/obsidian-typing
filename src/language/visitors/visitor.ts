@@ -40,7 +40,11 @@ export interface Symbol {
     metadata?: any;
 }
 
-const cache = new NodeWeakMap<WeakMap<Visitor<any, any, any, any, any>, CacheEntry>>();
+let cache: NodeWeakMap<WeakMap<Visitor<any, any, any, any, any>, CacheEntry>>;
+
+function resetCache() {
+    cache = new NodeWeakMap<WeakMap<Visitor<any, any, any, any, any>, CacheEntry>>();
+}
 
 type CallType = "lint" | "run" | "complete" | "accept" | "symbols" | "snippets" | "decorations" | "hover";
 
@@ -395,6 +399,9 @@ export class Visitor<
         if (callContext == null) {
             return true;
         }
+
+        // TODO: temporarily flush cache each call
+        resetCache();
 
         Visitor.globalContexts.push({ callContext, callStack: [], callCount: {} });
     }
