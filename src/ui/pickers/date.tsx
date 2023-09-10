@@ -62,6 +62,7 @@ export function Date() {
                             switch (e.key) {
                                 case "ArrowDown":
                                     e.preventDefault();
+                                    e.stopPropagation();
                                     let calendarContainer = ref.current;
 
                                     const selectedDay =
