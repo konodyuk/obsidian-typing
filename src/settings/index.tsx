@@ -1,6 +1,7 @@
 import { App, PluginSettingTab, Setting, TFile, TFolder, Vault } from "obsidian";
 import { useState } from "react";
 import ReactDOM from "react-dom";
+import { gctx } from "src/context";
 import TypingPlugin from "src/main";
 import { Combobox } from "src/ui";
 
