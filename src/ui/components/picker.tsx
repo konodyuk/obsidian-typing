@@ -25,6 +25,7 @@ export interface PickerConfig {
 export interface PickerState extends PickerConfig {
     isSelected?: boolean;
     bodyRef?: React.RefObject<any>;
+    focusedControl?: React.RefObject<any>;
     modalRef?: React.RefObject<any>;
     displayRef?: React.RefObject<any>;
     isActiveControlled?: boolean;
@@ -225,6 +226,7 @@ Picker.Wrapper = ({ children, ...config }: PickerConfig & ChildrenProps) => {
         isSelected: false,
         bodyRef: useRef(),
         modalRef: useRef(),
+        focusedControl: useRef(),
         displayRef: useRef(),
         isMobile: Platform.isMobile,
         isActiveControlled: config.isActive !== undefined,
