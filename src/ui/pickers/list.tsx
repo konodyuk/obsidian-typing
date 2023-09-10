@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import { Platform } from "obsidian";
 import { createContext, useContext, useRef, useState } from "react";
 import styles from "src/styles/prompt.scss";
-import { Picker } from "../components";
+import { Contexts, Picker } from "../components";
 import { PickerContext } from "../components/picker";
 import { useControls } from "../hooks";
 import { ControlSpec } from "../hooks/controls";
@@ -13,22 +13,40 @@ const REMOVE_CONST = "<|REMOVE|>";
 
 export function List({ SubPicker }: { SubPicker: any }) {
     let pickerCtx = useContext(PickerContext);
+    const refs = useRef();
 
     let controls = useControls({
         parse: (value) => {
             value = value ?? "";
             let values = value.split(",").map((x) => x.trim());
+            if (values.length == 0) return [""];
+            let lastNotEmpty = values.length - 1;
+            while (values[lastNotEmpty]?.length == 0) lastNotEmpty--;
+            if (lastNotEmpty == -1) return [""];
+            values = values.slice(0, lastNotEmpty + 1);
+            values.push("");
 
-            if (values[values.length - 1].length > 0) values.push("");
             return values;
         },
         compose: (values) => {
             let valuesList = [];
+
             for (let i = 0; values[i] != null; i++) {
                 // TODO: refactor, very ugly
                 if (values[i] != REMOVE_CONST) valuesList.push(values[i]);
             }
-            return valuesList.join(", ");
+
+            let lastNotEmpty = valuesList.length - 1;
+            while (valuesList[lastNotEmpty]?.length == 0) lastNotEmpty--;
+            if (lastNotEmpty == -1) values = [""];
+            valuesList = valuesList.slice(0, lastNotEmpty + 1);
+
+            if (valuesList.length == 0) return "";
+            let result = valuesList.join(", ");
+            if (valuesList.length == 1) {
+                result += ",";
+            }
+            return result;
         },
     });
 
@@ -37,7 +55,7 @@ export function List({ SubPicker }: { SubPicker: any }) {
         controlsList.push(controls[i]);
     }
 
-    const refs = controlsList.map(() => useRef());
+    refs.current = controlsList.map(() => useRef());
 
     return (
         <Picker>
@@ -46,9 +64,9 @@ export function List({ SubPicker }: { SubPicker: any }) {
                     {controlsList?.length > 1
                         ? controlsList.slice(0, controlsList.length - 1).map((x, i) => (
                               <ListPickerElement
-                                  ref={refs[i]}
+                                  ref={refs.current[i]}
                                   index={i}
-                                  refs={refs}
+                                  refs={refs.current}
                                   control={controlsList[i]}
                                   fieldName={pickerCtx.state.fieldName}
                               >
@@ -64,10 +82,22 @@ export function List({ SubPicker }: { SubPicker: any }) {
                                 </div>
                             }
                             key={controlsList.length - 1}
+                            displayRef={refs.current[controlsList.length - 1]}
                             value={controlsList[controlsList.length - 1].value}
                             onSetValue={(value) => {}}
                             onSubmitValue={(value) => {
                                 controlsList[controlsList.length - 1].submitValue(value);
+                                const idx = controlsList.length;
+                                let done = false;
+                                for (let timeout of [10, 50, 100, 1000]) {
+                                    setTimeout(() => {
+                                        const nextEl = refs.current[idx];
+                                        if (done) return;
+                                        if (!nextEl.current) return;
+                                        nextEl.current.focus();
+                                        done = true;
+                                    }, timeout);
+                                }
                             }}
                             fieldName={pickerCtx.state.fieldName}
                         >
@@ -82,8 +112,10 @@ export function List({ SubPicker }: { SubPicker: any }) {
 
 function ListPickerElement({ index, ref, refs, children, control, fieldName }) {
     const [isActive, setIsActive] = useState(false);
+    const promptCtx = useContext(Contexts.PromptContext);
 
     const el = () => refs[index].current.base;
+
     return (
         <button
             ref={ref}
@@ -104,20 +136,27 @@ function ListPickerElement({ index, ref, refs, children, control, fieldName }) {
             }}
             onBlur={(e) => {
                 if (Platform.isMobile) return;
-                if (!el().contains(e.relatedTarget)) {
-                    setIsActive(false);
+                for (let container of [el(), promptCtx.state?.dropdownRef?.current?.base]) {
+                    for (let element of [e?.relatedTarget, document.activeElement]) {
+                        if (container?.contains?.(element)) {
+                            return;
+                        }
+                    }
                 }
+                setIsActive(false);
             }}
             onKeyDown={(e) => {
-                if (e.key == "Enter") {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsActive(true);
-                }
                 if (e.key == "Escape") {
                     e.preventDefault();
                     e.stopPropagation();
                     setIsActive(false);
+                    refs[index].current.base.focus();
+                }
+                if (e.target != el()) return;
+                if (e.key == "Enter") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsActive(true);
                 }
                 if (e.key == "Delete") {
                     e.preventDefault();
