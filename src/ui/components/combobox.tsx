@@ -54,14 +54,21 @@ export const Combobox = ({
                   .map((x) => x.option)
             : options;
 
-        let indexOfValue = filtered.findIndex((x) => x.value == value);
-        if (indexOfValue != -1) {
-            let valueEl = filtered.splice(indexOfValue, 1);
-            filtered.splice(0, 0, ...valueEl);
-        }
+        filtered = reorderValueToTop(filtered);
         return filtered;
     };
-    let allFilteredOptions = query.length ? filterHook() : options;
+    const reorderValueToTop = (options) => {
+        let indexOfValue = getIndexOfValue(options);
+        if (indexOfValue != -1) {
+            let valueEl = options.splice(indexOfValue, 1);
+            options.splice(0, 0, ...valueEl);
+        }
+        return options;
+    };
+    const getIndexOfValue = (options) => {
+        return options.findIndex((x) => x.value == (value ?? control?.value));
+    };
+    let allFilteredOptions = query.length ? filterHook() : reorderValueToTop(options);
     let filteredOptions = allFilteredOptions.slice(offset, offset + numOptions);
     // let filteredOptions =
     //     numOptions < allFilteredOptions.length ? allFilteredOptions.slice(0, numOptions) : allFilteredOptions;
@@ -203,7 +210,7 @@ export const Combobox = ({
                             <div tabIndex={-1} className={"suggestion-content"}>
                                 {opt.display ? opt.display(opt.value) : opt.label || opt.value}
                             </div>
-                            {value === opt.value && (
+                            {(value ?? control?.value) === opt.value && (
                                 <div tabIndex={-1} className="suggestion-aux">
                                     <Check />
                                 </div>
