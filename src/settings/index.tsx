@@ -44,8 +44,7 @@ class TypingSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        containerEl.createEl("h1").innerText = "Paths";
-
+        containerEl.createEl("h2").innerText = "Paths";
         ReactDOM.render(
             <FileSuggestionCombobox
                 paths={getAllDirs}
@@ -55,8 +54,7 @@ class TypingSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }}
             />,
-            new Setting(containerEl).setName("OTL Imports Path").setDesc("Which directory to scan for OTL files")
-                .controlEl
+            new Setting(containerEl).setName("OTL Imports Path").setDesc("Directory containing all OTL files").controlEl
         );
         ReactDOM.render(
             <FileSuggestionCombobox
@@ -67,9 +65,8 @@ class TypingSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }}
             />,
-            new Setting(containerEl)
-                .setName("JS Imports Path")
-                .setDesc("Which directory to scan for JS/TS/JSX/TSX files").controlEl
+            new Setting(containerEl).setName("JS Imports Path").setDesc("Directory containing all JS/TS/JSX/TSX files")
+                .controlEl
         );
         ReactDOM.render(
             <FileSuggestionCombobox
@@ -80,19 +77,19 @@ class TypingSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }}
             />,
-            new Setting(containerEl).setName("Schema Path").setDesc("OTL entrypoint file").controlEl
+            new Setting(containerEl).setName("Schema Path").setDesc("Main OTL file containing all types for this vault")
+                .controlEl
         );
 
-        containerEl.createEl("h1").innerText = "Style";
-        containerEl.createEl("h2").innerText = "Headers & Footers";
-        new Setting(containerEl).setName("Preview Mode").addToggle((toggle) => {
+        containerEl.createEl("h2").innerText = "Style";
+        new Setting(containerEl).setName("Headers & Footers: Preview Mode").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.marginalsInPreview);
             toggle.onChange(async (value: boolean) => {
                 this.plugin.settings.marginalsInPreview = value;
                 await this.plugin.saveSettings();
             });
         });
-        new Setting(containerEl).setName("Live Preview Mode").addToggle((toggle) => {
+        new Setting(containerEl).setName("Headers & Footers: Live Preview Mode").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.marginalsInLivePreview);
             toggle.setDisabled(true);
             toggle.onChange(async (value: boolean) => {
@@ -100,15 +97,14 @@ class TypingSettingTab extends PluginSettingTab {
                 await this.plugin.saveSettings();
             });
         });
-        containerEl.createEl("h2").innerText = "React Links";
-        new Setting(containerEl).setName("Preview Mode").addToggle((toggle) => {
+        new Setting(containerEl).setName("React Links: Preview Mode").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.linksInPreview);
             toggle.onChange(async (value: boolean) => {
                 this.plugin.settings.linksInPreview = value;
                 await this.plugin.saveSettings();
             });
         });
-        new Setting(containerEl).setName("Live Preview Mode").addToggle((toggle) => {
+        new Setting(containerEl).setName("React Links: Live Preview Mode").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.linksInLivePreview);
             toggle.onChange(async (value: boolean) => {
                 this.plugin.settings.linksInLivePreview = value;
@@ -116,7 +112,7 @@ class TypingSettingTab extends PluginSettingTab {
             });
         });
 
-        containerEl.createEl("h1").innerText = "Icon Fonts";
+        containerEl.createEl("h2").innerText = "Icon Fonts";
         new Setting(containerEl).setName("Enable FontAwesome Free").addToggle((toggle) => {
             toggle.setDisabled(true);
         });
