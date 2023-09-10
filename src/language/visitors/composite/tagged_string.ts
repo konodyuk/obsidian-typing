@@ -52,7 +52,10 @@ export const FnScriptString = (content = "\n\t${}\n", tags = ["fn", "function"])
             code: Visitors.String,
         },
         run(node) {
-            return FnScript.new({ source: dedent(this.runChild("code")) });
+            return FnScript.new({
+                source: dedent(this.runChild("code")),
+                filePath: this.globalContext?.callContext?.interpreter?.activeModule?.file?.path,
+            });
         },
         lint(node) {
             let result = FnScript.validate(this.runChild("code"));
@@ -79,7 +82,10 @@ export const ExprScriptString = (content = "\n\t${}\n", tags = ["expr", "express
             code: Visitors.String,
         },
         run(node) {
-            return ExprScript.new({ source: dedent(this.runChild("code")) });
+            return ExprScript.new({
+                source: dedent(this.runChild("code")),
+                filePath: this.globalContext?.callContext?.interpreter?.activeModule?.file?.path,
+            });
         },
         lint(node) {
             let result = ExprScript.validate(this.runChild("code"));

@@ -33,15 +33,17 @@ export abstract class ModuleManagerSync<ContextType = any> {
         this.dependencyGraph = new DependencyGraph();
     }
 
-    public importSmart(path: string) {
-        let base = this.currentFrame?.module?.file.path;
+    public importSmart(path: string, base?: string) {
+        base = base ?? this.currentFrame?.module?.file.path;
         if (base) {
             base = dirname(base);
         } else {
             base = "";
         }
-        let newPath = normalize(join(base, path));
-        path = newPath;
+        if (path.startsWith(".")) {
+            let newPath = normalize(join(base, path));
+            path = newPath;
+        }
         if (!this.extensions.some((ext) => path.endsWith("." + ext))) {
             for (let ext of this.extensions) {
                 let result = this.importModule(path + "." + ext);

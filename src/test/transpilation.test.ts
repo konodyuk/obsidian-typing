@@ -6,7 +6,9 @@ function trimWhiteSpace(s: string) {
 }
 
 function testTranspilation(from: string, to: string) {
-    let result = transpile(from, { plugins: [customImportExportTransform] });
+    let result = transpile(from, {
+        plugins: [customImportExportTransform({ ctxObject: "api", importFunction: "_import_explicit" })],
+    });
     if (result.errors) {
         throw result.errors[0];
     }

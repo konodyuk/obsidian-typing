@@ -79,3 +79,12 @@ test("methods", async () => {
     expect(note.methods.inc).toBeTruthy();
     expect(note.methods.inc(100)).toEqual(101);
 });
+
+test("import from relative", async () => {
+    expect(gctx.graph).toBeDefined();
+    let note = gctx.api.note("folder/file.md");
+    expect(note).toBeTruthy();
+    expect(note.methods).toBeTruthy();
+    expect(note.methods.one).toBeTruthy();
+    expect(note.methods.one()).toEqual(1);
+});

@@ -1,3 +1,8 @@
+interface TranspilationOptions {
+    ctxObject: string;
+    importFunction: string;
+}
+
 function buildImportArgs(path) {
     if (path.node.type === "ExportAllDeclaration") {
         return [
@@ -29,13 +34,13 @@ function buildImportArgs(path) {
     ];
 }
 
-function buildDeclarations(path, importArgs, isExport, exportAllAs) {
+function buildDeclarations(path, importArgs, isExport, exportAllAs, options: TranspilationOptions) {
     const importCall = {
         type: "CallExpression",
         callee: {
             type: "MemberExpression",
-            object: { type: "Identifier", name: "api" },
-            property: { type: "Identifier", name: "_import_explicit" },
+            object: { type: "Identifier", name: options.ctxObject },
+            property: { type: "Identifier", name: options.importFunction },
         },
         arguments: importArgs,
     };
@@ -103,26 +108,28 @@ function buildDeclarations(path, importArgs, isExport, exportAllAs) {
         : declarations;
 }
 
-export const customImportExportTransform = {
-    visitor: {
-        ImportDeclaration(path) {
-            transformImportDeclaration(path, false);
+export const customImportExportTransform = (options: TranspilationOptions) => {
+    return {
+        visitor: {
+            ImportDeclaration(path) {
+                transformImportDeclaration(path, false, undefined, options);
+            },
+            ExportNamedDeclaration(path) {
+                // Check if it's an "export {...} from 'source'" form
+                if (path.node.source) {
+                    transformImportDeclaration(path, true, undefined, options);
+                }
+                // If it's not, no need to transform it, it's a simple export
+            },
+            ExportAllDeclaration(path) {
+                transformImportDeclaration(path, true, path.node.exported.name, options);
+            },
         },
-        ExportNamedDeclaration(path) {
-            // Check if it's an "export {...} from 'source'" form
-            if (path.node.source) {
-                transformImportDeclaration(path, true);
-            }
-            // If it's not, no need to transform it, it's a simple export
-        },
-        ExportAllDeclaration(path) {
-            transformImportDeclaration(path, true, path.node.exported.name);
-        },
-    },
+    };
 };
 
-function transformImportDeclaration(path, isExport, exportAllAs) {
+function transformImportDeclaration(path, isExport, exportAllAs, options: TranspilationOptions) {
     const importArgs = buildImportArgs(path);
-    const declarations = buildDeclarations(path, importArgs, isExport, exportAllAs);
+    const declarations = buildDeclarations(path, importArgs, isExport, exportAllAs, options);
     path.replaceWith(declarations);
 }

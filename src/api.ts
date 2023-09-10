@@ -45,11 +45,11 @@ export class TypingAPI {
         return mod.env;
     }
 
-    _import_explicit(path: string, symbols: any[]): Record<string, any> {
+    _import_explicit(path: string, symbols: any[], base?: string): Record<string, any> {
         if (path in this.lib) {
             return this.lib[path as keyof typeof this.lib];
         }
-        let mod = gctx.importManager.importSmart(path);
+        let mod = gctx.importManager.importSmart(path, base);
         if (mod == null) {
             throw new Error(`ImportError: Could not find module ${path}`);
         }

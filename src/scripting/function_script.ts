@@ -6,6 +6,7 @@ import { compileFunctionWithContext } from "./transpilation";
 
 interface IScriptContextBase {
     note?: Note;
+    _import_explicit?: typeof gctx.api._import_explicit;
 }
 
 export class Script<T extends IScriptContextBase = IScriptContextBase> extends DataClass {
@@ -13,6 +14,9 @@ export class Script<T extends IScriptContextBase = IScriptContextBase> extends D
     source: string;
 
     fn: Function;
+
+    @field()
+    filePath: string = null;
 
     onAfterCreate() {
         this.source = this.transformSource(this.source);
@@ -29,6 +33,8 @@ export class Script<T extends IScriptContextBase = IScriptContextBase> extends D
     }
 
     call(ctx: T) {
+        ctx._import_explicit = (path: string, symbols: string[]) =>
+            gctx.api._import_explicit(path, symbols, this.filePath);
         return this.fn(ctx, ctx.note);
     }
 
