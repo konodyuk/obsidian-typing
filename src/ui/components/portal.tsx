@@ -1,3 +1,4 @@
+import { RefObject } from "preact";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 
@@ -13,9 +14,9 @@ export const Portal = {
 
         return <PortalContext.Provider value={{ node, setNode }}>{children}</PortalContext.Provider>;
     },
-    Receiver: () => {
+    Receiver: ({ ref }: { ref: RefObject<HTMLDivElement> }) => {
         const { node, setNode } = useContext(PortalContext);
-        const ref = useRef<HTMLElement | null>(null);
+        ref = ref ?? useRef<HTMLElement | null>(null);
 
         useEffect(() => {
             if (ref.current && !node) {
