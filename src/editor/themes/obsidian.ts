@@ -21,6 +21,7 @@ const obsidianEditorTheme = (overrides: StyleSpec, isDark: boolean = false) =>
         {
             "&": {
                 backgroundColor: "var(--background-primary)",
+                height: "100%",
             },
             ".cm-scroller": {
                 fontFamily: "var(--font-monospace)",
@@ -40,6 +41,9 @@ const obsidianEditorTheme = (overrides: StyleSpec, isDark: boolean = false) =>
                 backgroundColor: "var(--background-secondary)",
                 color: "var(--text-muted)",
                 border: "unset",
+            },
+            ".cm-lineNumbers": {
+                minWidth: "var(--size-4-8)",
             },
             ".cm-content": {
                 caretColor: "var(--caret-color)",
