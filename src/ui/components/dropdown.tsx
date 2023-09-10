@@ -1,8 +1,10 @@
 import { ComponentChildren } from "preact";
 import { createContext, RefObject, useContext, useEffect, useRef, useState } from "react";
+import { usePopper } from "react-popper";
 import styles from "src/styles/prompt.scss";
 import { Contexts } from ".";
 import { Portal } from "../components/portal";
+import { useBlurCallbacks } from "../hooks";
 
 type ChildrenProps = { children?: ComponentChildren };
 
@@ -10,6 +12,11 @@ export interface DropdownContextType {
     isActive: boolean;
     setIsActive: (value: boolean) => void;
     panelRef: RefObject<HTMLDivElement>;
+    targetRef: RefObject<HTMLDivElement>;
+    panel: HTMLDivElement;
+    target: HTMLDivElement;
+    setPanel: any;
+    setTarget: any;
     isControlled: boolean;
 }
 
@@ -18,10 +25,18 @@ export const DropdownContext = createContext<DropdownContextType | null>(null);
 const Dropdown = ({
     children,
     active = undefined,
-    ref,
-}: ChildrenProps & { active?: boolean; ref?: RefObject<HTMLDivElement> }) => {
+    targetRef,
+    panelRef,
+}: ChildrenProps & {
+    active?: boolean;
+    targetRef?: RefObject<HTMLDivElement>;
+    panelRef?: RefObject<HTMLDivElement>;
+}) => {
     let [isActive, setIsActive] = useState(active ?? false);
-    let panelRef = useRef();
+    let [panel, setPanel] = useState();
+    let [target, setTarget] = useState();
+    panelRef = panelRef ?? useRef();
+    targetRef = targetRef ?? useRef();
 
     useEffect(() => {
         if (active !== undefined) {
@@ -30,8 +45,26 @@ const Dropdown = ({
     }, [active]);
 
     return (
-        <DropdownContext.Provider value={{ isActive, setIsActive, panelRef, isControlled: active !== undefined }}>
-            <div ref={ref} class={styles.pickerDropdown}>
+        <DropdownContext.Provider
+            value={{
+                isActive,
+                setIsActive,
+                panelRef,
+                targetRef,
+                panel,
+                setPanel,
+                target,
+                setTarget,
+                isControlled: active !== undefined,
+            }}
+        >
+            <div
+                ref={(node) => {
+                    targetRef.current = node;
+                    setTarget(node);
+                }}
+                class={styles.pickerDropdown}
+            >
                 {children}
             </div>
         </DropdownContext.Provider>
@@ -41,42 +74,45 @@ const Dropdown = ({
 Dropdown.Panel = (props: ChildrenProps & { static?: boolean }) => {
     const dropdownCtx = useContext(DropdownContext);
     const pickerCtx = useContext(Contexts.PickerContext);
-    if (!(pickerCtx?.state.isMobile && props.static) && (!dropdownCtx || !dropdownCtx.isActive)) return null;
+    const { onDropdownBlur, onPickerBlur } = useBlurCallbacks();
+    const isMobile = pickerCtx?.state.isMobile;
+    if (!(isMobile && props.static) && (!dropdownCtx || !dropdownCtx.isActive)) return null;
 
-    let el = (
-        <div
-            class={pickerCtx?.state.isMobile ? "" : styles.pickerDropdownPanel}
-            ref={dropdownCtx.panelRef}
-            onBlur={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setTimeout(() => {
-                    if (dropdownCtx.isControlled) {
-                        return;
-                    }
-                    if (dropdownCtx.panelRef?.current?.contains?.(document.activeElement)) {
-                        return;
-                    }
-                    if (dropdownCtx.panelRef?.current?.contains?.(e?.relatedTarget)) {
-                        return;
-                    }
-                    dropdownCtx.setIsActive(false);
-                }, 100);
-            }}
-            onKeyDown={(e) => {
-                // e.preventDefault();
-                // e.stopPropagation();
-            }}
-        >
-            {props.children}
-        </div>
-    );
-
-    if (pickerCtx?.state.isMobile) {
-        return <Portal.Sender>{el}</Portal.Sender>;
+    let el;
+    if (!isMobile) {
+        const { styles: position, attributes } = usePopper(dropdownCtx.target, dropdownCtx.panel, {
+            placement: "bottom-start",
+            // modifiers: [
+            //     {
+            //         name: "flip",
+            //         enabled: false,
+            //     },
+            // ],
+        });
+        el = (
+            <div
+                class={styles.pickerDropdownPanel}
+                ref={(node) => {
+                    dropdownCtx.panelRef.current = node;
+                    dropdownCtx.setPanel(node);
+                }}
+                style={position.popper}
+                onBlur={(e) => {
+                    dropdownCtx.target.focus();
+                    onPickerBlur(e);
+                    setTimeout(() => {
+                        onDropdownBlur(e);
+                    }, 100);
+                }}
+            >
+                {props.children}
+            </div>
+        );
+    } else {
+        el = <div>{props.children}</div>;
     }
 
-    return el;
+    return <Portal.Sender>{el}</Portal.Sender>;
 };
 
 export { Dropdown };
