@@ -178,10 +178,11 @@ function PromptRoot({
     );
 }
 
-const Confirmation = ({ text = "Are you sure you want to close this prompt?" }) => {
+const Confirmation = ({ text = "The note hasn't been created yet and your progress will be discarded." }) => {
     const { resolve, close } = useContext(Contexts.ModalContext);
     return (
         <>
+            <div className="modal-title">Are you sure?</div>
             <div className="modal-content">{text}</div>
             <div className={styles.confirmationButtons}>
                 <button
@@ -190,7 +191,7 @@ const Confirmation = ({ text = "Are you sure you want to close this prompt?" }) 
                         resolve(false);
                     }}
                 >
-                    No
+                    Cancel
                 </button>
                 <button
                     className={styles.confirmationButton}
@@ -198,7 +199,7 @@ const Confirmation = ({ text = "Are you sure you want to close this prompt?" }) 
                         resolve(true);
                     }}
                 >
-                    Yes
+                    Discard & Close
                 </button>
             </div>
         </>
@@ -347,7 +348,7 @@ export async function prompt(ui: JSX.Element, options?: { confirmation?: boolean
             ? async () =>
                   await modal(
                       <Confirmation text={options.confirmationText} />,
-                      classNames("modal", styles.confirmation)
+                      classNames("modal", styles.prompt, styles.confirmation)
                   )
             : null
     );
