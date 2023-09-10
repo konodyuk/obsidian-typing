@@ -47,7 +47,7 @@ export function useBlurCallbacks() {
 
     const onDropdownBlur = useCallback(
         (e) => {
-            if (pickerCtx.state.isMobile) return;
+            if (pickerCtx?.state?.isMobile) return;
             if (!dropdownCtx) return;
 
             if (dropdownCtx.panel?.contains?.(document.activeElement)) {

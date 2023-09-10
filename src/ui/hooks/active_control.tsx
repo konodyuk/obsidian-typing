@@ -5,7 +5,9 @@ export function useActiveControl() {
     const pickerCtx = useContext(Contexts.PickerContext);
 
     const onBeforeFocus = (e) => {
-        pickerCtx.state.focusedControl.current = e.target;
+        if (pickerCtx?.state?.focusedControl) {
+            pickerCtx.state.focusedControl.current = e.target;
+        }
     };
 
     return { onBeforeFocus };

@@ -32,9 +32,9 @@ export const Portal = {
         return <div ref={ref}></div>;
     },
     Sender: React.memo(({ children }: { children: React.ReactNode }) => {
-        const { node } = useContext(PortalContext);
+        const portalContext = useContext(PortalContext);
 
-        if (!node) return null;
+        if (!portalContext?.node) return children;
 
         return ReactDOM.createPortal(children, node);
     }),
