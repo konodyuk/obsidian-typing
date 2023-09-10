@@ -36,6 +36,6 @@ export const Portal = {
 
         if (!portalContext?.node) return children;
 
-        return ReactDOM.createPortal(children, node);
+        return ReactDOM.createPortal(children, portalContext.node);
     }),
 };
