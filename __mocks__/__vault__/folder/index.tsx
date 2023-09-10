@@ -1,0 +1,1 @@
+export { one } from "./file";

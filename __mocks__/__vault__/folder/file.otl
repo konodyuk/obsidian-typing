@@ -1,4 +1,11 @@
 type F {
     folder = "folder"
     icon = "test"
+
+    methods {
+        one = expr"""()=>{
+            import { one } from "."
+            return one()
+        }"""
+    }
 }
