@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { CornerDownLeft } from "lucide-react";
+import { ArrowRightCircle } from "lucide-react";
 import { Platform } from "obsidian";
 import { ComponentChildren } from "preact";
 import React, { createContext, useContext, useEffect, useReducer, useRef } from "react";
@@ -96,7 +96,7 @@ Picker.SubmitButton = (props: { controls: ControlsResult<any> }) => {
             }}
             className={styles.pickerSubmitButton}
         >
-            <CornerDownLeft />
+            <ArrowRightCircle />
         </button>
     );
 };
