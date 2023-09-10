@@ -151,13 +151,14 @@ const autoSavePlugin = (textView: TextFileView) =>
         }
     );
 
-const panelContainer = document.createElement("div");
+let panelContainer: HTMLElement;
 export function setPanelContent(s: string) {
-    panelContainer.textContent = s;
+    if (panelContainer) panelContainer.textContent = s;
 }
 
 function wordCountPanel(view: EditorView): Panel {
     setPanelContent("default");
+    if (!panelContainer) panelContainer = document.createElement("div");
     return {
         dom: panelContainer,
     };
@@ -202,7 +203,7 @@ class BaseEditorView extends TextFileView {
                 search(),
                 lintGutter(),
                 indentUnit.of("    "),
-                showPanel.of(wordCountPanel),
+                // showPanel.of(statusPanel), // TODO: disabled until it is configured to show useful information
                 keymap.of(
                     defaultKeymap.concat([
                         {
