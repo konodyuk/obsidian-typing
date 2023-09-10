@@ -5,12 +5,14 @@ import TypingPlugin from "src/main";
 import { ImportManager } from "src/scripting";
 import { Note, RelationsManager, TypeGraph } from "src/typing";
 import { TypingAPI } from "./api";
+import { CSSManager } from "./utilities";
 
 export class GlobalContext {
     app: App;
     plugin: TypingPlugin;
     importManager: ImportManager;
     interpreter: Interpreter;
+    cssManager: CSSManager;
     testing: boolean = false;
 
     // TODO: rename to `types` to resolve ambiguity with relations?
@@ -47,6 +49,9 @@ export class GlobalContext {
         gctx.graph = new TypeGraph();
         gctx.relations = new RelationsManager();
         gctx.interpreter = new Interpreter(plugin.app.vault, plugin);
+
+        if (gctx.testing) return;
+        gctx.cssManager = new CSSManager("global");
     }
 }
 

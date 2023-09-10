@@ -138,7 +138,30 @@ class TypingSettingTab extends PluginSettingTab {
 
         containerEl.createEl("h2").innerText = "Icon Fonts";
         new Setting(containerEl).setName("Enable FontAwesome Free").addToggle((toggle) => {
-            toggle.setDisabled(true);
+            toggle.setValue(this.plugin.settings.enabledFonts.includes("fontawesome"));
+            toggle.onChange(async (value: boolean) => {
+                if (value) {
+                    this.plugin.settings.enabledFonts.push("fontawesome");
+                } else {
+                    this.plugin.settings.enabledFonts.remove("fontawesome");
+                }
+                this.plugin.settings.enabledFonts = this.plugin.settings.enabledFonts.unique();
+                await this.plugin.saveSettings();
+                await gctx.cssManager.reloadFonts();
+            });
+        });
+        new Setting(containerEl).setName("Enable Lucide").addToggle((toggle) => {
+            toggle.setValue(this.plugin.settings.enabledFonts.includes("lucide"));
+            toggle.onChange(async (value: boolean) => {
+                if (value) {
+                    this.plugin.settings.enabledFonts.push("lucide");
+                } else {
+                    this.plugin.settings.enabledFonts.remove("lucide");
+                }
+                this.plugin.settings.enabledFonts = this.plugin.settings.enabledFonts.unique();
+                await this.plugin.saveSettings();
+                await gctx.cssManager.reloadFonts();
+            });
         });
     }
 }
