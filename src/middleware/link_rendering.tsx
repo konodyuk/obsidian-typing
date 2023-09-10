@@ -65,6 +65,10 @@ function linkPostProcessor(plugin: TypingPlugin): MarkdownPostProcessor {
                 return;
             }
 
+            if (linkEl.classList.contains("no-postprocessing")) {
+                return;
+            }
+
             let linkText = linkEl.getAttr("href");
             let linkPath = getLinkpath(linkText);
 
