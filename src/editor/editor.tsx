@@ -15,16 +15,7 @@ import {
 import { lintGutter } from "@codemirror/lint";
 import { search, searchKeymap } from "@codemirror/search";
 import { EditorState, Extension } from "@codemirror/state";
-import {
-    EditorView,
-    keymap,
-    Panel,
-    scrollPastEnd,
-    showPanel,
-    tooltips,
-    ViewPlugin,
-    ViewUpdate,
-} from "@codemirror/view";
+import { EditorView, keymap, Panel, tooltips, ViewPlugin, ViewUpdate } from "@codemirror/view";
 import { Input, parseMixed, Parser, SyntaxNodeRef } from "@lezer/common";
 import { styleTags, tags as t } from "@lezer/highlight";
 import { basicSetup } from "codemirror";
@@ -216,7 +207,7 @@ class BaseEditorView extends TextFileView {
                     ])
                 ),
                 autoSavePlugin(this),
-                scrollPastEnd(),
+                // scrollPastEnd(), // TODO: disabled as it messes measure loop
                 autocompletion(),
                 ...this.extensions,
             ],
