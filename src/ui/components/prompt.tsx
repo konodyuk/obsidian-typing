@@ -1,8 +1,8 @@
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import CodeMirror from "@uiw/react-codemirror";
 import classNames from "classnames";
-import { ComponentChildren } from "preact";
-import React, { createContext, useContext, useEffect, useReducer } from "react";
+import { ComponentChildren, RefObject } from "preact";
+import React, { createContext, useContext, useEffect, useReducer, useRef } from "react";
 import { gctx } from "src/context";
 import { obsidianMarkdownTheme } from "src/editor/themes/obsidian";
 import styles from "src/styles/prompt.scss";
@@ -30,6 +30,8 @@ export type ErrorSpec =
 export interface PromptState extends NoteState {
     uploads?: UploadSpec[];
     errors?: ErrorSpec[];
+    dropdownRef?: RefObject<HTMLDivElement>;
+    scrollerRef?: RefObject<HTMLDivElement>;
 }
 
 const initialState: PromptState = {
@@ -102,7 +104,11 @@ function PromptRoot({
     callback?: (state: PromptState) => Promise<void>;
     returnOnExit?: boolean;
 }) {
-    const [state, dispatch] = useReducer(promptReducer, noteState);
+    const [state, dispatch] = useReducer(promptReducer, {
+        ...noteState,
+        dropdownRef: useRef(),
+        scrollerRef: useRef(),
+    });
     const contextValue: PromptContextType = { state, dispatch };
     const { resolve, setOnClose, onBeforeClose } = useContext(Contexts.ModalContext);
 
@@ -152,7 +158,7 @@ function PromptRoot({
     return (
         <PromptContext.Provider value={contextValue}>
             <Portal.Scope>
-                <div class={styles.promptScroller}>
+                <div class={styles.promptScroller} ref={state.scrollerRef} tabIndex={-1}>
                     {children}
                     <button
                         className={styles.promptSubmitButton}
@@ -166,7 +172,7 @@ function PromptRoot({
                         {submitText ?? "Create new note"}
                     </button>
                 </div>
-                <Portal.Receiver />
+                <Portal.Receiver ref={state.dropdownRef} />
             </Portal.Scope>
         </PromptContext.Provider>
     );
