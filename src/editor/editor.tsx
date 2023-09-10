@@ -149,7 +149,7 @@ export function setPanelContent(s: string) {
     if (panelContainer) panelContainer.textContent = s;
 }
 
-function wordCountPanel(view: EditorView): Panel {
+function statusPanel(view: EditorView): Panel {
     setPanelContent("default");
     if (!panelContainer) panelContainer = document.createElement("div");
     return {
