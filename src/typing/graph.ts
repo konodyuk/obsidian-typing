@@ -8,12 +8,15 @@ export class TypeGraph {
         if (left instanceof Note) {
             left = left.type;
         }
-        if (!(left instanceof Type)) {
-            left = this.types[left];
+        if (typeof left == "string") {
+            left = this.get({ name: left });
         }
-        if (!(right instanceof Type)) {
-            right = this.types[right];
+        if (typeof right == "string") {
+            right = this.get({ name: right });
         }
+        if (!left) return false;
+        if (!right) return false;
+        if (!left.parents) return false;
         if (left.parents.includes(right.name)) {
             return true;
         }
