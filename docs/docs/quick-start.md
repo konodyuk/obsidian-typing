@@ -15,7 +15,7 @@ Don't forget to enable the plugin after installation!
 
 The root schema of your vault, which serves as the primary configuration for the plugin, is stored in the `typing.otl` file located at the vault's root.
 
-1. If the `typing.otl` file is absent, create it using the `Create Root Schema` command.
+1. If the `typing.otl` file is absent, create it using the `Typing: Create root schema` command.
 2. Open the file to access the OTL code editor where you can begin configuring the plugin.
 
 ## 2. Type Declaration: `Movie`

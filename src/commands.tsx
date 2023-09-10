@@ -46,6 +46,37 @@ const COMMANDS = [
             new ActionSuggestModal(gctx.app, note).open();
         },
     },
+
+    {
+        id: "typing-create-otl-file",
+        name: "Create new .OTL file",
+        callback: async () => {
+            let freeName;
+            let extension = "otl";
+            let suffix = "";
+            let serial = 0;
+            do {
+                if (serial > 0) suffix = ` ${serial}`;
+                freeName = `Untitled${suffix}.${extension}`;
+                serial += 1;
+            } while (gctx.app.vault.getAbstractFileByPath(freeName) != null);
+
+            let tfile = await gctx.app.vault.create(freeName, "");
+            gctx.app.workspace.getLeaf(false).openFile(tfile);
+        },
+    },
+
+    {
+        id: "typing-create-root-schema",
+        name: "Create root schema",
+        callback: async () => {
+            let schemaPath = gctx.settings.schemaPath;
+            if (gctx.app.vault.getAbstractFileByPath(schemaPath) == null) {
+                let tfile = await gctx.app.vault.create(schemaPath, "");
+                gctx.app.workspace.getLeaf(false).openFile(tfile);
+            }
+        },
+    },
 ];
 
 export function registerCommands(plugin: TypingPlugin) {
