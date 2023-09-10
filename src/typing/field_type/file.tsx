@@ -41,11 +41,11 @@ export class File extends FieldType<File> {
     autorename: Script = null;
 
     Display: FieldType["Display"] = ({ value }) => {
-        let { name, extension } = parseLinkExtended(value);
+        let { name, extension, display } = parseLinkExtended(value);
 
         return (
             <span>
-                {name}
+                {display || name}
                 {extension && <kbd>{extension}</kbd>}
             </span>
         );
@@ -78,6 +78,7 @@ export class File extends FieldType<File> {
                 subpath={this.subpath}
                 display={this.display}
                 short={this.short}
+                search={this.search}
             />
         );
     };
@@ -96,7 +97,7 @@ export class File extends FieldType<File> {
                 folder: Visitors.Literal(Visitors.String),
                 autorename: Visitors.Literal(Visitors.ExprScriptString("(file)=>{return ${file.name}}")),
                 upload: Visitors.Literal(Visitors.Boolean),
-                // search: Visitors.Literal(Visitors.Boolean),
+                search: Visitors.Literal(Visitors.Boolean),
                 subpath: Visitors.Literal(Visitors.Boolean),
                 display: Visitors.Literal(Visitors.Boolean),
                 // rename: Visitors.Literal(Visitors.Boolean),
