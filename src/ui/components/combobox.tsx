@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { Platform, prepareFuzzySearch } from "obsidian";
 import { useRef, useState } from "react";
 import styles from "src/styles/prompt.scss";
@@ -205,7 +205,7 @@ export const Combobox = ({
                             </div>
                             {value === opt.value && (
                                 <div tabIndex={-1} className="suggestion-aux">
-                                    <kbd tabIndex={-1} className="far fa-check" />
+                                    <Check />
                                 </div>
                             )}
                         </div>
