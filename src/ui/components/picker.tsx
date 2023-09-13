@@ -100,7 +100,9 @@ Picker.SubmitButton = (props: { controls: ControlsResult<any> }) => {
                     inputTarget?.focus?.();
                 } catch {}
                 try {
-                    inputTarget?.dispatchEvent?.(new KeyboardEvent("keydown", { key: "Enter", metaKey: true }));
+                    inputTarget?.dispatchEvent?.(
+                        new KeyboardEvent("keydown", { key: "Enter", metaKey: true, ctrlKey: true })
+                    );
                 } catch {}
                 setTimeout(() => {
                     props?.controls?.submitCurrentValue();

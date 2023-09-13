@@ -67,7 +67,7 @@ export const Input = React.memo(
                     onKeyDown={(e) => {
                         if (props.onBeforeKeyDown?.(e)) return;
                         if (e.key == "Enter") {
-                            if (e.metaKey) {
+                            if (e.metaKey || e.ctrlKey) {
                                 onSubmitValueHandler?.(e.target.value, e);
                             } else {
                                 onSetValueHandler?.(e.target.value, e);

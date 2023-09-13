@@ -46,7 +46,7 @@ export class LinkWidget extends WidgetType {
         container.onclick = (e) => {
             let instance = gctx.app.workspace.getActiveViewOfType(View);
             let sourcePath = (instance.info ?? instance).getFile?.()?.path || "";
-            let newLeaf = e.metaKey;
+            let newLeaf = e.metaKey || e.ctrlKey;
             gctx.app.workspace.openLinkText(this.linkText, sourcePath, newLeaf);
         };
 

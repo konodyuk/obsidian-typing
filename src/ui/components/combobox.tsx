@@ -163,7 +163,7 @@ export const Combobox = ({
                                     else return;
                                 }
                                 setQuery(newValue);
-                                if (e.metaKey) {
+                                if (e.metaKey || e.ctrlKey) {
                                     onSubmitValueHandler(newValue);
                                 } else {
                                     onSetValueHandler(newValue);
@@ -211,7 +211,7 @@ export const Combobox = ({
                                 e.stopPropagation();
                                 setQuery(opt.value);
                                 setActiveIndex(0);
-                                if (e.metaKey) {
+                                if (e.metaKey || e.ctrlKey) {
                                     onSubmitValueHandler(opt.value);
                                 } else {
                                     onSetValueHandler(opt.value);
@@ -238,7 +238,7 @@ export const Combobox = ({
                             onClick={(e) => {
                                 setQuery(query);
                                 setActiveIndex(0);
-                                if (e.metaKey) {
+                                if (e.metaKey || e.ctrlKey) {
                                     onSubmitValueHandler(query);
                                 } else {
                                     onSetValueHandler(query);
