@@ -11,6 +11,19 @@ By the end, you'll have established a basic movie management subsystem.
 Don't forget to enable the plugin after installation!
 :::
 
+Alongside this guide, we invite you to watch a live experience of setting up and using the plugin. The video below provides a step-by-step walkthrough, showcasing the real-time UI and workflows in action, complementing the instructions in this guide:
+
+import LiteYouTubeEmbed from 'react-lite-youtube-embed';
+
+<div className="video-container">
+  <LiteYouTubeEmbed
+    id="_A-DAQIDqTQ"
+    params="autoplay=1&autohide=1&showinfo=0&rel=0"
+    poster="maxresdefault"
+    webp
+  />
+</div>
+
 ## 1. Configuration File
 
 The root schema of your vault, which serves as the primary configuration for the plugin, is stored in the `typing.otl` file located at the vault's root.

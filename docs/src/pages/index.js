@@ -5,6 +5,7 @@ import CodeBlock from "@theme/CodeBlock";
 import Heading from "@theme/Heading";
 import Layout from "@theme/Layout";
 import clsx from "clsx";
+import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 import { dedent } from "../utils/dedent";
 import styles from "./index.module.css";
 

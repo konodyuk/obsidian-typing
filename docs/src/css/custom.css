@@ -48,3 +48,11 @@
     overflow: hidden;
     max-height: 500px;
 }
+
+.video-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 560px;
+    margin: 20px auto;
+}
