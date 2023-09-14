@@ -56,7 +56,7 @@ Customize the `Movie` type with a recognizable icon and prefix:
 type Movie {
     folder = "typed/movies"
     // highlight-next-line
-    icon = "far fa-film"
+    icon = "fas fa-film"
     // highlight-next-line
     prefix = "MOV"
 }
