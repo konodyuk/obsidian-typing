@@ -68,14 +68,14 @@ export class ReactModal<T = any> extends Modal {
         );
     }
 
-    close = () => {
+    close() {
         (async () => {
             if (!this.onBeforeClose || (await this.onBeforeClose())) {
                 this.onCloseHandler?.();
                 this.promiseCallbacks.resolve(null);
             }
         })();
-    };
+    }
 }
 
 export function modal<T = any>(
