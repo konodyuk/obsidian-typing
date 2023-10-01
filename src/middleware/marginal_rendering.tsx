@@ -125,7 +125,9 @@ class MarginalRenderChild extends MarkdownRenderChild {
                 print: this.print,
                 reload: () => this.requestUpdate(),
                 on: (event, handler) => {
-                    this.deferredEvents.push(gctx.plugin.app.metadataCache.on(event, handler));
+                    let eventRef = gctx.plugin.app.metadataCache.on(event, handler);
+                    this.deferredEvents.push(eventRef);
+                    this.registerEvent(eventRef);
                 },
                 register: (cb: () => void) => {
                     this.deferredCallbacks.push(cb);
