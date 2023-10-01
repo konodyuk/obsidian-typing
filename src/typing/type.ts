@@ -90,7 +90,13 @@ export class Type extends DataClass {
         if (gctx.dv != null) {
             paths = gctx.dv.pagePaths(`"${this.folder}"`);
         } else {
-            let folder = gctx.app.vault.getAbstractFileByPath(this.folder) as TFolder;
+            let folder = gctx.app.vault.getAbstractFileByPath(this.folder);
+            if (folder == null) {
+                return [];
+            }
+            if (!(folder instanceof TFolder)) {
+                throw new Error("Specified type folder is a file");
+            }
             paths = folder.children.filter((x) => x instanceof TFile && x.extension == "md").map((x) => x.path);
         }
 
