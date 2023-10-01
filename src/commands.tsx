@@ -5,7 +5,7 @@ import { ActionSuggestModal, Prompt, TypeSuggestModal } from "src/ui";
 
 const COMMANDS = [
     {
-        id: "typing-new",
+        id: "new",
         name: "New",
         callback: async () => {
             let type = await new Promise<Type>((resolve, reject) => {
@@ -38,7 +38,7 @@ const COMMANDS = [
     },
 
     {
-        id: "typing-actions",
+        id: "actions",
         name: "Open Actions",
         callback: () => {
             let note = gctx.currentNote;
@@ -48,7 +48,7 @@ const COMMANDS = [
     },
 
     {
-        id: "typing-create-otl-file",
+        id: "create-otl-file",
         name: "Create new .OTL file",
         callback: async () => {
             let freeName;
@@ -67,7 +67,7 @@ const COMMANDS = [
     },
 
     {
-        id: "typing-create-root-schema",
+        id: "create-root-schema",
         name: "Create root schema",
         callback: async () => {
             let schemaPath = gctx.settings.schemaPath;
