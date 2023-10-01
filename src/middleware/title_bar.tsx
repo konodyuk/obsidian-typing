@@ -33,7 +33,7 @@ class ViewTitle extends Component {
 function addViewActions(view: MarkdownView) {
     let actionsEl = view.containerEl.querySelector(".view-actions") as HTMLElement;
     if (!actionsEl.querySelector(`a.view-action[aria-label="Actions"]`)) {
-        view.addAction("grid", "Actions", () => {
+        view.addAction("grid-2x2", "Actions", () => {
             let note = gctx.api.note(view.file.path);
             new ActionSuggestModal(gctx.app, note).open();
         });
