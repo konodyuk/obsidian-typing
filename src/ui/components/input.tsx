@@ -73,6 +73,10 @@ export const Input = React.memo(
                                 onSetValueHandler?.(e.target.value, e);
                             }
                         }
+                        if (pickerCtx && e.key == "Backspace" && (e.metaKey || e.ctrlKey)) {
+                            pickerCtx.dispatch({ type: "SET_VALUE", payload: "" });
+                            pickerCtx.dispatch({ type: "SET_IS_ACTIVE", payload: false });
+                        }
                     }}
                     onFocus={onFocus}
                     onBlur={onBlur}
