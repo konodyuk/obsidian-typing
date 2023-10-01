@@ -107,7 +107,4 @@ export function registerTitleBarLeafHook(plugin: TypingPlugin) {
     plugin.registerEvent(plugin.app.workspace.on("layout-change", processLeaves));
 
     plugin.registerEvent(plugin.app.workspace.on("active-leaf-change", processLeaf));
-    plugin.register(() => {
-        plugin.app.workspace.off("layout-change", processLeaf);
-    });
 }
