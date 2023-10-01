@@ -201,29 +201,37 @@ export abstract class ModuleManagerSync<ContextType = any> {
 
     protected async setupFileWatcher() {
         this.plugin.app.workspace.onLayoutReady(this.preloadFiles);
-        this.vault.on("modify", async ({ path }) => {
-            if (this.shouldRead(path)) {
-                this.reloadModule(path);
-            }
-        });
-        this.vault.on("rename", async ({ path }, oldPath) => {
-            if (this.shouldRead(oldPath)) {
-                this.unloadModule(oldPath);
-            }
-            if (this.shouldRead(path)) {
-                this.reloadModule(path);
-            }
-        });
-        this.vault.on("create", async ({ path }) => {
-            if (this.shouldRead(path)) {
-                this.reloadModule(path);
-            }
-        });
-        this.vault.on("delete", async ({ path }) => {
-            if (this.shouldRead(path)) {
-                this.unloadModule(path);
-            }
-        });
+        this.plugin.registerEvent(
+            this.vault.on("modify", async ({ path }) => {
+                if (this.shouldRead(path)) {
+                    this.reloadModule(path);
+                }
+            })
+        );
+        this.plugin.registerEvent(
+            this.vault.on("rename", async ({ path }, oldPath) => {
+                if (this.shouldRead(oldPath)) {
+                    this.unloadModule(oldPath);
+                }
+                if (this.shouldRead(path)) {
+                    this.reloadModule(path);
+                }
+            })
+        );
+        this.plugin.registerEvent(
+            this.vault.on("create", async ({ path }) => {
+                if (this.shouldRead(path)) {
+                    this.reloadModule(path);
+                }
+            })
+        );
+        this.plugin.registerEvent(
+            this.vault.on("delete", async ({ path }) => {
+                if (this.shouldRead(path)) {
+                    this.unloadModule(path);
+                }
+            })
+        );
     }
 
     protected shouldRead(path: string): boolean {
