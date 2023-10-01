@@ -13,7 +13,7 @@ import { gctx } from "src/context";
 import TypingPlugin from "src/main";
 import { Script } from "src/scripting";
 import { Note, Values } from "src/typing";
-import { eagerDebounce, render, throttle } from "src/utilities";
+import { eagerDebounce, render } from "src/utilities";
 
 const HEADER_CODEBLOCK_LANGUAGE = "typing-header";
 const FOOTER_CODEBLOCK_LANGUAGE = "typing-footer";
@@ -63,7 +63,7 @@ const ErrorDisclosure = ({
 };
 
 class MarginalRenderChild extends MarkdownRenderChild {
-    private debouncedUpdate: ReturnType<typeof throttle>;
+    private debouncedUpdate: ReturnType<typeof eagerDebounce>;
     public note: Note;
     public messages: string[];
     public isAutoreloadEnabled: boolean = true;

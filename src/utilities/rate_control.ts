@@ -1,3 +1,5 @@
+export { debounce } from "obsidian";
+
 type Callback = (...args: any[]) => void;
 
 export function eagerDebounce<T extends (...args: any) => any>(func: T, wait: number): T {
@@ -22,32 +24,6 @@ export function eagerDebounce<T extends (...args: any) => any>(func: T, wait: nu
             shouldUpdate = true;
         }
     } as T;
-
-    return debouncedFn;
-}
-
-export function debounce(callback: Callback, wait: number): Callback & { cancel: () => void } {
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    const debouncedFn = function (...args: any[]) {
-        const later = () => {
-            timeoutId = null;
-            callback(...args);
-        };
-
-        if (timeoutId !== null) {
-            clearTimeout(timeoutId);
-        }
-
-        timeoutId = setTimeout(later, wait);
-    };
-
-    debouncedFn.cancel = function () {
-        if (timeoutId !== null) {
-            clearTimeout(timeoutId);
-            timeoutId = null;
-        }
-    };
 
     return debouncedFn;
 }
