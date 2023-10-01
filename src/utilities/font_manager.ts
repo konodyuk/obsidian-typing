@@ -55,7 +55,7 @@ async function downloadFont(spec: FontSpec) {
 }
 
 function getFontCacheDir() {
-    return `.obsidian/plugins/${gctx.plugin.manifest.id}/font-cache/`;
+    return `${gctx.plugin.manifest.dir}/font-cache/`;
 }
 
 function getFontCachePath(name: FONTS) {
