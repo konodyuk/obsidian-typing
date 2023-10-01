@@ -238,6 +238,7 @@ export class Note {
             // TODO: this is probably not right, but I think this should be noexcept
             return null;
         }
+        return tfile;
     }
 
     Link = (props: { children?: any; container?: HTMLElement; linkText?: string }) => {
