@@ -54,7 +54,7 @@ class TypingSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        containerEl.createEl("h2").innerText = "Safety";
+        containerEl.createEl("h2", { text: "Safety" });
         new Setting(containerEl)
             .setName("Enable JS scripting")
             .setDesc(
@@ -69,7 +69,7 @@ class TypingSettingTab extends PluginSettingTab {
                 });
             });
 
-        containerEl.createEl("h2").innerText = "Paths";
+        containerEl.createEl("h2", { text: "Paths" });
         ReactDOM.render(
             <FileSuggestionCombobox
                 paths={getAllDirs}
@@ -79,7 +79,7 @@ class TypingSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }}
             />,
-            new Setting(containerEl).setName("OTL Imports Path").setDesc("Directory containing all OTL files").controlEl
+            new Setting(containerEl).setName("OTL imports path").setDesc("Directory containing all OTL files").controlEl
         );
         ReactDOM.render(
             <FileSuggestionCombobox
@@ -90,7 +90,7 @@ class TypingSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }}
             />,
-            new Setting(containerEl).setName("JS Imports Path").setDesc("Directory containing all JS/TS/JSX/TSX files")
+            new Setting(containerEl).setName("JS imports path").setDesc("Directory containing all JS/TS/JSX/TSX files")
                 .controlEl
         );
         ReactDOM.render(
@@ -102,19 +102,19 @@ class TypingSettingTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }}
             />,
-            new Setting(containerEl).setName("Schema Path").setDesc("Main OTL file containing all types for this vault")
+            new Setting(containerEl).setName("Schema path").setDesc("Main OTL file containing all types for this vault")
                 .controlEl
         );
 
-        containerEl.createEl("h2").innerText = "Style";
-        new Setting(containerEl).setName("Headers & Footers: Preview Mode").addToggle((toggle) => {
+        containerEl.createEl("h2", { text: "Style" });
+        new Setting(containerEl).setName("Headers & footers: preview mode").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.marginalsInPreview);
             toggle.onChange(async (value: boolean) => {
                 this.plugin.settings.marginalsInPreview = value;
                 await this.plugin.saveSettings();
             });
         });
-        new Setting(containerEl).setName("Headers & Footers: Live Preview Mode").addToggle((toggle) => {
+        new Setting(containerEl).setName("Headers & footers: live preview mode").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.marginalsInLivePreview);
             toggle.setDisabled(true);
             toggle.onChange(async (value: boolean) => {
@@ -122,14 +122,14 @@ class TypingSettingTab extends PluginSettingTab {
                 await this.plugin.saveSettings();
             });
         });
-        new Setting(containerEl).setName("React Links: Preview Mode").addToggle((toggle) => {
+        new Setting(containerEl).setName("React links: preview mode").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.linksInPreview);
             toggle.onChange(async (value: boolean) => {
                 this.plugin.settings.linksInPreview = value;
                 await this.plugin.saveSettings();
             });
         });
-        new Setting(containerEl).setName("React Links: Live Preview Mode").addToggle((toggle) => {
+        new Setting(containerEl).setName("React links: live preview mode").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.linksInLivePreview);
             toggle.onChange(async (value: boolean) => {
                 this.plugin.settings.linksInLivePreview = value;
@@ -137,7 +137,7 @@ class TypingSettingTab extends PluginSettingTab {
             });
         });
 
-        containerEl.createEl("h2").innerText = "Icon Fonts";
+        containerEl.createEl("h2", { text: "Icon fonts" });
         new Setting(containerEl).setName("Enable FontAwesome Free").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.enabledFonts.includes("fontawesome"));
             toggle.onChange(async (value: boolean) => {
