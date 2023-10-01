@@ -230,7 +230,14 @@ export class Note {
     }
 
     get file(): TFile {
-        return gctx.app.vault.getAbstractFileByPath(this.path) as TFile;
+        let tfile = gctx.app.vault.getAbstractFileByPath(this.path);
+        if (!tfile) {
+            return null;
+        }
+        if (!(tfile instanceof TFile)) {
+            // TODO: this is probably not right, but I think this should be noexcept
+            return null;
+        }
     }
 
     Link = (props: { children?: any; container?: HTMLElement; linkText?: string }) => {
@@ -246,7 +253,10 @@ export class Note {
     Footer = () => {};
 
     async open() {
-        await gctx.app.workspace.getLeaf().openFile(gctx.app.vault.getAbstractFileByPath(this.path) as TFile);
+        let tfile = this.file;
+        if (tfile) {
+            await gctx.app.workspace.getLeaf().openFile(tfile);
+        }
     }
 }
 

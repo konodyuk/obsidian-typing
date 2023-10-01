@@ -217,7 +217,11 @@ export function autoFieldAccessor(path: string, plugin: TypingPlugin): EditorFie
     if (activeView && activeView.getMode() == "source" && activeView.file.path === path) {
         return new EditorFieldAccessor(activeView.editor, note.type);
     } else {
-        return new FileFieldAccessor(plugin.app.vault.getAbstractFileByPath(path) as TFile, plugin, note.type);
+        let tfile = note.file;
+        if (!tfile) {
+            return null;
+        }
+        return new FileFieldAccessor(tfile, plugin, note.type);
     }
 }
 
