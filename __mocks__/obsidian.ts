@@ -78,6 +78,7 @@ export class Plugin {
     loadData() {
         return {};
     }
+    registerEvent() {}
 }
 export abstract class TextFileView {}
 
