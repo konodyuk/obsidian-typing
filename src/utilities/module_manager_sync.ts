@@ -187,7 +187,7 @@ export abstract class ModuleManagerSync<ContextType = any> {
             return;
         }
 
-        return await this.vault.read(tfile as TFile);
+        return await this.vault.read(tfile);
     }
 
     protected preloadFiles = async () => {
