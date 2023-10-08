@@ -3,6 +3,8 @@ import { Note, Type } from ".";
 export class TypeGraph {
     public types: { [name: string]: Type } = {};
     private folderToType: { [folder: string]: Type } = {};
+    public isEmpty: boolean = true;
+    public isReady: boolean = false;
 
     public isinstance(left: Note | Type | string, right: Type | string) {
         if (left instanceof Note) {
@@ -47,10 +49,13 @@ export class TypeGraph {
     public add(type: Type) {
         this.types[type.name] = type;
         this.folderToType[type.folder] = type;
+        this.isEmpty = false;
     }
 
     public clear() {
         this.types = {};
         this.folderToType = {};
+        this.isEmpty = true;
+        this.isReady = false;
     }
 }
