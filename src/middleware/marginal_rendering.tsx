@@ -13,6 +13,7 @@ import { gctx } from "src/context";
 import TypingPlugin from "src/main";
 import { Script } from "src/scripting";
 import { Note, Values } from "src/typing";
+import { Contexts } from "src/ui";
 import { eagerDebounce, render } from "src/utilities";
 
 const HEADER_CODEBLOCK_LANGUAGE = "typing-header";
@@ -141,12 +142,13 @@ class MarginalRenderChild extends MarkdownRenderChild {
             };
             this.messages = [];
             try {
-                let el;
-                if (this.marginal instanceof Script) el = this.marginal.call(context);
                 let contentEl = this.containerEl.createDiv();
-                if (el != null) {
-                    render(<>{el}</>, contentEl);
-                }
+                render(
+                    <Contexts.MarkdownRenderingContext.Provider value={{ sourcePath: this.path, component: this }}>
+                        <MarginalComponent script={this.marginal} context={context} />
+                    </Contexts.MarkdownRenderingContext.Provider>,
+                    contentEl
+                );
             } catch (e) {
                 let errorContainer = this.containerEl.createDiv();
                 render(
@@ -181,6 +183,11 @@ class MarginalRenderChild extends MarkdownRenderChild {
         this.deferredEvents = [];
     };
 }
+
+const MarginalComponent = ({ script, context }: { script: Script; context: any }) => {
+    let el = script.call(context);
+    return el;
+};
 
 export function registerMarginalMonkeyPatch(plugin: TypingPlugin) {
     plugin.register(
