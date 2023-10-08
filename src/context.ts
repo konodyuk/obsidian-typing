@@ -14,6 +14,7 @@ export class GlobalContext {
     interpreter: Interpreter;
     cssManager: CSSManager;
     testing: boolean = false;
+    platform = Platform;
 
     // TODO: rename to `types` to resolve ambiguity with relations?
     graph: TypeGraph;

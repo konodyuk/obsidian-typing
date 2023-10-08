@@ -21,6 +21,9 @@ export class TypingAPI {
     get relations() {
         return gctx.relations;
     }
+    get platform() {
+        return gctx.platform;
+    }
 
     ui = ui;
     prompt = ui.prompt;
