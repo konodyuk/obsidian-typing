@@ -7,5 +7,6 @@ export async function importModules() {
         "react-dom": await import("react-dom"),
         preact: await import("preact"),
         "@emotion/styled": await import("@emotion/styled"),
+        "@emotion/react": await import("@emotion/react"),
     };
 }
