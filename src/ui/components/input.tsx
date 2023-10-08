@@ -24,6 +24,7 @@ export const Input = React.memo(
         isActive?: boolean;
     }) => {
         const dropdownCtx = useContext(Contexts.DropdownContext);
+        const pickerCtx = useContext(Contexts.PickerContext);
         const inputRef = useRef();
         const [active, setActive] = useState(false);
         const { onDropdownBlur, onPickerBlur } = useBlurCallbacks();
