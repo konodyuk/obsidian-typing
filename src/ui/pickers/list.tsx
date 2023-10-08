@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { Plus } from "lucide-react";
 import { Platform } from "obsidian";
 import { createContext, useContext, useRef, useState } from "react";
@@ -74,41 +75,50 @@ export function List({ SubPicker }: { SubPicker: any }) {
                               </ListPickerElement>
                           ))
                         : null}
-                    <div className={styles.listElement}>
-                        <Picker.Wrapper
-                            displayOverride={
-                                <div class={styles.listIconContainer} tabIndex={-1}>
-                                    <Plus size={16} />
-                                </div>
+                    <Picker.Wrapper
+                        displayOverride={
+                            <div class={styles.listIconContainer} tabIndex={-1}>
+                                <Plus size={16} />
+                            </div>
+                        }
+                        key={controlsList.length - 1}
+                        displayRef={refs.current[controlsList.length - 1]}
+                        value={controlsList[controlsList.length - 1].value}
+                        onSetValue={(value) => {}}
+                        onSubmitValue={(value) => {
+                            controlsList[controlsList.length - 1].submitValue(value);
+                            const idx = controlsList.length;
+                            let done = false;
+                            for (let timeout of [10, 50, 100, 1000]) {
+                                setTimeout(() => {
+                                    const nextEl = refs.current[idx];
+                                    if (done) return;
+                                    if (!nextEl.current) return;
+                                    nextEl.current.focus();
+                                    done = true;
+                                }, timeout);
                             }
-                            key={controlsList.length - 1}
-                            displayRef={refs.current[controlsList.length - 1]}
-                            value={controlsList[controlsList.length - 1].value}
-                            onSetValue={(value) => {}}
-                            onSubmitValue={(value) => {
-                                controlsList[controlsList.length - 1].submitValue(value);
-                                const idx = controlsList.length;
-                                let done = false;
-                                for (let timeout of [10, 50, 100, 1000]) {
-                                    setTimeout(() => {
-                                        const nextEl = refs.current[idx];
-                                        if (done) return;
-                                        if (!nextEl.current) return;
-                                        nextEl.current.focus();
-                                        done = true;
-                                    }, timeout);
-                                }
-                            }}
-                            fieldName={pickerCtx.state.fieldName}
-                        >
+                        }}
+                        fieldName={pickerCtx.state.fieldName}
+                    >
+                        <ListElementWrapper>
                             <SubPicker />
-                        </Picker.Wrapper>
-                    </div>
+                        </ListElementWrapper>
+                    </Picker.Wrapper>
                 </div>
             </ListContext.Provider>
         </Picker>
     );
 }
+
+const ListElementWrapper = ({ children }) => {
+    const pickerCtx = useContext(Contexts.PickerContext);
+    return (
+        <div class={classNames(styles.listElement, { [styles.listElementActive]: pickerCtx?.state?.isActive })}>
+            {children}
+        </div>
+    );
+};
 
 function ListPickerElement({ index, ref, refs, children, control, fieldName }) {
     const [isActive, setIsActive] = useState(false);
@@ -184,7 +194,7 @@ function ListPickerElement({ index, ref, refs, children, control, fieldName }) {
                     }
                 }
             }}
-            className={styles.listElement}
+            className={classNames(styles.listElement, { [styles.listElementActive]: isActive })}
         >
             <Picker.Wrapper
                 tabIndex={-1}
