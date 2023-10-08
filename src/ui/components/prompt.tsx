@@ -2,7 +2,7 @@ import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import CodeMirror from "@uiw/react-codemirror";
 import classNames from "classnames";
 import { ComponentChildren, RefObject } from "preact";
-import React, { createContext, useContext, useEffect, useReducer, useRef } from "react";
+import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { gctx } from "src/context";
 import { obsidianMarkdownTheme } from "src/editor/themes/obsidian";
 import styles from "src/styles/prompt.scss";
@@ -207,15 +207,18 @@ const Confirmation = ({ text = "The note hasn't been created yet and your progre
 };
 
 function PromptTitle({ disabled, prefix = true }: { disabled?: boolean; prefix?: boolean }) {
+    const [isActive, setIsActive] = useState(false);
     const context = useContext(PromptContext);
     if (!context) throw new Error("PromptTitle must be a child of Prompt");
     const { state, dispatch } = context;
 
     return (
-        <div className={styles.promptChild}>
+        <PromptChild isActive={isActive}>
             <div className={styles.promptTitle}>
                 {prefix && state.prefix && <span className={styles.promptTitlePrefix}>{state.prefix}</span>}
                 <input
+                    onFocus={() => setIsActive(true)}
+                    onBlur={() => setIsActive(false)}
                     disabled={disabled}
                     type="text"
                     placeholder="Note title..."
@@ -224,18 +227,21 @@ function PromptTitle({ disabled, prefix = true }: { disabled?: boolean; prefix?:
                     value={state.title}
                 />
             </div>
-        </div>
+        </PromptChild>
     );
 }
 
 function PromptText() {
+    const [isActive, setIsActive] = useState(false);
     const context = useContext(PromptContext);
     if (!context) throw new Error("PromptText must be a child of Prompt");
     const { state, dispatch } = context;
 
     return (
-        <div class={styles.promptChild}>
+        <PromptChild isActive={isActive}>
             <CodeMirror
+                onFocus={() => setIsActive(true)}
+                onBlur={() => setIsActive(false)}
                 onChange={(value) => dispatch({ type: "SET_TEXT", payload: value })}
                 basicSetup={{ lineNumbers: false, foldGutter: false }}
                 value={state.text}
@@ -251,7 +257,7 @@ function PromptText() {
                     // keymap.of([indentWithTab]),
                 ]}
             />
-        </div>
+        </PromptChild>
     );
 }
 
@@ -279,9 +285,24 @@ const PromptField = (props: { name: string; children?: ComponentChildren }) => {
     const DefaultPicker = state.type.fields[props.name]?.type.Picker;
 
     return (
-        <div class={styles.promptChild}>
-            <FieldLabel name={props.name} />
-            <Picker.Wrapper {...pickerConfig}>{props.children ?? <DefaultPicker />}</Picker.Wrapper>
+        <Picker.Wrapper {...pickerConfig}>
+            <PromptChild>
+                <FieldLabel name={props.name} />
+                {props.children ?? <DefaultPicker />}
+            </PromptChild>
+        </Picker.Wrapper>
+    );
+};
+
+const PromptChild = ({ children, isActive }: { children: ComponentChildren; isActive?: boolean }) => {
+    const pickerCtx = useContext(Contexts.PickerContext);
+    return (
+        <div
+            class={classNames(styles.promptChild, {
+                [styles.promptChildActive]: isActive ?? pickerCtx?.state?.isActive,
+            })}
+        >
+            {children}
         </div>
     );
 };

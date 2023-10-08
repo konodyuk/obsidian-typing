@@ -68,7 +68,17 @@
 
     &-child {
         padding: 0 var(--size-4-3) var(--size-4-2) var(--size-4-3);
-        border-bottom: 1px solid var(--background-secondary);
+        // border-bottom: 1px solid var(--background-secondary);
+        // border: 1px solid var(--background-secondary);
+        border: solid;
+        border-width: 1px;
+        // border-left-width: 4px;
+        border-color: transparent;
+        border-bottom-color: var(--background-secondary);
+
+        &-active {
+            border-color: var(--interactive-accent-hover);
+        }
     }
 
     &-title {
@@ -322,8 +332,15 @@ input[type="text"].Input {
             &:hover,
             &:focus,
             &:active {
-                border: 1px solid var(--background-modifier-border-focus);
                 box-shadow: unset;
+            }
+            &:hover:not(:focus):not(:active):not(&-active) {
+                border: 1px solid var(--background-modifier-border-focus);
+            }
+            &:focus,
+            &:active,
+            &-active {
+                border: 1px solid var(--interactive-accent-hover);
             }
         }
     }
