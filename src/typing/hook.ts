@@ -1,6 +1,6 @@
 import { FnScript } from "src/scripting";
 import { DataClass, field } from "src/utilities";
-import { Note, Type } from ".";
+import { Note, NoteState, Type } from ".";
 
 export enum HookNames {
     CREATE = "create",
@@ -17,6 +17,7 @@ export interface HookContext {}
 
 export interface CreateHookContext extends HookContext {
     type: Type;
+    state: NoteState;
 }
 
 export interface OnCreateHookContext extends HookContext {
