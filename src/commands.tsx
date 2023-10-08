@@ -1,7 +1,7 @@
 import { gctx } from "src/context";
 import TypingPlugin from "src/main";
-import { HookNames, Type } from "src/typing";
-import { ActionSuggestModal, Prompt, TypeSuggestModal } from "src/ui";
+import { Type } from "src/typing";
+import { ActionSuggestModal, TypeSuggestModal } from "src/ui";
 
 const COMMANDS = [
     {
@@ -15,22 +15,7 @@ const COMMANDS = [
             if (!type) {
                 return;
             }
-            if (type.hooks.has(HookNames.CREATE)) {
-                type.runHook(HookNames.CREATE, { type });
-                return;
-            }
-            let defaults: Record<string, string> = {};
-            for (let fieldName in type.fields) {
-                defaults[fieldName] = type.fields[fieldName].default;
-            }
-            let state = await gctx.api.prompt(
-                <Prompt submitText={`Create new ${type.name}`} noteState={{ type, fields: defaults }}>
-                    <Prompt.Title />
-                    <Prompt.Text />
-                    <Prompt.Fields />
-                </Prompt>,
-                { confirmation: true }
-            );
+            let state = type.promptNew();
             if (state) {
                 await type.create(state);
             }

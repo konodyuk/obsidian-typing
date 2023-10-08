@@ -1,7 +1,8 @@
 import { TFile, TFolder } from "obsidian";
 import { gctx } from "src/context";
 import { StringFieldAccessor } from "src/middleware/field_accessor";
-import { DataClass, field } from "src/utilities";
+import { Prompt } from "src/ui";
+import { DataClass, field, mergeDeep } from "src/utilities";
 import { Action, Field, HookContainer, HookContextType, HookNames, Method, Note, NoteState, Prefix, Style } from ".";
 
 export class Type extends DataClass {
@@ -46,8 +47,36 @@ export class Type extends DataClass {
         this.hooks.run(name, context);
     }
 
+    async promptNew(initialState?: Partial<NoteState>) {
+        initialState = initialState ?? {};
+
+        let defaults: Record<string, string> = {};
+        for (let fieldName in this.fields) {
+            defaults[fieldName] = this.fields[fieldName].default;
+        }
+        let state = mergeDeep({ type: this, fields: defaults }, initialState) as NoteState;
+
+        if (this.hooks.has(HookNames.CREATE)) {
+            this.runHook(HookNames.CREATE, { type: this, state });
+            return;
+        }
+
+        state = await gctx.api.prompt(
+            <Prompt submitText={`Create new ${this.name}`} noteState={state}>
+                <Prompt.Title />
+                <Prompt.Text />
+                <Prompt.Fields />
+            </Prompt>,
+            { confirmation: true }
+        );
+        return state;
+    }
+
     async create(state: NoteState | Promise<NoteState>) {
         state = await state;
+        if (!state) {
+            return;
+        }
         let content = state.text ?? "";
         if (state.fields) {
             let fieldAccessor = new StringFieldAccessor(content, this);
