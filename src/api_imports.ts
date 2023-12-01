@@ -8,5 +8,6 @@ export async function importModules() {
         preact: await import("preact"),
         "@emotion/styled": await import("@emotion/styled"),
         "@emotion/react": await import("@emotion/react"),
+        "@emotion/css": await import("@emotion/css"),
     };
 }
