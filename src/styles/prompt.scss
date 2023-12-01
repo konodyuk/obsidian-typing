@@ -98,6 +98,7 @@
     &-text {
         font-family: var(--font-text);
         font-size: var(--font-ui-medium);
+        width: 100%;
 
         & .cm-scroller {
             min-height: 6em;
@@ -140,6 +141,7 @@ input[type="text"].Input {
         flex-direction: row;
         align-items: center;
         width: 100%;
+        overflow: scroll;
     }
     &-preview {
         position: absolute;
@@ -224,11 +226,15 @@ input[type="text"].Input {
     }
 
     &-display {
-        height: calc(var(--font-ui-medium) * var(--line-height-normal));
         display: flex;
         align-items: center;
+        max-width: 100%;
+
+        min-height: calc(var(--font-ui-medium) * var(--line-height-normal));
+        height: fit-content;
 
         &-hidden {
+            min-height: 0;
             height: 0;
             width: 0;
             overflow: hidden;
@@ -291,15 +297,7 @@ input[type="text"].Input {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-
-    &-container {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: var(--size-2-1);
-        padding-top: var(--size-4-1);
-    }
+    gap: var(--size-2-2);
 
     &-icon-container {
         display: flex;
@@ -323,11 +321,14 @@ input[type="text"].Input {
             height: calc(var(--font-ui-medium) * var(--line-height-normal));
             width: unset;
             font-size: var(--font-text);
-            margin: 0 var(--size-2-1);
+            align-items: center;
 
-            &:not(:first-child) {
-                margin-bottom: var(--size-2-1);
-            }
+            max-width: 100%;
+            overflow: scroll;
+
+            // &:not(:first-child) {
+            //     margin-bottom: var(--size-2-1);
+            // }
 
             &:hover,
             &:focus,
