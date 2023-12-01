@@ -5,6 +5,7 @@ import { registerCommands } from "src/commands";
 import { gctx, GlobalContext } from "src/context";
 import { registerCodeEditorViews } from "src/editor";
 import {
+    registerCssClassesHook,
     registerFileCreationMenu,
     registerInlineFieldsHider,
     registerLinkPostProcessor,
