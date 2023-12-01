@@ -11,7 +11,7 @@ export class Type extends DataClass {
     @field()
     public name: string;
     @field()
-    public parents: Array<string> = [];
+    public parentNames: Array<string> = [];
     @field({ inherit: false })
     public folder: string = null;
     @field()

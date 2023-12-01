@@ -17,9 +17,9 @@ export const File = createVisitor({
             let types = child.run(node);
             for (let type of types) {
                 module[type.name] = type;
-                if (!type.parents) continue;
+                if (!type.parentNames) continue;
                 // NOTE: the order of inheritance is correct because a type has to be defined below its parents
-                for (let parent of type.parents) {
+                for (let parent of type.parentNames) {
                     // TODO: distinguish imported already inherited types from defined here
                     if (!module[parent]) continue;
                     type.inherit(module[parent]);

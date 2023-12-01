@@ -18,11 +18,11 @@ export class TypeGraph {
         }
         if (!left) return false;
         if (!right) return false;
-        if (!left.parents) return false;
-        if (left.parents.includes(right.name)) {
+        if (!left.parentNames) return false;
+        if (left.parentNames.includes(right.name)) {
             return true;
         }
-        for (let parent of left.parents) {
+        for (let parent of left.parentNames) {
             if (this.isinstance(parent, right)) {
                 return true;
             }

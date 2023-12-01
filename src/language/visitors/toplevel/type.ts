@@ -95,7 +95,7 @@ export const Type = createVisitor({
     children: {
         // TODO: `abstract` keyword
         name: Visitors.Identifier({ allowString: true }),
-        parents: TypeParentsClause,
+        parentNames: TypeParentsClause,
         body: createVisitor({
             rules: Rules.TypeBody,
             run(node) {
@@ -260,10 +260,10 @@ export const Type = createVisitor({
         }).extend(Wrappers.ScopeWrapper({ shouldComplete: true })),
     },
     run() {
-        let { name, parents, body } = this.runChildren({ keys: ["name", "parents", "body"] });
+        let { name, parentNames, body } = this.runChildren({ keys: ["name", "parentNames", "body"] });
         let type = TypeObject.new({
             name,
-            parents,
+            parentNames,
             ...body,
         });
         return [type];

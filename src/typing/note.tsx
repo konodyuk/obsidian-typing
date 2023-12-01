@@ -208,11 +208,11 @@ export class Note {
     super(typeName?: string) {
         if (!this.type) return this;
         if (!typeName) {
-            if (this.type.parents.length == 1) {
-                typeName = this.type.parents[0];
+            if (this.type.parentNames.length == 1) {
+                typeName = this.type.parentNames[0];
             } else {
                 throw new Error(
-                    `Type ${this.type.name} has ${this.type.parents.length}!=1 parents. Please specify parent type name explictly`
+                    `Type ${this.type.name} has ${this.type.parentNames.length}!=1 parents. Please specify parent type name explictly`
                 );
             }
         }
