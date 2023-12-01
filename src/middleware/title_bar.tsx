@@ -73,15 +73,7 @@ function setViewTitle(view: MarkdownView) {
             onNameClick={async () => {
                 let note = gctx.api.note(view.file.path);
 
-                await note.applyState(
-                    await gctx.api.prompt(
-                        <Prompt submitText="Save" returnOnExit noteState={await note.getState()}>
-                            <Prompt.Title />
-                            <Prompt.Fields />
-                        </Prompt>,
-                        { confirmation: false }
-                    )
-                );
+                await note.promptState();
             }}
         ></ViewTitle>,
         container

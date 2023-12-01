@@ -171,6 +171,19 @@ export class Note {
         }
     }
 
+    async promptState() {
+        let state = await this.getState();
+        let newState = await prompt(
+            <Prompt submitText="Save" returnOnExit={true} noteState={state}>
+                <Prompt.Title />
+                <Prompt.Fields />
+            </Prompt>,
+            { confirmation: false }
+        );
+        if (!newState) return;
+        await this.applyState(newState);
+    }
+
     async runAction(name: string) {
         this.type.actions[name].script.call({ note: this });
     }
