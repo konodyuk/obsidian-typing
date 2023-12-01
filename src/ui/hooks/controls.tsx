@@ -1,17 +1,17 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Contexts } from "..";
 
-export interface ControlSpec {
-    value: string;
-    setValue: (value: string) => Promise<string>;
-    submitValue: (value: string) => Promise<string>;
+export interface ControlSpec<T extends string | number | boolean> {
+    value: T;
+    setValue: (value: T) => Promise<T>;
+    submitValue: (value: T) => Promise<T>;
 }
 
-export type ControlsResult<T> = {
-    [K in keyof T]: ControlSpec;
+export type ControlsResult<T extends Record<string | number, string | number | boolean>> = {
+    [K in keyof T]: ControlSpec<T[K]>;
 } & { value: string; submitCurrentValue: () => void };
 
-export function useControls<T extends Record<string | number, any>>({
+export function useControls<T extends Record<string | number, string | number | boolean>>({
     parse,
     compose,
 }: {
