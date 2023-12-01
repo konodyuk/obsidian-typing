@@ -134,6 +134,9 @@ export class Note {
     }
 
     async getState(): Promise<NoteState> {
+        // refresh accessor it it is defined, otherwise create it
+        this._fields ? this._fields.refreshAccessor() : this.fields;
+
         let fields: Record<string, string> = {};
         if (this.typed) {
             for (let fieldName in this.type.fields) {
@@ -148,6 +151,10 @@ export class Note {
         if (newState == null) {
             return;
         }
+
+        // refresh accessor it it is defined, otherwise create it
+        this._fields ? this._fields.refreshAccessor() : this.fields;
+
         let state = await this.state;
         for (let fieldName in newState.fields) {
             if (state.fields[fieldName] != newState.fields[fieldName]) {
@@ -269,7 +276,11 @@ class FieldsProxy extends DataClass {
     accessor: IFieldAccessor;
     proxy: Record<string, Promise<string> | string> = {};
 
-    onAfterCreate(): void {
+    onAfterCreate() {
+        this.refreshAccessor();
+    }
+
+    refreshAccessor(): void {
         this.accessor = autoFieldAccessor(this.note.path, gctx.plugin);
         let proxy = this;
 
