@@ -130,7 +130,10 @@ const context = await esbuild.context({
                 generateScopedName: (name, filename, css) => {
                     console.log("gen scoped name", name, filename);
                     if (filename.includes("notranspile")) return name;
-                    // return `typing--${name}`;
+                    if (/^[A-Z]/.test(name)) {
+                        // only prefix uppercase names
+                        return `typing--${name.toLowerCase()}`;
+                    }
                     return name;
                 },
                 // generateScopedName: "[name]__[local]",
