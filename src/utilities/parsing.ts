@@ -5,7 +5,8 @@ export function parseLink(value: string) {
 
     let path = "",
         subpath = "",
-        display = "";
+        display = "",
+        linkpath = value;
 
     // Split by # first
     [path, value] = value.split("#", 2);
@@ -20,11 +21,11 @@ export function parseLink(value: string) {
         display = display ?? "";
     }
 
-    return { path, subpath, display };
+    return { path, subpath, display, linkpath };
 }
 
 export function parseLinkExtended(value: string) {
-    let { path, subpath, display } = parseLink(value);
+    let { path, subpath, display, linkpath } = parseLink(value);
 
     let folder = "",
         name = "",
@@ -41,7 +42,7 @@ export function parseLinkExtended(value: string) {
 
     ({ name, extension } = parseFileExtension(name));
 
-    let result = { folder, name, extension, subpath, display };
+    let result = { folder, name, extension, subpath, display, linkpath };
     return result;
 }
 
