@@ -89,16 +89,24 @@ export function compileModuleWithContext(
     }
 
     const exports = {};
+    const module = { exports };
 
     const contextNames = Object.keys(context);
 
     // Use Function constructor to create a function
-    const createModule = new Function("exports", ...contextNames, `${code}\n//# sourceURL=${options.filename}`);
+    const createModule = new Function(
+        "exports",
+        "module",
+        ...contextNames,
+        `${code}\n//# sourceURL=${options.filename}`
+    );
 
     // Run the function to populate the exports object
-    createModule(exports, ...contextNames.map((name) => context[name]));
+    createModule(exports, module, ...contextNames.map((name) => context[name]));
 
-    return exports;
+    const result = { ...exports, ...module.exports };
+
+    return result;
 }
 
 export function compileFunctionWithContext(
