@@ -2,8 +2,11 @@ import { TFile } from "obsidian";
 import { LiteralValue } from "obsidian-dataview";
 import { gctx } from "src/context";
 import { autoFieldAccessor, IFieldAccessor } from "src/middleware/field_accessor";
+import { MarginalComponent } from "src/middleware/marginal_rendering";
+import { Script } from "src/scripting";
+import { Markdown } from "src/ui";
 import { bindCollection, DataClass, field, RenderLink } from "src/utilities";
-import { HookContextType, HookNames, RelationsProxy, Type } from ".";
+import { HookContextType, HookNames, RelationsProxy, Style, Type } from ".";
 
 export interface NoteState {
     type: Type;
@@ -257,9 +260,20 @@ export class Note {
         );
     };
 
-    // TODO
-    Header = () => {};
-    Footer = () => {};
+    Header = () => {
+        return <this.Marginal marginal={this.type?.style?.header} />;
+    };
+    Footer = () => {
+        return <this.Marginal marginal={this.type?.style?.footer} />;
+    };
+    private Marginal = ({ marginal }: { marginal: Style["header"] }) => {
+        if (!marginal) return null;
+        if (marginal instanceof Script) {
+            return <MarginalComponent script={marginal} />;
+        } else {
+            return <Markdown text={marginal.source} />;
+        }
+    };
 
     async open() {
         let tfile = this.file;
