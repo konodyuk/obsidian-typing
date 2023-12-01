@@ -49,7 +49,7 @@ const MODULE_TRANSPILE_OPTIONS = DEFAULT_TRANSPILE_OPTIONS;
 
 const FUNCTION_TRANSPILE_OPTIONS = {
     plugins: [
-        customImportExportTransform({ ctxObject: "ctx", importFunction: "_import_explicit" }),
+        customImportExportTransform({ ctxObject: "__ctx", importFunction: "_import_explicit" }),
         ...DEFAULT_PLUGINS,
     ],
     parserOpts: DEFAULT_PARSER_OPTS,

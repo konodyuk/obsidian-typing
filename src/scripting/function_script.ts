@@ -20,7 +20,11 @@ export class Script<T extends IScriptContextBase = IScriptContextBase> extends D
 
     onAfterCreate() {
         this.source = this.transformSource(this.source);
-        let transpiled = compileFunctionWithContext(this.source, { h, Fragment, api: gctx.api }, ["ctx", "note"]);
+        let transpiled = compileFunctionWithContext(this.source, { h, Fragment, api: gctx.api }, [
+            "ctx",
+            "note",
+            "__ctx",
+        ]);
         if (transpiled instanceof Function) {
             this.fn = transpiled;
         } else {
@@ -35,7 +39,7 @@ export class Script<T extends IScriptContextBase = IScriptContextBase> extends D
     call(ctx: T) {
         ctx._import_explicit = (path: string, symbols: string[]) =>
             gctx.api._import_explicit(path, symbols, this.filePath);
-        return this.fn(ctx, ctx.note);
+        return this.fn(ctx, ctx.note, ctx);
     }
 
     static validate(source: string) {
