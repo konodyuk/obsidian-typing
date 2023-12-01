@@ -82,7 +82,10 @@ let parserWithMetadata = parser.configure({
             "AssignmentName!": t.variableName,
             "SectionDeclaration/Identifier!": t.keyword,
             "AssignmentType/Identifier!": t.typeName,
-            String: t.string,
+
+            "String/...": t.string,
+            "TaggedString/String/...": t.content,
+
             "Tag!": t.tagName,
             "Boolean!": t.bool,
             "Number!": t.number,

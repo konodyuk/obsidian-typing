@@ -1,5 +1,5 @@
 @top File {
-  (TypeDeclaration | ImportStatement | newline)*
+  (TypeDeclaration | ImportStatement | newline ~statement | ";" ~statement)* | (Expression | newline  ~statement| ";" ~statement)*
 }
 
 // Type declarations
@@ -19,9 +19,14 @@ ExtendsClause {
   kw<"extends"> LooseIdentifier ("," LooseIdentifier)*
 }
 
+// expressions
+Expression {
+  Literal | Assignment | AssignmentType | SectionDeclaration
+}
+
 // Section declarations
 SectionDeclaration {
-  Identifier SectionBody
+  Identifier ~statement SectionBody
 }
 
 SectionBody {
@@ -50,7 +55,7 @@ AssignmentValue {
 }
 
 AssignmentType {
-  Identifier ("[" ParameterList "]")?
+  Identifier ~statement ("[" ParameterList "]")?
 }
 
 ParameterList {
@@ -75,7 +80,7 @@ Literal {
 }
 
 TaggedString {
-  Tag String
+  Tag ~statement String
 }
 
 Tag {
@@ -111,7 +116,16 @@ ImportedSymbols {
 
 // Identifiers
 LooseIdentifier {
-  Identifier | StringIdentifier
+  Identifier ~statement | StringIdentifier ~statement
+}
+
+StringIdentifier {
+    StringSingleLine ~statement
+}
+
+// Strings
+String {
+    StringMultiline | StringSingleLine ~statement
 }
 
 @tokens {
@@ -123,21 +137,11 @@ LooseIdentifier {
     "-"? @digit+ ("." (@digit)+)?
   }
 
-
-  StringIdentifier {
-    stringSingleLine
-  }
-
-  // Strings
-  String {
-    stringMultiline | stringSingleLine
-  }
-
-  stringMultiline {
+  StringMultiline {
     '"""' (stringContentMultiline)* '"""'
   }
 
-  stringSingleLine {
+  StringSingleLine {
     '"' (stringContentDouble)* '"' | "'" (stringContentSingle)* "'"
   }
 
@@ -182,10 +186,17 @@ LooseIdentifier {
 }
 
 @precedence {
+  TypeDeclaration
+  ImportStatement
   Float 
   Integer
   Assignment
+  AssignmentName
+  AssignmentValue
+  Literal
   TaggedString
+  String
+  StringIdentifier
 }
 
 kw<term> {
