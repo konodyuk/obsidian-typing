@@ -111,7 +111,15 @@ ImportStatement {
 
 // or Specifiers?
 ImportedSymbols {
-  LooseIdentifier ("," LooseIdentifier)*
+  ImportedSymbol ("," ImportedSymbol)*
+}
+
+ImportedSymbol {
+    LooseIdentifier (kw<"as"> ImportAlias)?
+}
+
+ImportAlias {
+    LooseIdentifier
 }
 
 // Identifiers

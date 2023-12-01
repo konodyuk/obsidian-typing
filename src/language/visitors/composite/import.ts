@@ -1,6 +1,13 @@
+import { SyntaxNode } from "@lezer/common";
 import { Type } from "src/typing";
-import { createVisitor, Rules, Symbol } from "../index_base";
+import { createVisitor, Rules } from "../index_base";
 import * as Visitors from "../pure";
+
+interface ImportSymbol {
+    symbol: string;
+    alias: string;
+    node: SyntaxNode;
+}
 
 export const Import = () =>
     createVisitor({
@@ -9,13 +16,22 @@ export const Import = () =>
             symbols: createVisitor({
                 rules: Rules.ImportedSymbols,
                 children: {
-                    symbol: Visitors.Identifier({ allowString: true }),
+                    symbol: createVisitor({
+                        rules: Rules.ImportedSymbol,
+                        children: {
+                            symbol: Visitors.Identifier({ allowString: true }),
+                            alias: Visitors.Proxy(Rules.ImportAlias, Visitors.Identifier({ allowString: true })),
+                        },
+                        run(node) {
+                            return this.runChildren();
+                        },
+                    }),
                 },
                 run(node) {
-                    let result: Symbol[] = [];
+                    let result: ImportSymbol[] = [];
                     this.traverse((node, child) => {
-                        let name = child.run(node);
-                        result.push({ name, node, nameNode: node });
+                        let { symbol, alias } = child.run(node);
+                        result.push({ alias: alias ?? symbol, symbol, node });
                     });
                     return result;
                 },
@@ -39,8 +55,8 @@ export const Import = () =>
                 return;
             }
             for (let symbol of symbols) {
-                if (!(symbol.name in module.env)) {
-                    this.error("Unknown symbol", symbol.nameNode);
+                if (!(symbol.symbol in module.env)) {
+                    this.error("Unknown symbol", symbol.node);
                 }
             }
         },
@@ -49,15 +65,18 @@ export const Import = () =>
             let { symbols, path } = this.runChildren();
             let module = this.callContext.interpreter.importSmart(path);
             for (let symbol of symbols) {
-                if (!(symbol.name in module.env)) {
+                if (!(symbol.symbol in module.env)) {
                     // TODO: handle: throw error or continue
                     continue;
                 }
-                result.push(module.env[symbol.name]);
+                let importedType = module.env[symbol.symbol];
+                importedType.name = symbol.alias;
+                result.push(importedType);
             }
             return result;
         },
         symbols() {
-            return this.runChildren({ keys: ["symbols"] })["symbols"];
+            let symbols = this.runChildren({ keys: ["symbols"] })["symbols"];
+            return symbols.map((x) => ({ nameNode: x.node, node: x.node, name: x.alias }));
         },
     });

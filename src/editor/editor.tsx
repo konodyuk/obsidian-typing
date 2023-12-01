@@ -95,7 +95,7 @@ let parserWithMetadata = parser.configure({
             "( )": t.paren,
             "{ }": t.brace,
             "[ ]": t.squareBracket,
-            "type abstract extends default import from": t.keyword,
+            "type abstract extends default import from as": t.keyword,
         }),
     ],
     wrap: parseMixed((node: SyntaxNodeRef, input) => {
