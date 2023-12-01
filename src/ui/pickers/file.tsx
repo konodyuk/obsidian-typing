@@ -1,14 +1,13 @@
 import { Upload } from "lucide-react";
 import { ChangeEvent, useContext, useState } from "react";
-import { FnScript } from "src/scripting";
 import styles from "src/styles/prompt.scss";
 import { parseFileExtension, parseLinkExtended } from "src/utilities";
 import { Contexts, Picker } from ".";
 import { Combobox, IComboboxOption, Input } from "../components";
 import { useControls } from "../hooks";
 
-function generateFileShortcut(file: File, rename?: FnScript): string {
-    if (rename) return rename.call(file);
+function generateFileShortcut(file: File, rename?: (file: File) => string): string {
+    if (rename) return rename(file);
     return file.name; // TODO: filter disallowed chars
 }
 
@@ -33,7 +32,7 @@ export const File = ({
     accept?: string;
     capture?: any;
     upload?: boolean;
-    autoRename?: FnScript;
+    autoRename?: (file: File) => string;
     short?: boolean;
     search?: boolean;
 }) => {
