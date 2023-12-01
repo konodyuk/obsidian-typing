@@ -1,3 +1,4 @@
+export { registerCssClassesHook } from "./css";
 export { registerFileCreationMenu } from "./file_creation_menu";
 export { registerInlineFieldsHider } from "./hide_inline_fields";
 export { registerLinkPostProcessor } from "./link_rendering";

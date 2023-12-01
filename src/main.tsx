@@ -53,6 +53,7 @@ export default class TypingPlugin extends Plugin {
         registerCodeEditorViews(this);
         registerCommands(this);
         registerFileCreationMenu(this);
+        registerCssClassesHook(this);
     }
 
     onunload() {

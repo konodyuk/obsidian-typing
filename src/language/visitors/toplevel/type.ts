@@ -150,7 +150,17 @@ export const Type = createVisitor({
                             "link",
                             Visitors.Union(Visitors.FnScriptString(), Visitors.ExprScriptString())
                         ),
-                        css: Visitors.Attribute("css", Visitors.TaggedString({ tags: ["css"] })),
+                        css: Visitors.Attribute(
+                            "css",
+                            Visitors.TaggedString({ tags: ["css"] }).override({
+                                children: {
+                                    content: Visitors.String,
+                                },
+                                run(node) {
+                                    return this.runChild("content");
+                                },
+                            })
+                        ),
                         css_classes: Visitors.Attribute("css_classes", Visitors.List(Visitors.String)),
                         show_prefix: Visitors.Attribute(
                             "show_prefix",

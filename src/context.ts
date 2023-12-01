@@ -13,6 +13,7 @@ export class GlobalContext {
     importManager: ImportManager;
     interpreter: Interpreter;
     cssManager: CSSManager;
+    userDefinedCssManager: CSSManager;
     testing: boolean = false;
     platform = Platform;
 
@@ -53,6 +54,7 @@ export class GlobalContext {
 
         if (gctx.testing) return;
         gctx.cssManager = new CSSManager("global");
+        gctx.userDefinedCssManager = new CSSManager("typing-user-defined");
     }
 }
 
