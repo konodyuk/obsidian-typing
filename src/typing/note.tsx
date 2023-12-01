@@ -195,13 +195,14 @@ export class Note {
         }
         let prevPath = this.file.path;
         let prevFilename = this.filename;
+        let prevFullname = this.fullname;
         let prevTitle = this.title;
 
         await gctx.app.fileManager.renameFile(this.file, path);
         this.path = path;
 
         // TODO: rewrite as a global callback
-        this.runHook(HookNames.ON_RENAME, { note: this, prevPath, prevFilename, prevTitle });
+        this.runHook(HookNames.ON_RENAME, { note: this, prevPath, prevFilename, prevFullname, prevTitle });
     }
 
     super(typeName?: string) {

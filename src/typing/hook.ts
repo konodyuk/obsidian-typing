@@ -36,6 +36,7 @@ export interface OnRenameHookContext extends HookContext {
     note: Note;
     prevPath: string;
     prevFilename: string;
+    prevFullname: string;
     prevTitle: string;
 }
 
