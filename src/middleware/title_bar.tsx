@@ -1,34 +1,21 @@
 import { MarkdownView, Platform, WorkspaceLeaf } from "obsidian";
 import { render } from "preact";
-import { Component } from "react";
 import { gctx } from "src/context";
 import TypingPlugin from "src/main";
 import styles from "src/styles/view-title.scss";
 import { ActionSuggestModal } from "src/ui";
 
-class ViewTitle extends Component {
-    constructor(
-        public props: {
-            prefix: string | null;
-            name: string | null;
-            onNameClick: { (): void };
-        }
-    ) {
-        super(props);
-    }
+const ViewTitle = (props: { prefix: string | null; name: string | null; onNameClick: { (): void } }) => {
+    let shouldRenderPrefix = props.prefix && (!Platform.isMobile || !props.name);
+    let shouldRenderName = props.name;
 
-    render() {
-        let shouldRenderPrefix = this.props.prefix && (!Platform.isMobile || !this.props.name);
-        let shouldRenderName = this.props.name;
-
-        return (
-            <div className={`${styles.viewTitle} view-header-title`} onClick={this.props.onNameClick}>
-                {shouldRenderPrefix ? <div className={styles.viewTitlePrefix}>{this.props.prefix}</div> : {}}
-                {shouldRenderName ? <div className={styles.viewTitleName}>{this.props.name}</div> : {}}
-            </div>
-        );
-    }
-}
+    return (
+        <div className={`${styles.viewTitle} view-header-title`} onClick={props.onNameClick}>
+            {shouldRenderPrefix ? <div className={styles.viewTitlePrefix}>{props.prefix}</div> : {}}
+            {shouldRenderName ? <div className={styles.viewTitleName}>{props.name}</div> : {}}
+        </div>
+    );
+};
 
 function addViewActions(view: MarkdownView) {
     let actionsEl = view.containerEl.querySelector(".view-actions") as HTMLElement;
