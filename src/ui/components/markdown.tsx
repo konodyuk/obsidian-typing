@@ -1,5 +1,6 @@
 import { Component, MarkdownRenderer } from "obsidian";
 import { createContext, memo, useContext, useEffect, useRef } from "react";
+import { dedent } from "src/utilities/dedent";
 
 interface MarkdownRenderingContextType {
     sourcePath: string;
@@ -9,7 +10,17 @@ interface MarkdownRenderingContextType {
 export const MarkdownRenderingContext = createContext<MarkdownRenderingContextType | null>(null);
 
 export const Markdown = memo(
-    ({ text, children, compact }: { text?: string; children?: string; compact?: boolean }) => {
+    ({
+        text,
+        children,
+        compact,
+        dedent: doDedent,
+    }: {
+        text?: string;
+        children?: string;
+        compact?: boolean;
+        dedent?: boolean;
+    }) => {
         let containerRef = useRef<HTMLElement>();
         text = text ?? children;
 
@@ -18,6 +29,9 @@ export const Markdown = memo(
         useEffect(() => {
             if (!containerRef.current) return;
             if (containerRef.current.firstChild) return;
+            if (doDedent) {
+                text = dedent(text);
+            }
             MarkdownRenderer.renderMarkdown(text, containerRef.current, context?.sourcePath, context?.component).then(
                 () => {
                     if (!compact) return;
@@ -32,7 +46,7 @@ export const Markdown = memo(
                     }
                 }
             );
-        }, [text, containerRef.current]);
+        }, [text, containerRef.current, compact, doDedent]);
 
         if (compact) {
             return (
