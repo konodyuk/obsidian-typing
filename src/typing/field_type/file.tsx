@@ -72,7 +72,7 @@ export class File extends FieldType<File> {
                 folder={this.folder}
                 accept={this.accept}
                 capture={this.capture}
-                autoRename={this.autorename}
+                autoRename={this.autorename?.call({})}
                 upload={this.upload}
                 preview={preview}
                 subpath={this.subpath}
