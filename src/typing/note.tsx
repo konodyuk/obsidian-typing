@@ -216,12 +216,11 @@ export class Note {
                 );
             }
         }
-        let superType = gctx.graph.get({ name: typeName });
+        let superType = this.type.getAncestor(typeName);
         if (!superType) {
-            throw new Error(`Invalid super type: ${typeName} does not exist`);
-        }
-        if (!gctx.graph.isinstance(this.type, superType)) {
-            throw new Error(`Invalid super type: ${typeName} is not a parent of ${this.type.name}`);
+            throw new Error(
+                `Invalid super type: ${typeName} does not exist or is not an ancestor of ${this.type.name}`
+            );
         }
         return new Note(this.path, superType);
     }

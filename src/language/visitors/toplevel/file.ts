@@ -22,6 +22,7 @@ export const File = createVisitor({
                 for (let parent of type.parentNames) {
                     // TODO: distinguish imported already inherited types from defined here
                     if (!module[parent]) continue;
+                    type.parents.push(module[parent]);
                     type.inherit(module[parent]);
                 }
             }

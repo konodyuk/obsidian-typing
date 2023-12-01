@@ -13,6 +13,8 @@ export class Type extends DataClass {
     @field()
     public parentNames: Array<string> = [];
     @field({ inherit: false })
+    public parents: Array<Type> = [];
+    @field({ inherit: false })
     public folder: string = null;
     @field()
     public icon: string = null;
@@ -29,17 +31,28 @@ export class Type extends DataClass {
     @field()
     public hooks: HookContainer = HookContainer.new();
 
+    private ancestors: Record<string, Type> = {};
+
     public onAfterCreate(): void {
         this.rebindFields();
     }
 
     public onAfterInherit(): void {
         this.rebindFields();
+        this.indexAncestors();
     }
 
     rebindFields() {
         for (let key in this.fields) {
             this.fields[key] = this.fields[key].bind({ type: this });
+        }
+    }
+
+    indexAncestors(type?: Type) {
+        type = type ?? this;
+        for (let parent of type.parents) {
+            this.ancestors[parent.name] = parent;
+            this.indexAncestors(parent);
         }
     }
 
@@ -130,5 +143,9 @@ export class Type extends DataClass {
         }
 
         return [...paths].map((path) => new Note(path, this));
+    }
+
+    getAncestor(name: string): Type | null {
+        return this.ancestors[name];
     }
 }
