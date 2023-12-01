@@ -18,6 +18,12 @@ export class Field extends DataClass implements Bindable<FieldBindingContext, Fi
     @field()
     public default: string = null;
 
+    public onAfterCreate(): void {
+        if (!this.type.context) {
+            this.type = this.type.bind({ field: this });
+        }
+    }
+
     bind(context: FieldBindingContext) {
         let result = Field.new({
             name: this.name,

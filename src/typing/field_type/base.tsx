@@ -6,7 +6,7 @@ import { Type } from "../type";
 
 export interface FieldTypeBindingContext {
     field: Field;
-    type: Type;
+    type?: Type;
 }
 
 export abstract class FieldType<InstanceType extends FieldType = any>
