@@ -39,6 +39,7 @@ export class Note extends FieldType<Note> {
     }
 
     Display: FieldType["Display"] = ({ value }) => {
+        if (typeof value != "string") value = value.markdown();
         let { path, subpath, display } = parseLink(value);
         if (!display) {
             // to not pass empty linkText to RenderLink
