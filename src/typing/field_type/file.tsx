@@ -41,13 +41,13 @@ export class File extends FieldType<File> {
     autorename: Script = null;
 
     Display: FieldType["Display"] = ({ value }) => {
-        let { name, extension, display } = parseLinkExtended(value);
+        let { name, extension, display, linkpath } = parseLinkExtended(value);
 
         return (
-            <span>
+            <a className="internal-link" href={linkpath}>
                 {display || name}
                 {extension && <kbd>{extension}</kbd>}
-            </span>
+            </a>
         );
     };
 
