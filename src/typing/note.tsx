@@ -126,7 +126,7 @@ export class Note {
     }
 
     get state(): Promise<NoteState> {
-        return new Promise((resolve) => resolve(this.getState()));
+        return this.getState();
     }
 
     set state(state: NoteState | Promise<NoteState>) {
