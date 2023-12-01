@@ -34,10 +34,11 @@ export function SuggestionWithIcon(props: { text: string; icon: string; callback
 export class TypeSuggestModal extends SuggestModal<Type> {
     types: Type[] = [];
 
-    constructor(app: App, public callback: { (type: Type): void }) {
+    constructor(app: App, public callback: { (type: Type): void }, types?: string[]) {
         super(app);
 
-        for (let name in gctx.graph.types) {
+        let typeNames = types ?? Object.keys(gctx.graph.types);
+        for (let name of typeNames) {
             if (name.startsWith("_")) continue;
             let type = gctx.graph.get({ name });
             if (!type.isAbstract && type.isCreateable) {
