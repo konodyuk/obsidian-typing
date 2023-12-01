@@ -1,7 +1,7 @@
 {
     "id": "typing",
     "name": "Typing",
-    "version": "0.2.8",
+    "version": "0.3.0",
     "minAppVersion": "0.9.12",
     "description": "Programmatic customizations for groups of notes",
     "author": "Nikita Konodyuk",
