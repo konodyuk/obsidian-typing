@@ -5,7 +5,7 @@ import { gctx } from "src/context";
 import { autoFieldAccessor, IFieldAccessor } from "src/middleware/field_accessor";
 import { MarginalComponent } from "src/middleware/marginal_rendering";
 import { Script } from "src/scripting";
-import { Markdown } from "src/ui";
+import { Markdown, prompt, Prompt } from "src/ui";
 import { bindCollection, DataClass, field, RenderLink } from "src/utilities";
 import { HookContextType, HookNames, RelationsProxy, Style, Type } from ".";
 
