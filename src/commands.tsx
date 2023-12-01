@@ -1,17 +1,13 @@
 import { gctx } from "src/context";
 import TypingPlugin from "src/main";
-import { Type } from "src/typing";
-import { ActionSuggestModal, TypeSuggestModal } from "src/ui";
+import { ActionSuggestModal } from "src/ui";
 
 const COMMANDS = [
     {
         id: "new",
         name: "New",
         callback: async () => {
-            let type = await new Promise<Type>((resolve, reject) => {
-                let modal = new TypeSuggestModal(gctx.app, (type) => resolve(type));
-                modal.open();
-            });
+            let type = await gctx.api.promptType();
             if (!type) {
                 return;
             }

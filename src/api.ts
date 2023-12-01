@@ -2,6 +2,7 @@ import { importModules } from "src/api_imports";
 import { gctx } from "src/context";
 import { Note, Type } from "src/typing";
 import * as ui from "src/ui";
+import { TypeSuggestModal } from "src/ui";
 
 type PromiseType<T> = T extends Promise<infer U> ? U : never;
 
@@ -27,6 +28,13 @@ export class TypingAPI {
 
     ui = ui;
     prompt = ui.prompt;
+
+    promptType = (types?: string[]) => {
+        return new Promise<Type>((resolve, reject) => {
+            let modal = new TypeSuggestModal(gctx.app, (type) => resolve(type), types);
+            modal.open();
+        });
+    };
 
     note(path: string): Note {
         return new Note(path);
