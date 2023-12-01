@@ -9,7 +9,7 @@ export enum HookNames {
     // ON_CLOSE = "on_close",
     ON_RENAME = "on_rename",
     // ON_MOVE = "on_move",
-    // ON_METADATA_CHANGE = "on_metadata_change",
+    ON_METADATA_CHANGE = "on_metadata_change",
     // ON_TYPE_CHANGE = "on_type_change",
 }
 
@@ -52,9 +52,8 @@ export interface OnTypeChangeHookContext extends HookContext {
 
 export interface OnMetadataChangeHookContext extends HookContext {
     note: Note;
-    fieldName: string;
-    value: string;
-    prevValue: string;
+    newState: NoteState;
+    prevState: NoteState;
 }
 
 export class Hook<T extends HookContext> extends DataClass {
@@ -75,6 +74,8 @@ export class HookContainer extends DataClass {
     [HookNames.ON_CREATE]: Hook<OnCreateHookContext> = null;
     @field()
     [HookNames.ON_RENAME]: Hook<OnRenameHookContext> = null;
+    @field()
+    [HookNames.ON_METADATA_CHANGE]: Hook<OnMetadataChangeHookContext> = null;
     // @field()
     // [HookNames.ON_MOVE]: Hook<OnMoveHookContext> = null;
 

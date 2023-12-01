@@ -154,6 +154,7 @@ export class Note {
                 await this._fields.setValue(fieldName, newState.fields[fieldName]);
             }
         }
+        this.runHook(HookNames.ON_METADATA_CHANGE, { note: this, newState, prevState: state });
         if (state.title != newState.title) {
             await this.rename({ title: newState.title });
         }
