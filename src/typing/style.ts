@@ -24,7 +24,7 @@ export class Style extends DataClass {
     @field()
     public show_prefix: ShowPrefixValues = ShowPrefixValues.SMART;
     @field()
-    public hide_inline_fields: HideInlineFieldsValues = HideInlineFieldsValues.NONE;
+    public hide_inline_fields: HideInlineFieldsValues = null;
     @field()
     public css_classes: Array<string> = [];
     @field()
