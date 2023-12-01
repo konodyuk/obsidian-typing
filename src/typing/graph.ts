@@ -1,8 +1,10 @@
+import { minimatch } from "minimatch";
 import { Note, Type } from ".";
 
 export class TypeGraph {
     public types: { [name: string]: Type } = {};
     private folderToType: { [folder: string]: Type } = {};
+    private globToType: { [glob: string]: Type } = {};
     public isEmpty: boolean = true;
     public isReady: boolean = false;
 
@@ -43,12 +45,20 @@ export class TypeGraph {
         if (folder != null && folder in this.folderToType) {
             return this.folderToType[folder];
         }
+        if (path != null) {
+            for (let glob in this.globToType) {
+                if (minimatch(path, glob)) {
+                    return this.globToType[glob];
+                }
+            }
+        }
         return null;
     }
 
     public add(type: Type) {
         this.types[type.name] = type;
-        this.folderToType[type.folder] = type;
+        if (type.folder) this.folderToType[type.folder] = type;
+        if (type.glob) this.globToType[type.glob] = type;
         this.isEmpty = false;
     }
 

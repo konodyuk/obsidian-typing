@@ -16,6 +16,8 @@ export class Type extends DataClass {
     public parents: Array<Type> = [];
     @field({ inherit: false })
     public folder: string = null;
+    @field({ inherit: false })
+    public glob: string = null;
     @field()
     public icon: string = null;
     @field()
