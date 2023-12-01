@@ -1,6 +1,7 @@
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import CodeMirror from "@uiw/react-codemirror";
 import classNames from "classnames";
+import { EditorView } from "codemirror";
 import { ComponentChildren, RefObject } from "preact";
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { gctx } from "src/context";
@@ -254,6 +255,7 @@ function PromptText() {
                 // height="10em"
                 extensions={[
                     markdown({ base: markdownLanguage }),
+                    EditorView.lineWrapping,
                     // keymap.of([indentWithTab]),
                 ]}
             />
