@@ -88,6 +88,15 @@ class MarginalRenderChild extends MarkdownRenderChild {
             })
         );
         this.registerEvent(
+            gctx.plugin.app.vault.on("rename", (file, oldPath) => {
+                if (!this.isAutoreloadEnabled) return;
+                if (oldPath != this.path) return;
+                this.path = file.path;
+                this.note = new Note(this.path);
+                this.onMetadataChange();
+            })
+        );
+        this.registerEvent(
             gctx.plugin.app.metadataCache.on("typing:schema-change", () => {
                 this.onSchemaChange();
             })
