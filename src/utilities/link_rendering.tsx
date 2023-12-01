@@ -48,6 +48,7 @@ export const RenderLink = ({
     note,
     container,
     linkText,
+    ...props
 }: {
     type: Type;
     note: Note;
@@ -61,7 +62,7 @@ export const RenderLink = ({
     let linkScript = type.style?.link;
     if (linkScript) {
         try {
-            let el = linkScript.call({ note, container, linkText });
+            let el = linkScript.call({ note, container, linkText, props });
             if (el) {
                 return el;
             }
