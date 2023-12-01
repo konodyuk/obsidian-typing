@@ -1,5 +1,6 @@
 import { TFile } from "obsidian";
 import { LiteralValue } from "obsidian-dataview";
+import { useRef } from "react";
 import { gctx } from "src/context";
 import { autoFieldAccessor, IFieldAccessor } from "src/middleware/field_accessor";
 import { MarginalComponent } from "src/middleware/marginal_rendering";
@@ -252,10 +253,27 @@ export class Note {
         return tfile;
     }
 
-    Link = (props: { children?: any; container?: HTMLElement; linkText?: string }) => {
+    link(opt?: { short: boolean }) {
+        if (opt?.short) {
+            return `[[${this.fullname}]]`;
+        } else {
+            return `[[${this.path}|${this.title}]]`;
+        }
+    }
+
+    Link = ({ children, linkText, ...props }: { children?: any; linkText?: string }) => {
+        let ref = useRef();
         return (
-            <a class="internal-link" href={this.path}>
-                {props?.children ?? <RenderLink note={this} type={this.type} {...props} />}
+            <a
+                class="internal-link no-postprocessing"
+                href={this.path}
+                ref={(el) => {
+                    ref.current = el;
+                }}
+            >
+                {children ?? (
+                    <RenderLink note={this} type={this.type} container={ref.current} linkText={linkText} {...props} />
+                )}
             </a>
         );
     };
