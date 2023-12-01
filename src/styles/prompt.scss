@@ -345,3 +345,12 @@ input[type="text"].Input {
         }
     }
 }
+
+.Checkbox {
+    &-container {
+        height: calc(var(--font-ui-medium) * var(--line-height-normal));
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
