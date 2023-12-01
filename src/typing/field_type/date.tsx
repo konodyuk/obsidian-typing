@@ -6,6 +6,7 @@ export class Date extends FieldType<Date> {
     name = "Date";
 
     Display: FieldType["Display"] = ({ value }) => {
+        if (typeof value != "string") return <>{value?.toLocal?.().toFormat?.("yyyy-MM-dd") ?? "invalid date"}</>;
         return <>{value}</>;
     };
 
