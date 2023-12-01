@@ -53,7 +53,7 @@ export class GlobalContext {
         gctx.interpreter = new Interpreter(plugin.app.vault, plugin);
 
         if (gctx.testing) return;
-        gctx.cssManager = new CSSManager("global");
+        gctx.cssManager = new CSSManager("typing-global");
         gctx.userDefinedCssManager = new CSSManager("typing-user-defined");
     }
 }
