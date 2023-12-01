@@ -4,7 +4,7 @@ import { Component } from "react";
 import { gctx } from "src/context";
 import TypingPlugin from "src/main";
 import styles from "src/styles/view-title.scss";
-import { ActionSuggestModal, Prompt } from "src/ui";
+import { ActionSuggestModal } from "src/ui";
 
 class ViewTitle extends Component {
     constructor(
