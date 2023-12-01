@@ -3,6 +3,8 @@ import { Pickers } from "src/ui";
 import { field } from "src/utilities";
 import { FieldType, FieldTypeBindingContext } from "./base";
 
+import styles from "src/styles/prompt.scss";
+
 export class List extends FieldType<List> {
     name = "List";
 
@@ -13,7 +15,24 @@ export class List extends FieldType<List> {
     public unique: boolean = false;
 
     Display: FieldType["Display"] = ({ value }) => {
-        return <>{value}</>;
+        let itemValues;
+        if (typeof value == "string")
+            // TODO: fix the same bug with comma inside values as in picker
+            itemValues = value
+                ?.split(",")
+                .map((x) => x.trim())
+                .filter((x) => x.trim());
+        else itemValues = value;
+        let displays = [];
+        for (let itemValue of itemValues) {
+            displays.push(
+                <div className={styles.listElement}>
+                    <this.type.Display value={itemValue} />
+                </div>
+            );
+        }
+
+        return <div className={styles.list}>{displays}</div>;
     };
 
     Picker = () => {
