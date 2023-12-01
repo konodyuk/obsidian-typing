@@ -1,3 +1,4 @@
+export { Boolean } from "./boolean";
 export { Choice } from "./choice";
 export { Date } from "./date";
 export { File } from "./file";
