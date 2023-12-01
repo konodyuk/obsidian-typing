@@ -19,7 +19,7 @@ export abstract class FieldType<InstanceType extends FieldType = any>
     static requiresDataview: boolean = false;
 
     Picker: React.FunctionComponent = () => {
-        return <Pickers.Text />;
+        return <Pickers.String />;
     };
 
     Display: React.FunctionComponent<{ value: string }> = ({ value }) => {

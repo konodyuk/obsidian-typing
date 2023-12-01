@@ -6,3 +6,4 @@ export { Note } from "./note";
 export { Number } from "./number";
 export { String } from "./string";
 export { Tag } from "./tag";
+export { Text } from "./text";
