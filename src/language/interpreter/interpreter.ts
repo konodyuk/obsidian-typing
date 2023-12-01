@@ -1,11 +1,22 @@
 import { gctx } from "src/context";
 import { setPanelContent } from "src/editor/editor";
 import { parser } from "src/language/grammar/otl_parser";
-import { Visitors } from "src/language/visitors";
+import { TVisitorBase, Visitors } from "src/language/visitors";
 import { FileSpec, Module, ModuleManagerSync } from "src/utilities/module_manager_sync";
 
 export class Interpreter extends ModuleManagerSync {
     extensions = ["otl"];
+
+    public runCode(code: string, visitor: TVisitorBase) {
+        let tree = parser.parse(code);
+        let node = tree.topNode;
+        if (!node) return null;
+
+        let lint = visitor.lint(node, { interpreter: this, input: code });
+        if (lint.hasErrors) return null;
+
+        return visitor.run(node, { interpreter: this, input: code });
+    }
 
     public evaluateModule(file: FileSpec, mod: Module): boolean {
         setPanelContent(`Importing ${this.activeModule?.file.path}...`);

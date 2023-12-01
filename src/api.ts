@@ -1,5 +1,6 @@
 import { importModules } from "src/api_imports";
 import { gctx } from "src/context";
+import { Visitors } from "src/language";
 import { Note, Type } from "src/typing";
 import * as ui from "src/ui";
 import { TypeSuggestModal } from "src/ui";
@@ -24,6 +25,10 @@ export class TypingAPI {
     }
     get platform() {
         return gctx.platform;
+    }
+
+    get otl() {
+        return { run: (code: string) => gctx.interpreter.runCode(code, Visitors.Expression), Visitors };
     }
 
     ui = ui;
