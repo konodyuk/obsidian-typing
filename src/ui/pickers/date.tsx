@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { default as ReactDatePicker } from "react-datepicker";
 import "src/styles/react-datepicker.notranspile.scss";
 import { parseDate } from "src/utilities";
@@ -37,6 +37,14 @@ export function Date() {
     }
 
     let [dateQuery, setDateQuery] = useState(controls.value);
+
+    useEffect(() => {
+        // we do it on first render to synchronize displayed and stored values
+        // for example, `today` -> `2023-11-30`
+        if (controls.value != controls.str.value) {
+            controls.str.setValue(controls.value);
+        }
+    }, []);
 
     return (
         <Picker>
