@@ -26,7 +26,7 @@ export class Style extends DataClass {
     @field()
     public hide_inline_fields: HideInlineFieldsValues = null;
     @field()
-    public css_classes: Array<string> = [];
+    public css_classes: Array<string> = null;
     @field()
     public css: string = null;
 }
