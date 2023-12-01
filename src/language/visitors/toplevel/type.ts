@@ -183,7 +183,19 @@ export const Type = createVisitor({
                     Visitors.NamedAttribute(
                         Visitors.StructuredObject({
                             name: Visitors.Attribute("name", Visitors.String),
-                            icon: Visitors.Attribute("icon", Visitors.String),
+                            icon: Visitors.Attribute("icon", Visitors.String).override({
+                                decorations(node) {
+                                    let valueNode = node.getChild(Rules.AssignmentValue);
+                                    if (!valueNode) return [];
+                                    let icon = stripQuotes(this.getNodeText(valueNode));
+                                    return [
+                                        Decoration.widget({
+                                            widget: new IconWidget(icon),
+                                            side: 1,
+                                        }).range(valueNode.to),
+                                    ];
+                                },
+                            }),
                             script: Visitors.Attribute("script", Visitors.FnScriptString()),
                             shortcut: Visitors.Attribute("shortcut", Visitors.String),
                         })
