@@ -13,7 +13,7 @@ import { gctx } from "src/context";
 import TypingPlugin from "src/main";
 import { Script } from "src/scripting";
 import { Note, Values } from "src/typing";
-import { Contexts } from "src/ui";
+import { Contexts, useMarginalContext } from "src/ui";
 import { eagerDebounce, render } from "src/utilities";
 
 const HEADER_CODEBLOCK_LANGUAGE = "typing-header";
@@ -158,7 +158,9 @@ class MarginalRenderChild extends MarkdownRenderChild {
                 let contentEl = this.containerEl.createDiv();
                 render(
                     <Contexts.MarkdownRenderingContext.Provider value={{ sourcePath: this.path, component: this }}>
-                        <MarginalComponent script={this.marginal} context={context} />
+                        <Contexts.MarginalContext.Provider value={context}>
+                            <MarginalComponent script={this.marginal} />
+                        </Contexts.MarginalContext.Provider>
                     </Contexts.MarkdownRenderingContext.Provider>,
                     contentEl
                 );
@@ -197,8 +199,9 @@ class MarginalRenderChild extends MarkdownRenderChild {
     };
 }
 
-const MarginalComponent = ({ script, context }: { script: Script; context: any }) => {
-    let el = script.call(context);
+export const MarginalComponent = ({ script }: { script: Script }) => {
+    const context = useMarginalContext();
+    const el = script.call(context);
     return el;
 };
 
