@@ -11,8 +11,8 @@ const ViewTitle = (props: { prefix: string | null; name: string | null; onNameCl
 
     return (
         <div className={`${styles.viewTitle} view-header-title`} onClick={props.onNameClick}>
-            {shouldRenderPrefix ? <div className={styles.viewTitlePrefix}>{props.prefix}</div> : {}}
-            {shouldRenderName ? <div className={styles.viewTitleName}>{props.name}</div> : {}}
+            {shouldRenderPrefix ? <div className={styles.viewTitlePrefix}>{props.prefix}</div> : null}
+            {shouldRenderName ? <div className={styles.viewTitleName}>{props.name}</div> : null}
         </div>
     );
 };
