@@ -24,7 +24,7 @@ export class Number extends FieldType<Number> {
         for (let i = this.min; i <= this.max; i++) {
             options.push({ value: `${i}` });
         }
-        return <Pickers.Choice options={options} />;
+        return <Pickers.Choice options={options} addQuotesInList={false} />;
     };
 
     get default() {

@@ -7,11 +7,13 @@ export const Choice = ({
     options,
     dynamic,
     maxOptions = 10,
+    addQuotesInList = true,
 }: // labelToValue,
 {
     options: IComboboxOption[];
     dynamic?: boolean;
     maxOptions?: number;
+    addQuotesInList?: boolean;
     // labelToValue?: (label: string) => string;
 }) => {
     let inList = useContext(Contexts.ListContext);
@@ -24,7 +26,7 @@ export const Choice = ({
             return { text };
         },
         compose: ({ text }) => {
-            if (inList) {
+            if (inList && addQuotesInList) {
                 return `"${text}"`;
             }
             return text;
