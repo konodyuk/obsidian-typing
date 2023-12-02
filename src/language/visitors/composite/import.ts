@@ -45,7 +45,7 @@ export const Import = () =>
         },
         lint(node) {
             let { symbols, path } = this.runChildren();
-            let module = this.callContext.interpreter.importSmart(path);
+            let module = this.callContext.interpreter.importSmart(path, this.callContext.path);
             if (!module) {
                 this.error("Invalid module");
                 return;
@@ -63,7 +63,7 @@ export const Import = () =>
         run(node) {
             let result: Type[] = [];
             let { symbols, path } = this.runChildren();
-            let module = this.callContext.interpreter.importSmart(path);
+            let module = this.callContext.interpreter.importSmart(path, this.callContext.path);
             for (let symbol of symbols) {
                 if (!(symbol.symbol in module.env)) {
                     // TODO: handle: throw error or continue

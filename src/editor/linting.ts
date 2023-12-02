@@ -4,6 +4,7 @@ import { SyntaxNode } from "@lezer/common";
 import { gctx } from "src/context";
 import { Rules } from "src/language/grammar";
 import { TVisitorBase, Visitors } from "src/language/visitors";
+import { codeEditorMetadataField } from "./state_fields";
 
 interface Linter {
     rule: Rules | null;
@@ -32,6 +33,7 @@ export const visitorLinter = (rootVisitor: TVisitorBase) => {
                 ...rootVisitor.lint(syntaxTree(view.state).topNode, {
                     state: view.state,
                     interpreter: gctx.interpreter,
+                    path: view.state.field(codeEditorMetadataField).path,
                 }).diagnostics
             );
             return diagnostics;

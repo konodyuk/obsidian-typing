@@ -19,13 +19,14 @@ import { EditorView, keymap, Panel, tooltips, ViewPlugin, ViewUpdate } from "@co
 import { Input, parseMixed, Parser, SyntaxNodeRef } from "@lezer/common";
 import { styleTags, tags as t } from "@lezer/highlight";
 import { basicSetup } from "codemirror";
-import { Scope, TextFileView, WorkspaceLeaf } from "obsidian";
+import { Scope, TextFileView, TFile, WorkspaceLeaf } from "obsidian";
 import { parser, Rules } from "src/language/grammar";
 import TypingPlugin from "src/main";
 import { visitorCompletion } from "./completion";
 import { decorationsPlugin } from "./decorations";
 import { hover } from "./hover";
 import { lint } from "./linting";
+import { codeEditorMetadataField, setCodeEditorMetadataEffect } from "./state_fields";
 import { obsidianCodeTheme } from "./themes/obsidian";
 
 import styles from "src/styles/editor.scss";
@@ -215,12 +216,18 @@ class BaseEditorView extends TextFileView {
                 autoSavePlugin(this),
                 // scrollPastEnd(), // TODO: disabled as it messes measure loop
                 autocompletion(),
+                codeEditorMetadataField,
                 ...this.extensions,
             ],
         });
         this.view = new EditorView({ state, parent: this.contentEl });
 
         await super.onOpen();
+    }
+
+    async onLoadFile(file: TFile) {
+        this.view.dispatch({ effects: setCodeEditorMetadataEffect.of({ path: file.path }) });
+        await super.onLoadFile(file);
     }
 
     clear(): void {

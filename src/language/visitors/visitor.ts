@@ -60,6 +60,7 @@ interface GlobalCallContext {
     doc?: Text;
     state?: EditorState;
     interpreter: Interpreter;
+    path?: string;
 }
 
 interface GlobalContext {
