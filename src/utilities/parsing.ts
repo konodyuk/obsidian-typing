@@ -42,7 +42,7 @@ export function parseLinkExtended(value: string) {
 
     ({ name, extension } = parseFileExtension(name));
 
-    let result = { folder, name, extension, subpath, display, linkpath };
+    let result = { path, folder, name, extension, subpath, display, linkpath };
     return result;
 }
 
