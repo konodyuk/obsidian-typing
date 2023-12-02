@@ -1,6 +1,6 @@
 {
   "name": "obsidian-typing",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Strict note typing for Obsidian",
   "main": "main.js",
   "scripts": {
