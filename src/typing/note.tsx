@@ -189,7 +189,7 @@ export class Note {
     }
 
     async runHook<T extends HookNames>(name: T, context: HookContextType<T>) {
-        this.type.hooks.run(name, context);
+        this.type?.hooks.run(name, context);
     }
 
     async rename({
