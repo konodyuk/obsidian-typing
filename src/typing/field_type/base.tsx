@@ -30,6 +30,10 @@ export abstract class FieldType<InstanceType extends FieldType = any>
         return "";
     }
 
+    parseDefault(value: any): string {
+        return `${value}`;
+    }
+
     bind(context: FieldTypeBindingContext): InstanceType {
         let instance = this.copy();
         instance.context = context;

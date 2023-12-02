@@ -22,6 +22,16 @@ export class Boolean extends FieldType<Boolean> {
         return `false`;
     }
 
+    parseDefault(value: number | string | boolean): string {
+        if (typeof value == "boolean") {
+            return value ? "true" : "false";
+        }
+        if (typeof value == "number") {
+            return value > 0 ? "true" : "false";
+        }
+        return value;
+    }
+
     static ParametersVisitor = () =>
         Visitors.ParametersVisitorFactory({
             kwargs: {

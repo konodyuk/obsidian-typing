@@ -22,6 +22,7 @@ export class Field extends DataClass implements Bindable<FieldBindingContext, Fi
         if (!this.type.context) {
             this.type = this.type.bind({ field: this });
         }
+        this.default = this.type.parseDefault(this.default);
     }
 
     bind(context: FieldBindingContext) {

@@ -43,6 +43,15 @@ export class List extends FieldType<List> {
         return "";
     }
 
+    parseDefault(value: string | any[]): string {
+        if (Array.isArray(value)) {
+            let result = value.map(this.type.parseDefault).join(", ");
+            if (value.length == 1) result += ",";
+            return result;
+        }
+        return value;
+    }
+
     bind(context: FieldTypeBindingContext): List {
         let result = super.bind(context);
         // TODO: there may be some troubles with field name, as it will be the same as of outer type
