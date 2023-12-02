@@ -65,6 +65,11 @@ export abstract class ModuleManagerSync<ContextType = any> {
         }
         this.onBeforeImport(path);
 
+        const importerModule = this.activeModule;
+        if (importerModule) {
+            this.dependencyGraph.addDependency(importerModule.file.path, path);
+        }
+
         // TODO: was commented out
         if (!forceReload && path in this.modules && source == null) {
             return this.modules[path];
@@ -83,10 +88,6 @@ export abstract class ModuleManagerSync<ContextType = any> {
 
         const module: Module = { env: {}, file };
 
-        const importerModule = this.activeModule;
-        if (importerModule) {
-            this.dependencyGraph.addDependency(importerModule.file.path, path);
-        }
         this.enterFrame({ module });
 
         this.modules[path] = module;
