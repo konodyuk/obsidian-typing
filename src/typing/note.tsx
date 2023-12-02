@@ -219,7 +219,7 @@ export class Note {
     }
 
     async runAction(name: string) {
-        this.type.actions[name].script.call({ note: this });
+        this.type?.actions[name].script.call({ note: this });
     }
 
     async runHook<T extends HookNames>(name: T, context: HookContextType<T>) {
