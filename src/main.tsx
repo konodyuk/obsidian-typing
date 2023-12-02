@@ -40,6 +40,8 @@ export default class TypingPlugin extends Plugin {
         await this.ctx.interpreter.setup();
         await this.ctx.importManager.setup();
 
+        this.ctx.noteCache.startWatch();
+
         if (gctx.testing) return;
 
         await this.ctx.cssManager.reloadFonts();

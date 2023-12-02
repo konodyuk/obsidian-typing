@@ -18,17 +18,25 @@ export interface NoteState {
 }
 
 export class Note {
+    public path: string;
     public type: Type | null;
     private _methods: Record<string, Function>;
     private _actions: Record<string, Function>;
     private _relations: RelationsProxy;
-    private _fields: FieldsProxy;
-    // private _page: Record<string, any>;
+
+    private get _fields() {
+        if (!this.type) return null;
+
+        let cached = gctx.noteCache.get(this.path, "fields");
+        if (cached) return cached;
+
+        let newProxy = FieldsProxy.new({ note: this });
+        gctx.noteCache.set(this.path, "fields", newProxy);
+        return newProxy;
+    }
 
     get fields() {
-        if (!this.type) return null;
-        if (!this._fields) this._fields = FieldsProxy.new({ note: this });
-        return this._fields.proxy;
+        return this._fields?.proxy;
     }
 
     get actions() {
@@ -50,31 +58,57 @@ export class Note {
     }
 
     get page(): Record<string, LiteralValue> {
-        return gctx.dv.page(this.path);
-        // if (!this._page) this._page = gctx.dv.page(this.path);
-        // return this._page;
+        let cached = gctx.noteCache.get(this.path, "page");
+        if (cached) return cached;
+
+        let newPage = gctx.dv.page(this.path);
+        gctx.noteCache.set(this.path, "page", newPage);
+        return newPage;
     }
 
-    constructor(public path: string, type?: Type) {
-        this.type = type ?? gctx.graph.get({ path });
+    private constructor(path: string, type: Type | null) {
+        this.path = path;
+        this.type = type;
+    }
 
-        if (this.type == null) {
+    static new(path: string, opts?: { type?: Type; isSuperCall?: boolean }) {
+        opts = opts ?? {};
+
+        if (opts.isSuperCall) {
+            let cached = gctx.noteCache.get(path, "superInstances")?.[opts.type?.name];
+            if (cached) return cached;
+        } else {
+            let cached = gctx.noteCache.get(path, "note");
+            if (cached) return cached;
+        }
+
+        let type = opts.type ?? gctx.graph.get({ path });
+
+        if (type == null) {
             // support for type specification via frontmatter field `_type`
             // TODO: do this only if it is configured
-            let file = this.file;
-            if (this.file) {
+            let file = Note.file(path);
+            if (file) {
                 let explicitTypeName = gctx.app.metadataCache.getFileCache(file)?.frontmatter?._type;
                 if (explicitTypeName) {
-                    this.type = gctx.graph.get({ name: explicitTypeName });
+                    type = gctx.graph.get({ name: explicitTypeName });
                 }
             }
         }
 
-        if (this.type == null) this.type = gctx.graph.get({ name: "default" });
+        if (type == null) type = gctx.graph.get({ name: "default" });
 
-        if (this.type == null) {
-            return;
+        let note = new Note(path, type);
+
+        if (!opts.isSuperCall && !opts.type) {
+            gctx.noteCache.set(path, "note", note);
+        } else {
+            let superInstances = gctx.noteCache.get(path, "superInstances") ?? {};
+            superInstances[opts?.type?.name] = note;
+            gctx.noteCache.set(path, "superInstances", superInstances);
         }
+
+        return note;
     }
 
     // more explicit alias for note.page
@@ -138,9 +172,6 @@ export class Note {
     }
 
     async getState(): Promise<NoteState> {
-        // refresh accessor it it is defined, otherwise create it
-        this._fields ? this._fields.refreshAccessor() : this.fields;
-
         let fields: Record<string, string> = {};
         if (this.typed) {
             for (let fieldName in this.type.fields) {
@@ -156,16 +187,19 @@ export class Note {
             return;
         }
 
-        // refresh accessor it it is defined, otherwise create it
-        this._fields ? this._fields.refreshAccessor() : this.fields;
-
         let state = await this.state;
+        let somethingChanged = false;
         for (let fieldName in newState.fields) {
             if (state.fields[fieldName] != newState.fields[fieldName]) {
+                somethingChanged = true;
                 await this._fields.setValue(fieldName, newState.fields[fieldName]);
             }
         }
-        this.runHook(HookNames.ON_METADATA_CHANGE, { note: this, newState, prevState: state });
+        if (somethingChanged) {
+            gctx.noteCache.invalidate(this.path);
+            this.runHook(HookNames.ON_METADATA_CHANGE, { note: this, newState, prevState: state });
+        }
+
         if (state.title != newState.title) {
             await this.rename({ title: newState.title });
         }
@@ -226,6 +260,11 @@ export class Note {
         await gctx.app.fileManager.renameFile(this.file, path);
         this.path = path;
 
+        // TODO: probably support renaming of cache entry to not leave existing Note instances
+        // for current path outdated
+        gctx.noteCache.invalidate(path);
+        gctx.noteCache.invalidate(prevPath);
+
         // TODO: rewrite as a global callback
         this.runHook(HookNames.ON_RENAME, { note: this, prevPath, prevFilename, prevFullname, prevTitle });
     }
@@ -247,15 +286,15 @@ export class Note {
                 `Invalid super type: ${typeName} does not exist or is not an ancestor of ${this.type.name}`
             );
         }
-        return new Note(this.path, superType);
+        return Note.new(this.path, { type: superType, isSuperCall: true });
     }
 
     get typed() {
         return this.type != null;
     }
 
-    get file(): TFile {
-        let tfile = gctx.app.vault.getAbstractFileByPath(this.path);
+    private static file(path: string): TFile {
+        let tfile = gctx.app.vault.getAbstractFileByPath(path);
         if (!tfile) {
             return null;
         }
@@ -264,6 +303,10 @@ export class Note {
             return null;
         }
         return tfile;
+    }
+
+    get file(): TFile {
+        return Note.file(this.path);
     }
 
     link(opt?: { short: boolean }) {
@@ -351,5 +394,38 @@ class FieldsProxy extends DataClass {
 
     async setValue(fieldName: string, value: string | Promise<string>) {
         return this.accessor.setValue(fieldName, await value);
+    }
+}
+
+export interface NoteCacheEntry {
+    note?: Note;
+    superInstances?: { [typeName: string]: Note };
+    fields?: FieldsProxy;
+    page?: Record<string, any>;
+}
+
+export class NoteCache {
+    entries: Record<string, NoteCacheEntry> = {};
+
+    invalidate(path: string) {
+        this.entries[path] = undefined;
+    }
+    invalidateAll() {
+        this.entries = {};
+    }
+    get<K extends keyof NoteCacheEntry>(path: string, key: K) {
+        return this.entries[path]?.[key];
+    }
+    set<K extends keyof NoteCacheEntry>(path: string, key: K, value: NoteCacheEntry[K]) {
+        if (!this.entries[path]) this.entries[path] = {};
+        this.entries[path][key] = value;
+    }
+
+    startWatch() {
+        gctx.plugin.registerEvent(
+            gctx.app.metadataCache.on("dataview:metadata-change", (op, file) => {
+                if (gctx.graph.isReady) this.invalidate(file.path);
+            })
+        );
     }
 }

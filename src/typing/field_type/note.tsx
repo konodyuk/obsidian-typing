@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { gctx } from "src/context";
 import { Visitors } from "src/language";
-import { Note as NoteObject, Type } from "src/typing";
+import { Type } from "src/typing";
 import { IComboboxOption, Pickers } from "src/ui";
 import { field, parseLink, RenderLink } from "src/utilities";
 import { FieldType } from "./base";
@@ -49,7 +49,7 @@ export class Note extends FieldType<Note> {
         // TODO: supply current path: which one should it be?
         let resolved = gctx.app.metadataCache.getFirstLinkpathDest(path, "");
         path = resolved?.path ?? path;
-        let note = new NoteObject(path);
+        let note = gctx.api.note(path);
         return (
             <a class="internal-link" href={note.path} tabIndex={-1}>
                 <Suspense fallback={note.title}>

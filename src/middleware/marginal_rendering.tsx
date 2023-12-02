@@ -73,7 +73,7 @@ class MarginalRenderChild extends MarkdownRenderChild {
 
     constructor(containerEl: HTMLElement, public path: string, public marginalType: "header" | "footer") {
         super(containerEl);
-        this.note = new Note(path);
+        this.note = gctx.api.note(path);
         this.debouncedUpdate = eagerDebounce(this.update, TIMEOUT);
     }
     get marginal() {
@@ -92,7 +92,7 @@ class MarginalRenderChild extends MarkdownRenderChild {
                 if (!this.isAutoreloadEnabled) return;
                 if (oldPath != this.path) return;
                 this.path = file.path;
-                this.note = new Note(this.path);
+                this.note = gctx.api.note(this.path);
                 this.onMetadataChange();
             })
         );
@@ -110,7 +110,7 @@ class MarginalRenderChild extends MarkdownRenderChild {
         this.requestUpdate();
     };
     onSchemaChange = () => {
-        this.note = new Note(this.path);
+        this.note = gctx.api.note(this.path);
         this.requestUpdate();
     };
     requestUpdate = () => {

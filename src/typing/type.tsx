@@ -112,7 +112,7 @@ export class Type extends DataClass {
 
         await gctx.app.vault.create(path, content);
 
-        let note = new Note(path);
+        let note = Note.new(path);
         note.runHook(HookNames.ON_CREATE, { note });
         return note;
     }
@@ -144,7 +144,7 @@ export class Type extends DataClass {
             paths = folder.children.filter((x) => x instanceof TFile && x.extension == "md").map((x) => x.path);
         }
 
-        return [...paths].map((path) => new Note(path, this));
+        return [...paths].map((path) => Note.new(path, { type: this }));
     }
 
     getAncestor(name: string): Type | null {

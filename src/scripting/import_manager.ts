@@ -21,6 +21,7 @@ export class ImportManager extends ModuleManagerSync {
     }
 
     protected onAfterReload(): void {
+        gctx.noteCache.invalidateAll();
         gctx.app.metadataCache.trigger("typing:schema-change");
     }
 }

@@ -1,7 +1,6 @@
 import { MarkdownPostProcessorContext, Plugin } from "obsidian";
 import { gctx } from "src/context";
 import TypingPlugin from "src/main";
-import { Note } from "src/typing";
 import { regexField } from "./field_accessor";
 
 export function hideInlineFields(plugin: Plugin) {
@@ -15,7 +14,7 @@ export function hideInlineFields(plugin: Plugin) {
                 );
             });
         }
-        let note = new Note(ctx.sourcePath);
+        let note = gctx.api.note(ctx.sourcePath);
         let hideSetting = note.type?.style?.hide_inline_fields;
         if (!hideSetting || hideSetting == "none") return;
 

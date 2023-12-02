@@ -1,6 +1,7 @@
 import { Editor, MarkdownView, TFile } from "obsidian";
+import { gctx } from "src/context";
 import TypingPlugin from "src/main";
-import { Note, Type } from "src/typing";
+import { Type } from "src/typing";
 
 export let regexField = /^\s*(?<field>[0-9\w\p{Letter}][-0-9\w\p{Letter}]*)\s*::\s*(?<value>.*)\s*/u;
 
@@ -212,7 +213,7 @@ export class StringFieldAccessor extends BaseFieldAccessor {
 }
 
 export function autoFieldAccessor(path: string, plugin: TypingPlugin): EditorFieldAccessor | FileFieldAccessor {
-    let note = new Note(path);
+    let note = gctx.api.note(path);
     let activeView = plugin.app.workspace.getActiveViewOfType(MarkdownView);
     if (activeView && activeView.getMode() == "source" && activeView.file.path === path) {
         return new EditorFieldAccessor(activeView.editor, note.type);

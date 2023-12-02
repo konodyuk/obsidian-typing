@@ -43,7 +43,7 @@ class LinkRenderChild extends MarkdownRenderChild {
         this.updateDebounced();
     };
     update = async () => {
-        this.note = new Note(this.path);
+        this.note = gctx.api.note(this.path);
         if (!this.note) {
             return;
         }

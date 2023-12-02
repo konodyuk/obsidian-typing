@@ -42,7 +42,7 @@ export class TypingAPI {
     };
 
     note(path: string): Note {
-        return new Note(path);
+        return Note.new(path);
     }
     type(opt: string | { path?: string; folder?: string; name?: string }): Type {
         if (typeof opt == "string") {

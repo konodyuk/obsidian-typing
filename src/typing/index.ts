@@ -4,7 +4,7 @@ export { FieldType, FieldTypes } from "./field_type";
 export { TypeGraph } from "./graph";
 export { Hook, HookContainer, HookContextType, HookNames } from "./hook";
 export { Method } from "./method";
-export { Note, NoteState } from "./note";
+export { Note, NoteCache, NoteState } from "./note";
 export { Prefix } from "./prefix";
 export { Relation, RelationsManager, RelationsProxy } from "./relations";
 export { Style } from "./style";

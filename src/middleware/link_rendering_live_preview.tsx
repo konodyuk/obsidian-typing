@@ -12,7 +12,6 @@ import {
 import { editorInfoField, editorLivePreviewField, getLinkpath, Plugin, View } from "obsidian";
 import ReactDOM from "react-dom";
 import { gctx } from "src/context";
-import { Note } from "src/typing";
 import { RenderLink } from "src/utilities";
 
 export class LinkWidget extends WidgetType {
@@ -57,7 +56,7 @@ export class LinkWidget extends WidgetType {
         // if (!path) return;
         // if (!path.endsWith("md")) return;
 
-        let note = new Note(path ?? linkPath);
+        let note = gctx.api.note(path ?? linkPath);
         let el = RenderLink({ note, type: note.type, container, linkText: this.linkDisplay });
 
         ReactDOM.render(el, container);

@@ -3,7 +3,7 @@ import { DataviewAPI } from "obsidian-dataview";
 import { Interpreter } from "src/language";
 import TypingPlugin from "src/main";
 import { ImportManager } from "src/scripting";
-import { Note, RelationsManager, TypeGraph } from "src/typing";
+import { Note, NoteCache, RelationsManager, TypeGraph } from "src/typing";
 import { TypingAPI } from "./api";
 import { CSSManager } from "./utilities";
 
@@ -14,6 +14,8 @@ export class GlobalContext {
     interpreter: Interpreter;
     cssManager: CSSManager;
     userDefinedCssManager: CSSManager;
+    noteCache: NoteCache;
+
     testing: boolean = false;
     platform = Platform;
 
@@ -37,7 +39,7 @@ export class GlobalContext {
         if (!view) {
             return null;
         }
-        let note = new Note(view.file.path);
+        let note = gctx.api.note(view.file.path);
         return note;
     }
     get isMobile(): boolean {
@@ -51,6 +53,7 @@ export class GlobalContext {
         gctx.graph = new TypeGraph();
         gctx.relations = new RelationsManager();
         gctx.interpreter = new Interpreter(plugin.app.vault, plugin);
+        gctx.noteCache = new NoteCache();
 
         if (gctx.testing) return;
         gctx.cssManager = new CSSManager("typing-global");
