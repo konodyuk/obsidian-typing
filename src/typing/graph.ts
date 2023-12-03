@@ -66,6 +66,5 @@ export class TypeGraph {
         this.types = {};
         this.folderToType = {};
         this.isEmpty = true;
-        this.isReady = false;
     }
 }
