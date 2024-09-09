@@ -19,7 +19,7 @@ const ViewTitle = (props: { prefix: string | null; name: string | null; onNameCl
 
 function addViewActions(view: MarkdownView) {
     let actionsEl = view.containerEl.querySelector(".view-actions") as HTMLElement;
-    if (!actionsEl.querySelector(`a.view-action[aria-label="Actions"]`)) {
+    if (!actionsEl.querySelector(`button.view-action[aria-label="Actions"]`)) {
         view.addAction("layout-grid", "Actions", () => {
             let note = gctx.api.note(view.file.path);
             new ActionSuggestModal(gctx.app, note).open();
