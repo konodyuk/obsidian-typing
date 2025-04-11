@@ -55,11 +55,11 @@ AssignmentValue {
 }
 
 AssignmentType {
-  Identifier ~statement ("[" ParameterList "]")?
+  Identifier ~statement ("[" newline* ParameterList newline* "]")?
 }
 
 ParameterList {
-  Parameter ("," Parameter)*
+  Parameter ("," newline* Parameter)*
 }
 
 Parameter {
@@ -105,13 +105,13 @@ List {
 }
 
 // Imports
-ImportStatement { 
-  kw<"import"> "{" ImportedSymbols "}" kw<"from"> String 
+ImportStatement {
+  kw<"import"> "{" newline* ImportedSymbols newline* "}" kw<"from"> String
 }
 
 // or Specifiers?
 ImportedSymbols {
-  ImportedSymbol ("," ImportedSymbol)*
+  ImportedSymbol ("," newline* ImportedSymbol)*
 }
 
 ImportedSymbol {
@@ -196,7 +196,7 @@ String {
 @precedence {
   TypeDeclaration
   ImportStatement
-  Float 
+  Float
   Integer
   Assignment
   AssignmentName
