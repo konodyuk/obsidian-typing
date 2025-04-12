@@ -6,15 +6,22 @@ import { Picker } from ".";
 import { Dropdown, Input } from "..";
 import { useControls } from "../hooks";
 
-function toLocalISOString(date: Date) {
+function toLocalISOString(date: Date, showTime: boolean) {
     let yyyy = date.getFullYear();
     let mm = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed.
     let dd = String(date.getDate()).padStart(2, "0");
 
-    return `${yyyy}-${mm}-${dd}`;
+    if (showTime) {
+        let HH = String(date.getHours()).padStart(2, "0");
+        let MM = String(date.getMinutes()).padStart(2, "0");
+
+        return `${yyyy}-${mm}-${dd} ${HH}:${MM}`;
+    } else {
+        return `${yyyy}-${mm}-${dd}`;
+    }
 }
 
-export function Date() {
+export function DateTime({ showTime }: { showTime: boolean }) {
     let controls = useControls({
         parse(value) {
             return { str: value };
@@ -22,7 +29,7 @@ export function Date() {
         compose({ str }) {
             let date = parseDate(str);
             if (!date) return "";
-            return toLocalISOString(date);
+            return toLocalISOString(date, showTime);
         },
     });
 
@@ -88,14 +95,15 @@ export function Date() {
                     <Dropdown.Panel static>
                         <ReactDatePicker
                             selected={parseDate(dateQuery)}
+                            showTimeInput={showTime}
                             inline
                             onSelect={async (date) => {
-                                let newValue = await controls.str.setValue(toLocalISOString(date));
+                                let newValue = await controls.str.setValue(toLocalISOString(date, showTime));
                                 setDateQuery(newValue);
                                 // dispatch({ type: "EXIT" });
                             }}
                             onChange={async (date) => {
-                                let newValue = await controls.str.setValue(toLocalISOString(date));
+                                let newValue = await controls.str.setValue(toLocalISOString(date, showTime));
                                 setDateQuery(newValue);
                             }}
                             calendarContainer={DummyContainer}

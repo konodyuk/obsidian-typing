@@ -1,6 +1,7 @@
 export { Boolean } from "./boolean";
 export { Choice } from "./choice";
 export { Date } from "./date";
+export { DateTime } from "./datetime";
 export { File } from "./file";
 export { List } from "./list";
 export { Note } from "./note";
