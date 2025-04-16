@@ -63,7 +63,7 @@ const ErrorDisclosure = ({
     );
 };
 
-class MarginalRenderChild extends MarkdownRenderChild {
+export class MarginalRenderChild extends MarkdownRenderChild {
     private debouncedUpdate: ReturnType<typeof eagerDebounce>;
     public note: Note;
     public messages: string[];

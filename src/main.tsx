@@ -10,13 +10,12 @@ import {
     registerInlineFieldsHider,
     registerLinkPostProcessor,
     registerLinkRenderingLivePreview,
+    registerMarginalRenderingLivePreview,
     registerMarginalMonkeyPatch,
     registerMarginalPostProcessor,
     registerTitleBarLeafHook,
 } from "src/middleware";
 import { DEFAULT_SETTINGS, registerSettings, TEST_SETTINGS, TypingSettings } from "src/settings";
-import { Field, FieldTypes, Prefix, Type } from "src/typing";
-import { Picker, Pickers, prompt, Prompt } from "src/ui";
 import { log } from "src/utilities";
 
 export default class TypingPlugin extends Plugin {
@@ -49,6 +48,7 @@ export default class TypingPlugin extends Plugin {
         registerSettings(this);
         registerMarginalPostProcessor(this);
         registerMarginalMonkeyPatch(this);
+        registerMarginalRenderingLivePreview(this);
         registerTitleBarLeafHook(this);
         registerLinkPostProcessor(this);
         registerLinkRenderingLivePreview(this);
@@ -61,6 +61,7 @@ export default class TypingPlugin extends Plugin {
 
     onunload() {
         log.info("Unloading plugin");
+        this.app.workspace.updateOptions();
     }
 
     async loadSettings() {

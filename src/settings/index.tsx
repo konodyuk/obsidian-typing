@@ -116,7 +116,6 @@ class TypingSettingTab extends PluginSettingTab {
         });
         new Setting(containerEl).setName("Headers & footers: live preview mode").addToggle((toggle) => {
             toggle.setValue(this.plugin.settings.marginalsInLivePreview);
-            toggle.setDisabled(true);
             toggle.onChange(async (value: boolean) => {
                 this.plugin.settings.marginalsInLivePreview = value;
                 await this.plugin.saveSettings();
